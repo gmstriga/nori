@@ -357,8 +357,9 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   public void onImageSelected(Image image, int position) {
     // Open ImageViewerActivity.
     final Intent intent = new Intent(SearchActivity.this, ImageViewerActivity.class);
-    intent.putExtra(BUNDLE_ID_IMAGE_INDEX, position);
-    intent.putExtra(BUNDLE_ID_SEARCH_RESULT, searchResultGridFragment.getSearchResult());
+    intent.putExtra(BUNDLE_ID_SEARCH_RESULT,
+        searchResultGridFragment.getSearchResult().getSearchResultForPage(image.searchPage));
+    intent.putExtra(BUNDLE_ID_IMAGE_INDEX, image.searchPagePosition);
     intent.putExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClient.getSettings());
     startActivity(intent);
   }
