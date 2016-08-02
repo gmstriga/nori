@@ -12,6 +12,15 @@ android {
         versionName "2.2.0"
         testApplicationId "io.github.tjg1.nori.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
+
+        buildConfigField "boolean", "DONATIONS_PAYPAL", "true"
+        buildConfigField "boolean", "DONATIONS_PATREON", "true"
+        buildConfigField "boolean", "DONATIONS_BITCOIN", "true"
+        buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+
+        buildConfigField "String", "DONATIONS_PAYPAL_EMAIL", "\"tomg@fastmail.uk\""
+        buildConfigField "String", "DONATIONS_PATREON_ACCOUNT", "\"3696048\""
+        buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "\"1NHUsSzj3N7TE8rykUYk8rqqLWWSmTVzdp\""
     }
     buildTypes {
         release {
