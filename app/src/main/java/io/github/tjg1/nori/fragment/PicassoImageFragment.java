@@ -13,11 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.tjg1.nori.R;
-import io.github.tjg1.library.norilib.Image;
 import com.squareup.picasso.Picasso;
 
+import io.github.tjg1.library.norilib.Image;
+import io.github.tjg1.nori.R;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
 /**
  * Fragment using the {@link it.sephiroth.android.library.imagezoom.ImageViewTouch} widget
@@ -76,6 +77,7 @@ public class PicassoImageFragment extends ImageFragment {
 
     // Initialize the ImageView widget.
     imageView = (ImageViewTouch) view.findViewById(R.id.imageView);
+    imageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
 
     // Load image into the view.
     String imageUrl = shouldLoadImageSamples() ? image.sampleUrl : image.fileUrl;
