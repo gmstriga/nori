@@ -68,6 +68,8 @@ public class DonationActivity extends AppCompatActivity {
         case R.id.button_donate_bitcoin:
           donateBitcoin();
           break;
+        default:
+          break;
       }
     }
   };
