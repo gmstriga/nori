@@ -6,6 +6,7 @@
 
 package io.github.tjg1.nori;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -197,7 +198,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
       actionBar.setDisplayShowTitleEnabled(false);
     }
 
-   // Set up service list spinner.
+    // Set up service list spinner.
     serviceSpinner = (Spinner) toolBar.findViewById(R.id.spinner_service);
     ServiceDropdownAdapter serviceDropdownAdapter = new ServiceDropdownAdapter();
     serviceSpinner.setAdapter(serviceDropdownAdapter);
@@ -544,19 +545,23 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     @Override
     public int getCount() {
       if (settingsList == null) {
-        return 0;
+        return 1;
       } else {
-        return settingsList.size();
+        return settingsList.size() + 1;
       }
     }
 
     @Override
     public SearchClient.Settings getItem(int position) {
+      if (settingsList == null || position == settingsList.size()) // APISettingActivity View.
+        return null;
       return settingsList.get(position).second;
     }
 
     @Override
     public long getItemId(int position) {
+      if (settingsList == null || position == settingsList.size()) // APISettingActivity View.
+        return -1;
       // Return database row ID.
       return settingsList.get(position).first;
     }
@@ -579,17 +584,23 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     @Override
     public View getView(int position, View recycledView, ViewGroup container) {
       // Reuse recycled view, if possible.
-      View view = recycledView;
-      if (view == null) {
-        // View could not be recycled, inflate new view.
-        LayoutInflater inflater = LayoutInflater.from(SearchActivity.this);
-        view = inflater.inflate(R.layout.simple_dropdown_item, container, false);
-      }
+      @SuppressLint("ViewHolder") View view = LayoutInflater.from(SearchActivity.this)
+          .inflate(R.layout.simple_dropdown_item, container, false);
 
       // Populate views with content.
-      SearchClient.Settings settings = getItem(position);
       TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-      text1.setText(settings.getName());
+      SearchClient.Settings settings = getItem(position);
+      if (settings != null) {
+        text1.setText(settings.getName());
+      } else {
+        text1.setText(R.string.service_dropdown_settings);
+        view.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            startActivity(new Intent(SearchActivity.this, APISettingsActivity.class));
+          }
+        });
+      }
 
       return view;
     }
@@ -625,10 +636,12 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
       // Save last active item to SharedPreferences.
-      lastSelectedItem = id;
-      sharedPreferences.edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
-      // Notify parent activity.
-      onSearchAPISelected(getItem(position));
+      if (id != -1) {
+        lastSelectedItem = id;
+        sharedPreferences.edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
+        // Notify parent activity.
+        onSearchAPISelected(getItem(position));
+      }
     }
 
     @Override
