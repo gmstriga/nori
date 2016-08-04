@@ -43,21 +43,21 @@
     </activity>
     <activity
         android:name=".ImageViewerActivity"
-        android:theme="@style/ImageViewerTheme">
-    </activity>
+        android:theme="@style/ImageViewerTheme"/>
     <activity
         android:name=".SettingsActivity"
         android:label="@string/activity_settings"/>
     <activity
         android:name=".NSFWFilterSettingsActivity"
-        android:label="@string/activity_nsfwfilter_settings">
-    </activity>
+        android:label="@string/activity_nsfwfilter_settings"/>
     <activity
         android:name=".TagFilterSettingsActivity"
         android:label="@string/activity_tag_filter_settings"/>
     <activity
         android:name=".APISettingsActivity"
         android:label="@string/activity_service_settings"/>
+    <activity android:name=".DonationActivity"
+              android:label="@string/activity_donations"/>
 
     <provider
         android:name=".database.SearchSuggestionProvider"

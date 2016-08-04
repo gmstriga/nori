@@ -7,8 +7,10 @@
 package io.github.tjg1.nori;
 
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,6 +19,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -214,6 +217,52 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     searchClient.search(query, searchCallback);
   }
 
+  /** Show the donation dialog at defined app launch count thresholds. */
+  private void showDonationDialog() {
+    // Get the number of times the dialog was already shown and current time.
+    int donationDialogShownTimes = sharedPreferences
+        .getInt(getString(R.string.preference_donation_dialog_count), 0);
+    long currentTime = System.currentTimeMillis();
+
+    // Get Nori installation date.
+    long installationDate;
+    try {
+      installationDate = getPackageManager().getPackageInfo(getPackageName(), 0)
+          .firstInstallTime;
+    } catch (PackageManager.NameNotFoundException e) {
+      return;
+    }
+
+    // Show the donation dialog 7 days after installation, 30 days thereafter and
+    // then every 3 months thereafter.
+    if (donationDialogShownTimes == 0 && (currentTime - installationDate) > 604800000L ||
+        donationDialogShownTimes == 1 && (currentTime - installationDate) > 3196800000L ||
+        (currentTime - installationDate) > (donationDialogShownTimes * 7776000000L + 3196800000L)) {
+      new AlertDialog.Builder(this)
+          .setTitle(R.string.activity_donations)
+          .setMessage(R.string.donation_summary)
+          .setCancelable(false)
+          .setPositiveButton(R.string.donation_dialog_donate,
+              new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                  startActivity(new Intent(SearchActivity.this, DonationActivity.class));
+                  dialogInterface.cancel();
+                }
+              })
+          .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+              dialogInterface.cancel();
+            }
+          }).create().show();
+
+      // Increment donation dialog count shared preference.
+      sharedPreferences.edit().putInt(getString(R.string.preference_donation_dialog_count),
+          ++donationDialogShownTimes).apply();
+    }
+  }
+
   /**
    * Called when a new Search API is selected by the user from the action bar dropdown.
    *
@@ -274,8 +323,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     // Get search result grid fragment from fragment manager.
     searchResultGridFragment = (SearchResultGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_searchResultGrid);
 
-
-
     SearchClient.Settings searchClientSettings;
     // Try restoring the SearchClient from savedInstanceState
     if (savedInstanceState != null) {
@@ -293,6 +340,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
         searchClient = searchClientSettings.createSearchClient();
         doSearch(intent.getStringExtra(BUNDLE_ID_SEARCH_QUERY));
       }
+      showDonationDialog();
     }
 
     // Set up the dropdown API server picker.
