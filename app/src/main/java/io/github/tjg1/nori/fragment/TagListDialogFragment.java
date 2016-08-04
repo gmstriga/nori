@@ -90,6 +90,7 @@ public class TagListDialogFragment extends DialogFragment implements ListView.On
     // Start SearchActivity with search for the given tag.
     final Intent intent = new Intent(getContext(), SearchActivity.class);
     intent.setAction(Intent.ACTION_SEARCH);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     intent.putExtra(SearchActivity.INTENT_EXTRA_SEARCH_CLIENT_SETTINGS, settings);
     intent.putExtra(SearchActivity.INTENT_EXTRA_SEARCH_QUERY, image.tags[position].getName());
     startActivity(intent);

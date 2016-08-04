@@ -117,6 +117,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
           // Prepare a intent to send to a new instance of this activity.
           Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
           intent.setAction(Intent.ACTION_SEARCH);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           intent.putExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClientSettings);
           intent.putExtra(BUNDLE_ID_SEARCH_QUERY, query.toString());
 
@@ -150,6 +151,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
           // Create and send a search intent.
           Intent intent = new Intent(SearchActivity.this, SearchActivity.class);
           intent.setAction(Intent.ACTION_SEARCH);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
           intent.putExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClientSettings);
           intent.putExtra(BUNDLE_ID_SEARCH_QUERY, c.getString(c.getColumnIndex(SearchSuggestionDatabase.COLUMN_NAME)));
           startActivity(intent);
