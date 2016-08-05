@@ -6,7 +6,6 @@
 
 package io.github.tjg1.nori.fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,12 +13,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import io.github.tjg1.library.norilib.Image;
@@ -28,8 +26,9 @@ import io.github.tjg1.library.norilib.clients.SearchClient;
 import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.SearchActivity;
 
+
 /** Dialog showing a list of tags for given image in {@link io.github.tjg1.nori.ImageViewerActivity}. */
-public class TagListDialogFragment extends DialogFragment implements ListView.OnItemClickListener {
+public class TagListDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
   /** Identifier used for the parceled {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} object in this fragment's argument bundle. */
   private static final String BUNDLE_ID_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
   /** Identifier used for the parceled {@link io.github.tjg1.library.norilib.Image} object in this fragment's argument bundle. */
@@ -69,13 +68,8 @@ public class TagListDialogFragment extends DialogFragment implements ListView.On
     image = getArguments().getParcelable(BUNDLE_ID_IMAGE);
     settings = getArguments().getParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
 
-    // Create and initialize the ListView.
-    final ListView listView = new ListView(getContext());
-    listView.setOnItemClickListener(this);
-    listView.setAdapter(new TagListAdapter());
-
     return new AlertDialog.Builder(getContext())
-        .setView(listView)
+        .setAdapter(new TagListAdapter(), this)
         .setPositiveButton(R.string.dialog_tags_closeButton, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
@@ -86,7 +80,7 @@ public class TagListDialogFragment extends DialogFragment implements ListView.On
   }
 
   @Override
-  public void onItemClick(AdapterView<?> adapterView, View clickedView, int position, long itemId) {
+  public void onClick(DialogInterface dialog, int position) {
     // Start SearchActivity with search for the given tag.
     final Intent intent = new Intent(getContext(), SearchActivity.class);
     intent.setAction(Intent.ACTION_SEARCH);
@@ -96,7 +90,7 @@ public class TagListDialogFragment extends DialogFragment implements ListView.On
     startActivity(intent);
 
     // Dismiss the dialog after the activity is started.
-    dismiss();
+    dialog.dismiss();
   }
 
   /**
