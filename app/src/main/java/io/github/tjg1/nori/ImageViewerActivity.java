@@ -273,8 +273,7 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE) {
+    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE && grantResults.length != 0) {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED && queuedDownloadRequestUrl != null) {
         getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
         queuedDownloadRequestUrl = null;
