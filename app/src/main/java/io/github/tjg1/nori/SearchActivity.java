@@ -82,8 +82,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   private MenuItem searchMenuItem;
   /** Action bar search view. */
   private SearchView searchView;
-  /** Prevent the {@link SearchView} from expanding on service spinner selection when activity is first launched. */
-  private boolean shouldExpandSearchView = false;
   /** Search callback currently awaiting a response from the Search API. */
   private SearchResultCallback searchCallback;
   /** Search result grid fragment shown in this activity. */
@@ -286,10 +284,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     // Expand the SearchView when an API is selected manually by the user.
     // (and not automatically restored from previous state when the app is first launched)
     if (searchClientSettings != null && searchMenuItem != null) {
-      if (shouldExpandSearchView)
-        MenuItemCompat.expandActionView(searchMenuItem);
-      else
-        shouldExpandSearchView = true;
+      MenuItemCompat.expandActionView(searchMenuItem);
     }
 
     searchClientSettings = settings;
