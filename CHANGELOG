@@ -1,3 +1,23 @@
+### Version 2.2.0 (05/07/2016) ###
+
+Lewis White (1 commit):
+      New Launcher Icon
+
+Tomasz Jan Góralczyk (29 commits):
+      Don't use implicit locales
+      Update norilib
+      Do not append Git revision to release builds
+      Don't pass entire SearchResults to ImageViewerActivity
+      Generate assets for the new launcher icon
+      Add donation Activity
+      Add periodical donate dialog
+      Use FLAG_ACTIVITY_NEW_TASK when starting SearchActivity
+      Fit images to screen on high-dpi devices.
+      Add link to APISettingsActivity to service spinner
+      Dismiss TagListDialogFragment after selecting a tag
+      Fix crash when monkeytesting ImageViewerActivity
+      Make ImageViewerActivity ViewPager background black
+
 ### Version 2.1.0 (29/06/2016) ###
 
 Tomasz Jan Góralczyk (31 commits):
