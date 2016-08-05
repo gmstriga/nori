@@ -269,9 +269,10 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   /**
    * Called when a new Search API is selected by the user from the action bar dropdown.
    *
-   * @param settings Selected {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} object.
+   * @param settings Selected {@link SearchClient.Settings} object.
+   * @param expandActionView Should the SearchView action view be expanded?
    */
-  protected void onSearchAPISelected(SearchClient.Settings settings) {
+  protected void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView) {
     if (settings == null) {
       // The SearchClient setting database is empty.
       return;
@@ -283,7 +284,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     }
     // Expand the SearchView when an API is selected manually by the user.
     // (and not automatically restored from previous state when the app is first launched)
-    if (searchClientSettings != null && searchMenuItem != null) {
+    if (searchClientSettings != null && searchMenuItem != null && expandActionView) {
       MenuItemCompat.expandActionView(searchMenuItem);
     }
 
@@ -637,10 +638,11 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
       // Save last active item to SharedPreferences.
       if (id != -1) {
+        // Notify parent activity.
+        onSearchAPISelected(getItem(position), id != lastSelectedItem);
+        // Update last selected item id.
         lastSelectedItem = id;
         sharedPreferences.edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
-        // Notify parent activity.
-        onSearchAPISelected(getItem(position));
       }
     }
 
