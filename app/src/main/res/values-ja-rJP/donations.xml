@@ -2,6 +2,6 @@
 <resources>
 
   <!-- Pay what you want currency. -->
-  <string name="donation_currency" translatable="false">JPY</string>
+  <string name="donation_currency">JPY</string>
 
 </resources>
