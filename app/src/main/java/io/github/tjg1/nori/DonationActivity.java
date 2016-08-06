@@ -2,8 +2,9 @@
  * This file is part of nori.
  * Copyright (c) 2014-2016 Tomasz Jan Góralczyk <tomg@fastmail.uk>
  * License: GNU GPLv2
- * Contains parts of android.donations.lib by SufficientlySecure.
  */
+
+// Contains parts of android.donations.lib by SufficientlySecure.
 
 package io.github.tjg1.nori;
 
