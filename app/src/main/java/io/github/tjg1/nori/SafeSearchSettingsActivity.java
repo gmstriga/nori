@@ -9,6 +9,9 @@ package io.github.tjg1.nori;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SafeSearchSettingsActivity extends AppCompatActivity implements ListView.OnItemClickListener, CompoundButton.OnCheckedChangeListener {
+public class SafeSearchSettingsActivity extends AppCompatActivity {
+
   /** Default {@link android.content.SharedPreferences} object. */
   private SharedPreferences sharedPreferences;
   /** Human-readable labels for each SafeSearch setting. */
@@ -41,7 +45,63 @@ public class SafeSearchSettingsActivity extends AppCompatActivity implements Lis
   /** Values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
   private String[] safeSearchValues;
   /** Current values of the preference_safeSearch preference. */
-  private List<String> safeSearchCurrentSetting = new ArrayList<>(4);
+  private List<String> safeSearchCurrentSetting;
+
+  /** Get the default {@link android.content.SharedPreferences} object. */
+  @NonNull
+  private SharedPreferences getSharedPreferences() {
+    if (sharedPreferences == null) {
+      sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+    return sharedPreferences;
+  }
+
+  /** Get the human-readable labels for each SafeSearch setting. */
+  @NonNull
+  private String[] getSafeSearchEntries() {
+    if (safeSearchEntries == null) {
+      safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
+    }
+    return safeSearchEntries;
+  }
+
+  /** Get the human-readable summaries for each SafeSearch setting. */
+  @NonNull
+  private String[] getSafeSearchSummaries() {
+    if (safeSearchSummaries == null) {
+      safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
+    }
+    return safeSearchSummaries;
+  }
+
+  /** Get values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
+  @NonNull
+  private String[] getSafeSearchValues() {
+    if (safeSearchValues == null) {
+      safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
+    }
+    return safeSearchValues;
+  }
+
+  /** Get current values of the preference_safeSearch preference. */
+  @NonNull
+  private List<String> getSafeSearchCurrentSetting() {
+    if (safeSearchCurrentSetting == null) {
+      safeSearchCurrentSetting = new ArrayList<>(4);
+
+      String safeSearchPreference = getSharedPreferences()
+          .getString(getString(R.string.preference_safeSearch_key), null);
+
+      if (safeSearchPreference != null && !TextUtils.isEmpty(safeSearchPreference.trim())) {
+        safeSearchCurrentSetting
+            .addAll(Arrays.asList(safeSearchPreference.trim().split(" ")));
+      } else {
+        safeSearchCurrentSetting.addAll(Arrays.asList(getResources()
+            .getStringArray(R.array.preference_safeSearch_defaultValues)));
+      }
+    }
+    return safeSearchCurrentSetting;
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +109,29 @@ public class SafeSearchSettingsActivity extends AppCompatActivity implements Lis
     setContentView(R.layout.activity_safe_search_settings);
 
     // Set Toolbar as the app bar.
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
+    setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+  }
+
+  @Override
+  public void setContentView(@LayoutRes int layoutResID) {
+    super.setContentView(layoutResID);
+
+    // Set up ListView.
+    final ListView listView = (ListView) findViewById(android.R.id.list);
+    listView.setAdapter(new SafeSearchListAdapter());
+    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        final Checkable checkBox = (Checkable) view.findViewById(R.id.checkbox);
+        checkBox.toggle();
+      }
+    });
+  }
+
+  @Override
+  public void setSupportActionBar(@Nullable Toolbar toolbar) {
+    super.setSupportActionBar(toolbar);
+
     // Hide the action bar icon and use the activity title as the home button.
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -58,31 +139,6 @@ public class SafeSearchSettingsActivity extends AppCompatActivity implements Lis
       actionBar.setDisplayShowTitleEnabled(true);
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
-
-    // Get shared preference object.
-    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-    // Get string array resources.
-    safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
-    safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
-    safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
-
-    // Get current value of the preference_safeSearch preference, or fallback to the default value.
-    if (sharedPreferences.contains(getString(R.string.preference_safeSearch_key))) {
-      String safeSearchPreference = sharedPreferences.getString(getString(R.string.preference_safeSearch_key), null);
-      if (!TextUtils.isEmpty(safeSearchPreference)) {
-        safeSearchPreference = safeSearchPreference.trim();
-        safeSearchCurrentSetting.addAll((Arrays.asList(safeSearchPreference.split(" "))));
-      }
-    } else {
-      final String[] obscenityRatingDefaultValues = getResources().getStringArray(R.array.preference_safeSearch_defaultValues);
-      safeSearchCurrentSetting.addAll(Arrays.asList(obscenityRatingDefaultValues));
-    }
-
-    // Set up ListView.
-    final ListView listView = (ListView) findViewById(android.R.id.list);
-    listView.setAdapter(new SafeSearchListAdapter());
-    listView.setOnItemClickListener(this);
   }
 
   @Override
@@ -96,38 +152,25 @@ public class SafeSearchSettingsActivity extends AppCompatActivity implements Lis
     }
   }
 
-  @Override
-  public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-    // Toggle checkbox when List item is clicked.
-    final Checkable checkBox = (Checkable) view.findViewById(R.id.checkbox);
-    checkBox.toggle();
-  }
-
-  @SuppressWarnings("RedundantCast")
-  @Override
-  public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-    if (checked && !safeSearchCurrentSetting.contains((String) compoundButton.getTag())) {
-      safeSearchCurrentSetting.add((String) compoundButton.getTag());
-    } else if (!checked && safeSearchCurrentSetting.contains((String) compoundButton.getTag())) {
-      safeSearchCurrentSetting.remove((String) compoundButton.getTag());
-    }
-
-    // Update SharedPreferences.
-    sharedPreferences.edit()
+  /** Update the value of the preference_safeSearch shared preference. */
+  private void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting) {
+    getSharedPreferences().edit()
         .putString(getString(R.string.preference_safeSearch_key),
-            StringUtils.mergeStringArray(safeSearchCurrentSetting.toArray(new String[safeSearchCurrentSetting.size()]), " ").trim())
+            StringUtils.mergeStringArray(safeSearchCurrentSetting, " ").trim())
         .apply();
   }
 
-  private class SafeSearchListAdapter extends BaseAdapter {
+  /** Adapter for the SafeSearch setting List (in the fdroid version) */
+  private class SafeSearchListAdapter extends BaseAdapter implements
+      CompoundButton.OnCheckedChangeListener {
 
     public int getCount() {
-      return safeSearchEntries.length;
+      return getSafeSearchEntries().length;
     }
 
     @Override
     public Object getItem(int position) {
-      return safeSearchEntries[position];
+      return getSafeSearchEntries()[position];
     }
 
     @Override
@@ -147,15 +190,31 @@ public class SafeSearchSettingsActivity extends AppCompatActivity implements Lis
 
       // Populate views.
       final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-      checkBox.setChecked(safeSearchCurrentSetting.contains(safeSearchValues[position]));
-      checkBox.setOnCheckedChangeListener(SafeSearchSettingsActivity.this);
-      checkBox.setTag(safeSearchValues[position]);
+      checkBox.setChecked(getSafeSearchCurrentSetting().contains(getSafeSearchValues()[position]));
+      checkBox.setOnCheckedChangeListener(this);
+      checkBox.setTag(getSafeSearchValues()[position]);
       final TextView title = (TextView) view.findViewById(R.id.title);
-      title.setText(safeSearchEntries[position]);
+      title.setText(getSafeSearchEntries()[position]);
       final TextView summary = (TextView) view.findViewById(R.id.summary);
-      summary.setText(safeSearchSummaries[position]);
+      summary.setText(getSafeSearchSummaries()[position]);
 
       return view;
+    }
+
+    @SuppressWarnings("SuspiciousMethodCalls")
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+      List<String> safeSearchCurrentSetting = getSafeSearchCurrentSetting();
+
+      if (checked && !safeSearchCurrentSetting.contains(compoundButton.getTag())) {
+        safeSearchCurrentSetting.add((String) compoundButton.getTag());
+      } else if (!checked && safeSearchCurrentSetting.contains(compoundButton.getTag())) {
+        safeSearchCurrentSetting.remove(compoundButton.getTag());
+      }
+
+      // Update SharedPreferences.
+      updateSafeSearchSettings(safeSearchCurrentSetting
+          .toArray(new String[safeSearchCurrentSetting.size()]));
     }
   }
 }
