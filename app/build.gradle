@@ -40,6 +40,12 @@ android {
     lintOptions {
         abortOnError false
     }
+    productFlavors {
+        fdroid {
+        }
+        google {
+        }
+    }
 }
 
 dependencies {
