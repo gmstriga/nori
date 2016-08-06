@@ -18,29 +18,29 @@
     <item>medium</item>
     <item>large</item>
   </string-array>
-  <!-- Obscenity Filter preferences entries. -->
-  <string-array translatable="false" name="preference_nsfwFilter_entries">
-    <item>@string/obscenity_rating_safe</item>
-    <item>@string/obscenity_rating_questionable</item>
-    <item>@string/obscenity_rating_explicit</item>
-    <item>@string/obscenity_rating_undefined</item>
+  <!-- SafeSearch preferences entries. -->
+  <string-array translatable="false" name="preference_safeSearch_entries">
+    <item>@string/safe_search_on</item>
+    <item>@string/safe_search_moderate</item>
+    <item>@string/safe_search_off</item>
+    <item>@string/safe_search_undefined</item>
   </string-array>
-  <string-array translatable="false" name="preference_nsfwFilter_summaries">
-    <item>@string/obscenity_rating_safe_summary</item>
-    <item>@string/obscenity_rating_questionable_summary</item>
-    <item>@string/obscenity_rating_explicit_summary</item>
-    <item>@string/obscenity_rating_undefined_summary</item>
+  <string-array translatable="false" name="preference_safeSearch_summaries">
+    <item>@string/safe_search_on_summary</item>
+    <item>@string/safe_search_moderate_summary</item>
+    <item>@string/safe_search_off_summary</item>
+    <item>@string/safe_search_undefined_summary</item>
   </string-array>
-  <!-- Obscenity Filter preferences entry values. -->
-  <string-array translatable="false" name="preference_nsfwFilter_values">
-    <item>safe</item>
-    <item>questionable</item>
-    <item>explicit</item>
-    <item>undefined</item>
+  <!-- SafeSearch preferences entry values. -->
+  <string-array translatable="false" name="preference_safeSearch_values">
+    <item>s</item>
+    <item>q</item>
+    <item>e</item>
+    <item>u</item>
   </string-array>
-  <string-array translatable="false" name="preference_nsfwFilter_defaultValues">
-    <item>safe</item>
-    <item>undefined</item>
+  <string-array translatable="false" name="preference_safeSearch_defaultValues">
+    <item>s</item>
+    <item>u</item>
   </string-array>
   <!-- Service name suggestions shown when adding or editing service API settings. -->
   <string-array translatable="false" name="service_suggestions_names">

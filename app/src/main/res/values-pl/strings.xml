@@ -16,7 +16,7 @@
   <string name="activity_image_viewer_titleFormat" formatted="false">%s: %s</string>
   <string name="activity_settings">Ustawienia</string>
   <string name="activity_tag_filter_settings">Filter tagów</string>
-  <string name="activity_nsfwfilter_settings">SafeSearch</string>
+  <string name="activity_safeSearch_settings">SafeSearch</string>
   <string name="activity_service_settings">Lista serwerów</string>
   <string name="activity_donations">Dotacje</string>
 
@@ -62,8 +62,8 @@
   <!-- Preferences -->
   <string name="preference_category_search">Wyszukiwanie</string>
   <string name="preference_previewSize_title">Rozmiar miniatur</string>
-  <string name="preference_nsfwFilter_title">SafeSearch</string>
-  <string name="preference_nsfwFilter_summary">Zarządzaj ustawieniami filtra treści dla dorosłych</string>
+  <string name="preference_safeSearch_title">SafeSearch</string>
+  <string name="preference_safeSearch_summary">Zarządzaj ustawieniami filtra treści dla dorosłych</string>
   <string name="preference_tagFilter_summary">Zarządzaj listą tagów do usunięcia z wyników wyszukiwania</string>
   <string name="preference_tagFilter_title">Filtr tagów</string>
   <string name="preference_clearSearchHistory_summary">Wyczyść historię wyszukiwania</string>
@@ -84,15 +84,15 @@
   <string name="preference_previewSize_medium">Średnie</string>
   <string name="preference_previewSize_large">Duże</string>
 
-  <!-- NSFW ratings -->
-  <string name="obscenity_rating_safe">Łagodne</string>
-  <string name="obscenity_rating_questionable">Sugestywne</string>
-  <string name="obscenity_rating_explicit">Wulgarne</string>
-  <string name="obscenity_rating_undefined">Niezdefiniowane</string>
-  <string name="obscenity_rating_safe_summary">Bez nagości i treści seksualnych</string>
-  <string name="obscenity_rating_questionable_summary">Częściowa nagość i treści seksualnie sugestywne</string>
-  <string name="obscenity_rating_explicit_summary">Pełna nagość i treści pornograficzne</string>
-  <string name="obscenity_rating_undefined_summary">Pokaż treści nie posiadające oceny przyzwoitości.</string>
+  <!-- SafeSearch ratings -->
+  <string name="safe_search_on">Łagodne</string>
+  <string name="safe_search_moderate">Sugestywne</string>
+  <string name="safe_search_off">Wulgarne</string>
+  <string name="safe_search_undefined">Niezdefiniowane</string>
+  <string name="safe_search_on_summary">Bez nagości i treści seksualnych</string>
+  <string name="safe_search_moderate_summary">Częściowa nagość i treści seksualnie sugestywne</string>
+  <string name="safe_search_off_summary">Pełna nagość i treści pornograficzne</string>
+  <string name="safe_search_undefined_summary">Pokaż treści nie posiadające oceny przyzwoitości.</string>
 
   <!-- Donations -->
   <string name="donation_summary">Jeśli podoba Ci się ta aplikacja, rozważ wpłacenie darowizny by wesprzeć jej dalszy rozwój.\nTo dzięki Waszemu wsparciu, Nori może pozostać darmową aplikacją bez reklam.</string>

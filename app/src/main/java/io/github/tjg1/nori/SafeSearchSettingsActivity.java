@@ -31,22 +31,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class NSFWFilterSettingsActivity extends AppCompatActivity implements ListView.OnItemClickListener, CompoundButton.OnCheckedChangeListener {
+public class SafeSearchSettingsActivity extends AppCompatActivity implements ListView.OnItemClickListener, CompoundButton.OnCheckedChangeListener {
   /** Default {@link android.content.SharedPreferences} object. */
   private SharedPreferences sharedPreferences;
-  /** Human-readable labels for each obscenity rating. */
-  private String[] obscenityRatingEntries;
-  /** Human-readable summaries for each obscenity rating. */
-  private String[] obscenityRatingSummaries;
-  /** Values for each obscenity rating stored in {@link android.content.SharedPreferences} */
-  private String[] obscenityRatingValues;
-  /** Current values of the preference_nsfwFilter preference. */
-  private List<String> obscenityRatingsFiltered = new ArrayList<>(4);
+  /** Human-readable labels for each SafeSearch setting. */
+  private String[] safeSearchEntries;
+  /** Human-readable summaries for each SafeSearch setting. */
+  private String[] safeSearchSummaries;
+  /** Values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
+  private String[] safeSearchValues;
+  /** Current values of the preference_safeSearch preference. */
+  private List<String> safeSearchCurrentSetting = new ArrayList<>(4);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_nsfwfilter_settings);
+    setContentView(R.layout.activity_safe_search_settings);
 
     // Set Toolbar as the app bar.
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,25 +63,25 @@ public class NSFWFilterSettingsActivity extends AppCompatActivity implements Lis
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     // Get string array resources.
-    obscenityRatingEntries = getResources().getStringArray(R.array.preference_nsfwFilter_entries);
-    obscenityRatingSummaries = getResources().getStringArray(R.array.preference_nsfwFilter_summaries);
-    obscenityRatingValues = getResources().getStringArray(R.array.preference_nsfwFilter_values);
+    safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
+    safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
+    safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
 
-    // Get current value of the preference_nsfwFilter preference, or fallback to the default value.
-    if (sharedPreferences.contains(getString(R.string.preference_nsfwFilter_key))) {
-      String nsfwFilter = sharedPreferences.getString(getString(R.string.preference_nsfwFilter_key), null);
-      if (!TextUtils.isEmpty(nsfwFilter)) {
-        nsfwFilter = nsfwFilter.trim();
-        obscenityRatingsFiltered.addAll((Arrays.asList(nsfwFilter.split(" "))));
+    // Get current value of the preference_safeSearch preference, or fallback to the default value.
+    if (sharedPreferences.contains(getString(R.string.preference_safeSearch_key))) {
+      String safeSearchPreference = sharedPreferences.getString(getString(R.string.preference_safeSearch_key), null);
+      if (!TextUtils.isEmpty(safeSearchPreference)) {
+        safeSearchPreference = safeSearchPreference.trim();
+        safeSearchCurrentSetting.addAll((Arrays.asList(safeSearchPreference.split(" "))));
       }
     } else {
-      final String[] obscenityRatingDefaultValues = getResources().getStringArray(R.array.preference_nsfwFilter_defaultValues);
-      obscenityRatingsFiltered.addAll(Arrays.asList(obscenityRatingDefaultValues));
+      final String[] obscenityRatingDefaultValues = getResources().getStringArray(R.array.preference_safeSearch_defaultValues);
+      safeSearchCurrentSetting.addAll(Arrays.asList(obscenityRatingDefaultValues));
     }
 
     // Set up ListView.
     final ListView listView = (ListView) findViewById(android.R.id.list);
-    listView.setAdapter(new ObscenityRatingListAdapter());
+    listView.setAdapter(new SafeSearchListAdapter());
     listView.setOnItemClickListener(this);
   }
 
@@ -106,28 +106,28 @@ public class NSFWFilterSettingsActivity extends AppCompatActivity implements Lis
   @SuppressWarnings("RedundantCast")
   @Override
   public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-    if (checked && !obscenityRatingsFiltered.contains((String) compoundButton.getTag())) {
-      obscenityRatingsFiltered.add((String) compoundButton.getTag());
-    } else if (!checked && obscenityRatingsFiltered.contains((String) compoundButton.getTag())) {
-      obscenityRatingsFiltered.remove((String) compoundButton.getTag());
+    if (checked && !safeSearchCurrentSetting.contains((String) compoundButton.getTag())) {
+      safeSearchCurrentSetting.add((String) compoundButton.getTag());
+    } else if (!checked && safeSearchCurrentSetting.contains((String) compoundButton.getTag())) {
+      safeSearchCurrentSetting.remove((String) compoundButton.getTag());
     }
 
     // Update SharedPreferences.
     sharedPreferences.edit()
-        .putString(getString(R.string.preference_nsfwFilter_key),
-            StringUtils.mergeStringArray(obscenityRatingsFiltered.toArray(new String[obscenityRatingsFiltered.size()]), " ").trim())
+        .putString(getString(R.string.preference_safeSearch_key),
+            StringUtils.mergeStringArray(safeSearchCurrentSetting.toArray(new String[safeSearchCurrentSetting.size()]), " ").trim())
         .apply();
   }
 
-  private class ObscenityRatingListAdapter extends BaseAdapter {
+  private class SafeSearchListAdapter extends BaseAdapter {
 
     public int getCount() {
-      return obscenityRatingEntries.length;
+      return safeSearchEntries.length;
     }
 
     @Override
     public Object getItem(int position) {
-      return obscenityRatingEntries[position];
+      return safeSearchEntries[position];
     }
 
     @Override
@@ -147,13 +147,13 @@ public class NSFWFilterSettingsActivity extends AppCompatActivity implements Lis
 
       // Populate views.
       final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-      checkBox.setChecked(obscenityRatingsFiltered.contains(obscenityRatingValues[position]));
-      checkBox.setOnCheckedChangeListener(NSFWFilterSettingsActivity.this);
-      checkBox.setTag(obscenityRatingValues[position]);
+      checkBox.setChecked(safeSearchCurrentSetting.contains(safeSearchValues[position]));
+      checkBox.setOnCheckedChangeListener(SafeSearchSettingsActivity.this);
+      checkBox.setTag(safeSearchValues[position]);
       final TextView title = (TextView) view.findViewById(R.id.title);
-      title.setText(obscenityRatingEntries[position]);
+      title.setText(safeSearchEntries[position]);
       final TextView summary = (TextView) view.findViewById(R.id.summary);
-      summary.setText(obscenityRatingSummaries[position]);
+      summary.setText(safeSearchSummaries[position]);
 
       return view;
     }
