@@ -26,6 +26,7 @@ import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import io.github.tjg1.nori.util.StringUtils;
@@ -116,16 +117,28 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
   public void setContentView(@LayoutRes int layoutResID) {
     super.setContentView(layoutResID);
 
-    // Set up ListView.
-    final ListView listView = (ListView) findViewById(android.R.id.list);
-    listView.setAdapter(new SafeSearchListAdapter());
-    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        final Checkable checkBox = (Checkable) view.findViewById(R.id.checkbox);
-        checkBox.toggle();
-      }
-    });
+    if ("google".equals(BuildConfig.FLAVOR)) {
+      final RadioGroup safeSearchGroup = (RadioGroup) findViewById(R.id.safe_search_radio_group);
+      final CheckBox undefinedCheckBox = (CheckBox) findViewById(R.id.safe_search_undefined);
+      final SafeSearchCheckedChangeListener listener =
+          new SafeSearchCheckedChangeListener(safeSearchGroup, undefinedCheckBox);
+      listener.updateViews();
+
+      // Set View listeners.
+      safeSearchGroup.setOnCheckedChangeListener(listener);
+      undefinedCheckBox.setOnCheckedChangeListener(listener);
+    } else {
+      // Set up ListView.
+      final ListView listView = (ListView) findViewById(android.R.id.list);
+      listView.setAdapter(new SafeSearchListAdapter());
+      listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+          final Checkable checkBox = (Checkable) view.findViewById(R.id.checkbox);
+          checkBox.toggle();
+        }
+      });
+    }
   }
 
   @Override
@@ -158,6 +171,86 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
         .putString(getString(R.string.preference_safeSearch_key),
             StringUtils.mergeStringArray(safeSearchCurrentSetting, " ").trim())
         .apply();
+  }
+
+  /** {@link android.widget.CompoundButton.OnCheckedChangeListener} for the Google version. */
+  private class SafeSearchCheckedChangeListener implements
+      CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener {
+
+    /** SafeSearch filter setting {@link RadioGroup}. */
+    private final RadioGroup safeSearchGroup;
+    /** Display images with undefined SafeSearch rating, if checked. */
+    private final CheckBox undefinedCheckBox;
+
+    /**
+     * Create a new listener for SafeSearch setting {@link RadioGroup} and {@link CheckBox}.
+     * @param safeSearchGroup   SafeSearch filter setting {@link RadioGroup}.
+     * @param undefinedCheckBox Display images with undefined SafeSearch rating, if checked.
+     */
+    public SafeSearchCheckedChangeListener(@NonNull RadioGroup safeSearchGroup,
+                                           @NonNull CheckBox undefinedCheckBox) {
+      this.safeSearchGroup = safeSearchGroup;
+      this.undefinedCheckBox = undefinedCheckBox;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton button, boolean checked) {
+      updatePreferences(safeSearchGroup.getCheckedRadioButtonId(), checked);
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int position) {
+      updatePreferences(radioGroup.getCheckedRadioButtonId(), undefinedCheckBox.isChecked());
+    }
+
+    /**
+     * Update the SafeSearch {@link RadioGroup} and {@link CheckBox} with current preference values.
+     */
+    public void updateViews() {
+      final List<String> currentSetting = getSafeSearchCurrentSetting();
+
+      // Select radio group item based on current setting.
+      if (currentSetting.contains("e")) {
+        this.safeSearchGroup.check(R.id.safe_search_off);
+      } else if (currentSetting.contains("q")) {
+        this.safeSearchGroup.check(R.id.safe_search_moderate);
+      } else if (currentSetting.contains("s")) {
+        this.safeSearchGroup.check(R.id.safe_search_on);
+      }
+
+      // Check undefined check box based on current setting.
+      this.undefinedCheckBox.setChecked(currentSetting.contains("u"));
+    }
+
+    /**
+     * Update {@link SharedPreferences} with the selected SafeSearch setting.
+     *
+     * @param safeSearchCheckedRadioButtonId Selected SafeSearch radio group item ID.
+     * @param undefinedChecked               Show items with undefined SafeSearch ratings.
+     */
+    private void updatePreferences(int safeSearchCheckedRadioButtonId, boolean undefinedChecked) {
+      // Set the show items with undefined SafeSearch ratings setting.
+      String[] safeSearchSettings = undefinedChecked ? new String[]{null, "u"} : new String[1];
+
+      // Set SearchClient setting from radio group selected item id.
+      switch (safeSearchCheckedRadioButtonId) {
+        case R.id.safe_search_on:
+          safeSearchSettings[0] = "s";
+          break;
+        case R.id.safe_search_moderate:
+          safeSearchSettings[0] = "s q";
+          break;
+        case R.id.safe_search_off:
+          safeSearchSettings[0] = "s q e";
+          break;
+        default:
+          safeSearchSettings[0] = "s";
+          break;
+      }
+
+      // Update SharedPreferences.
+      updateSafeSearchSettings(safeSearchSettings);
+    }
   }
 
   /** Adapter for the SafeSearch setting List (in the fdroid version) */
