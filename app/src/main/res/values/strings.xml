@@ -84,7 +84,7 @@
   <string name="preference_nsfwFilter_key" translatable="false">preference_nsfwFilter</string>
   <string name="preference_tagFilter_key" translatable="false">preference_tagFilter</string>
   <string name="preference_image_viewer_keepScreenOn_key" translatable="false">preference_image_viewer_keepScreenOn</string>
-  <string name="preference_image_viewer_conserveBandwidth_key" translatable="false">preference_image_viewer_conserveBandwidth</string>]
+  <string name="preference_image_viewer_conserveBandwidth_key" translatable="false">preference_image_viewer_conserveBandwidth</string>
   <string name="preference_donation_dialog_count" translatable="false">preference_donation_dialog_count</string>
 
   <!-- Thumbnail sizes -->
@@ -112,7 +112,7 @@
   <string name="donation_method_googleSummary">Donate using Google Play</string>
   <string name="donation_method_bitcoin">Bitcoin</string>
   <string name="donation_method_bitcoinSummary">Donate Bitcoin</string>
-  <string name="donation_paypal_item">Nori Donation</string>
+  <string name="donation_paypal_item" translatable="false">Nori Donation</string>
   <string name="donation_url_copiedToClipboard">Donation URL was copied to clipboard.</string>
   <string name="donation_method_bitcoin_copiedToClipboard">Bitcoin address was copied to the clipboard.</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR Code</string>
