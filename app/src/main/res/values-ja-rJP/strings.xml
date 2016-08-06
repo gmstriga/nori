@@ -104,7 +104,6 @@
   <string name="donation_method_googleSummary">Google Play を使用して寄付します</string>
   <string name="donation_method_bitcoin">Bitcoin</string>
   <string name="donation_method_bitcoinSummary">Bitcoin で寄付します</string>
-  <string name="donation_paypal_item">Nori の寄付</string>
   <string name="donation_url_copiedToClipboard">寄付の URL をクリップボードにコピーしました。</string>
   <string name="donation_method_bitcoin_copiedToClipboard">Bitcoin アドレスをクリップボードにコピーしました。</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR コード</string>
