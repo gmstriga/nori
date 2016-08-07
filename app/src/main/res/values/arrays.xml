@@ -50,6 +50,7 @@
     <item>Konachan</item>
     <item>yande.re</item>
     <item>Dollbooru</item>
+    <item>E621</item>
   </string-array>
   <!-- Service URLs automatically filled in when a suggested service name is picked. -->
   <string-array translatable="false" name="service_suggestions_uris">
@@ -59,5 +60,6 @@
     <item>http://konachan.com</item>
     <item>https://yande.re</item>
     <item>http://dollbooru.org</item>
+    <item>https://e621.net</item>
   </string-array>
 </resources>
