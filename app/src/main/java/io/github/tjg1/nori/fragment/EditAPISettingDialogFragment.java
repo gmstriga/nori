@@ -33,7 +33,7 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   /** Bundle ID of the database row ID passed into the arguments bundle when editing an existing object. */
   private static final String BUNDLE_ID_ROW_ID = "io.github.tjg1.nori.SearchClient.Settings.rowId";
   /** Danbooru API URL. Used to only show the optional authentication fields for the Danbooru API. */
-  private static final String DANBOORU_API_URL = "http://danbooru.donmai.us";
+  private static final String DANBOORU_API_URL = "danbooru.donmai.us";
   /** Interface in the parent Context waiting to receive data from the dialog. */
   private Listener listener;
   /** Database ID of the object being edited (if not creating a new settings object). */
@@ -205,7 +205,7 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   @Override
   public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
     // Only show optional authentication inputs for the Danbooru API.
-    if (uri.getText().toString().startsWith(DANBOORU_API_URL)) {
+    if (uri.getText().toString().contains(DANBOORU_API_URL)) {
       username.setVisibility(View.VISIBLE);
       passphrase.setVisibility(View.VISIBLE);
     } else if (username.getVisibility() != View.GONE) {
