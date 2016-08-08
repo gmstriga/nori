@@ -8,8 +8,8 @@ android {
         applicationId "io.github.tjg1.nori"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 5
-        versionName "2.2.1"
+        versionCode 6
+        versionName "2.3.0"
         testApplicationId "io.github.tjg1.nori.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
 

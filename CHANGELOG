@@ -1,3 +1,10 @@
+### Version 2.3.0 (08/07/2016) ###
+
+kycklingar (8 commits):
+      Add E621 support
+      Force Danbooru to use https
+      Danbooru authentication fix
+
 ### Version 2.2.1 (06/07/2016) ###
 
 Tomasz Jan Góralczyk (7 commits):
