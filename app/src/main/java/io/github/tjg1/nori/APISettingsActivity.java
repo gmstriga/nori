@@ -132,7 +132,8 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
           // This is so database I/O doesn't block the UI thread.
           SearchClient.Settings.APIType apiType =
               SearchClient.Settings.APIType.values()[intent.getIntExtra(ServiceTypeDetectionService.API_TYPE, 0)];
-          final SearchClient.Settings settings = new SearchClient.Settings(apiType, name, url, username, passphrase);
+          String endpointUrl = intent.getStringExtra(ServiceTypeDetectionService.ENDPOINT_URL);
+          final SearchClient.Settings settings = new SearchClient.Settings(apiType, name, endpointUrl, username, passphrase);
           new Thread(new Runnable() {
             @Override
             public void run() {
