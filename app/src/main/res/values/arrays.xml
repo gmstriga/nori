@@ -53,7 +53,7 @@
   </string-array>
   <!-- Service URLs automatically filled in when a suggested service name is picked. -->
   <string-array translatable="false" name="service_suggestions_uris">
-    <item>http://danbooru.donmai.us</item>
+    <item>https://danbooru.donmai.us</item>
     <item>http://gelbooru.com</item>
     <item>http://safebooru.org</item>
     <item>http://konachan.com</item>
