@@ -7,6 +7,12 @@ Nori is a free and open source Android client for tag-based image archives and g
 
 If you're interested in contributing to Nori, have any questions or just want to hang out, join us in the `#nori` IRC channel on Freenode.
 
+### Download ###
+
+Nori can be downloaded from [F-Droid](https://f-droid.org/repository/browse/?fdid=io.github.tjg1.nori), the Free and Open Source Android App Repository.
+
+We also publish APKs for each release, on [GitHub](https://github.com/tjg1/nori/releases).
+
 ### Build ###
 
 To build Nori, first make sure you have cloned the repository recursively to also get a copy of [norilib](https://github.com/tjg1/norilib), our API client library:
