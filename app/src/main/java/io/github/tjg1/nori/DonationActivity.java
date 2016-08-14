@@ -11,6 +11,7 @@ package io.github.tjg1.nori;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +27,19 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Arrays;
+
+import io.github.tjg1.nori.util.iab.IabHelper;
+import io.github.tjg1.nori.util.iab.IabResult;
+import io.github.tjg1.nori.util.iab.Inventory;
+import io.github.tjg1.nori.util.iab.Purchase;
 
 /**
  * Activity used to support the continued development of Nori using PayPal, Patreon or Google IAP.
@@ -53,6 +65,36 @@ public class DonationActivity extends AppCompatActivity {
   private boolean mBitcoinEnabled = false;
   /** Bitcoin donations address. */
   private String mBitcoinAddress;
+
+  /** Google IAP donations enabled. */
+  private boolean mGoogleIAPEnabled = false;
+  /** Google IAP public key. */
+  private String mGoogleIAPPublicKey;
+  /** Google IAP donation helper. */
+  private IabHelper iabHelper;
+  /** Google IAP handler acting as the event listener and ListView adapter. */
+  private GoogleIAPHandler iapHandler;
+  /** List of Play Store IAP items. */
+  private static final String[] GOOGLE_IAP_ITEMS =
+      new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
+
+  /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
+  private IabHelper getIabHelper() {
+    if (iabHelper == null) {
+      iabHelper = new IabHelper(this, BuildConfig.DONATIONS_GOOGLE_PUB_KEY);
+      iabHelper.enableDebugLogging(BuildConfig.DEBUG);
+    }
+    return iabHelper;
+  }
+
+  /** Get the Google IAP listener/adapter. */
+  private GoogleIAPHandler getIapHandler() {
+    if (iapHandler == null) {
+      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1);
+    }
+    return iapHandler;
+  }
+
 
   /** Handle donation button method clicks. */
   private View.OnClickListener donationButtonListener = new View.OnClickListener() {
@@ -111,6 +153,14 @@ public class DonationActivity extends AppCompatActivity {
   }
 
   @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // Pass on the Activity result to the IAB helper.
+    if (iabHelper == null || iabHelper.handleActivityResult(requestCode, resultCode, data)) {
+      super.onActivityResult(requestCode, resultCode, data);
+    }
+  }
+
+  @Override
   public void setContentView(@LayoutRes int layoutResID) {
     super.setContentView(layoutResID);
 
@@ -131,6 +181,12 @@ public class DonationActivity extends AppCompatActivity {
         bitcoinDonateButton.setVisibility(View.VISIBLE);
         bitcoinDonateButton.setOnClickListener(donationButtonListener);
         bitcoinDonateButton.setOnLongClickListener(bitcoinButtonLongClickListener);
+      }
+      if (mGoogleIAPEnabled && !TextUtils.isEmpty(mGoogleIAPPublicKey)) {
+        ListView listView = (ListView) findViewById(R.id.list_donation_amount);
+        listView.setAdapter(getIapHandler());
+        listView.setOnItemClickListener(getIapHandler());
+        getIabHelper().startSetup(getIapHandler());
       }
     }
   }
@@ -173,6 +229,8 @@ public class DonationActivity extends AppCompatActivity {
     mPatreonAccountName = BuildConfig.DONATIONS_PATREON_ACCOUNT;
     mBitcoinEnabled = BuildConfig.DONATIONS_BITCOIN;
     mBitcoinAddress = BuildConfig.DONATIONS_BITCOIN_ADDRESS;
+    mGoogleIAPEnabled = BuildConfig.DONATIONS_GOOGLE;
+    mGoogleIAPPublicKey = BuildConfig.DONATIONS_GOOGLE_PUB_KEY;
   }
 
   /** Launch the system web browser pointed to the PayPal donation page. */
@@ -241,5 +299,122 @@ public class DonationActivity extends AppCompatActivity {
     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(string, string);
     clipboard.setPrimaryClip(clip);
+  }
+
+  // This could be implemented as a fragment displaying the ListView and handling IAB functions.
+  /** Listener handling interactions with the Google Play IAB helper. */
+  private class GoogleIAPHandler extends ArrayAdapter<Pair<String,String>>
+      implements IabHelper.OnIabSetupFinishedListener, IabHelper.QueryInventoryFinishedListener,
+      IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener,
+      AdapterView.OnItemClickListener {
+
+    /**
+     * Create a new object acting as a listener for {@link IabHelper} events and as an Adapter
+     * for the donation amount {@link android.widget.ListView}.
+     *
+     * @param context Activity context.
+     * @param resource Layout resource used to display donation amounts.
+     */
+    public GoogleIAPHandler(Context context, int resource) {
+      super(context, resource);
+    }
+
+    /**
+     * Called to notify that setup is complete.
+     *
+     * @param result The result of the setup process.
+     */
+    @Override
+    public void onIabSetupFinished(IabResult result) {
+      if (result.isSuccess()) {
+        if (iabHelper == null) return;
+
+        try {
+          // Query the prices of IAP items and display them in the ListView.
+          getIabHelper().queryInventoryAsync(true, Arrays.asList(GOOGLE_IAP_ITEMS), null, this);
+          return;
+        } catch (IabHelper.IabAsyncInProgressException ignored) {
+        }
+      }
+      onError();
+    }
+
+    /**
+     * Called to notify that an inventory query operation completed.
+     *
+     * @param result The result of the operation.
+     * @param inv    The inventory.
+     */
+    @Override
+    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+      if (result.isSuccess()) {
+        if (iabHelper == null) return;
+        // Populate adapter with SKU details.
+        for (String sku : GOOGLE_IAP_ITEMS) {
+          if (inv.hasDetails(sku)) {
+            add(new Pair<>(sku, inv.getSkuDetails(sku).getPrice()));
+          }
+        }
+        notifyDataSetChanged();
+        return;
+      }
+      onError();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+      final String sku = getItem(position).first;
+
+      try {
+        // Launch Google Play purchase flow.
+        getIabHelper().launchPurchaseFlow(DonationActivity.this, sku, 0, this);
+      } catch (IabHelper.IabAsyncInProgressException e) {
+        onError();
+      }
+    }
+
+    /**
+     * Called to notify that an in-app purchase finished. If the purchase was successful,
+     * then the sku parameter specifies which item was purchased. If the purchase failed,
+     * the sku and extraData parameters may or may not be null, depending on how far the purchase
+     * process went.
+     *
+     * @param result The result of the purchase.
+     * @param info   The purchase information (null if purchase failed)
+     */
+    @Override
+    public void onIabPurchaseFinished(IabResult result, Purchase info) {
+      if (iabHelper == null) return;
+
+      if (result.isSuccess()) {
+        // Consume the purchase, so that the user can donate multiple times.
+        try {
+          getIabHelper().consumeAsync(info, this);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+          e.printStackTrace();
+        }
+
+        // Display thank you toast.
+        Toast.makeText(DonationActivity.this, R.string.donation_toast_completed, Toast.LENGTH_LONG)
+            .show();
+      }
+    }
+
+    /**
+     * Called to notify that a consumption has finished.
+     *
+     * @param purchase The purchase that was (or was to be) consumed.
+     * @param result   The result of the consumption operation.
+     */
+    @Override
+    public void onConsumeFinished(Purchase purchase, IabResult result) {
+      // Do nothing.
+    }
+  }
+
+  /** Display an error message {@link Toast} when connection to the Play Store service fails */
+  private void onError() {
+    Toast.makeText(DonationActivity.this, R.string.donation_error_connectingToPlayStoreService,
+        Toast.LENGTH_LONG).show();
   }
 }

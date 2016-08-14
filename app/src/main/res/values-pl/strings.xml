@@ -101,12 +101,14 @@
   <string name="donation_method_paypal">PayPal</string>
   <string name="donation_method_paypalSummary">Przekaż darowiznę poprzez PayPal</string>
   <string name="donation_method_google">Google</string>
-  <string name="donation_method_googleSummary">Google Play</string>
+  <string name="donation_method_googleSummary">Przekaż darowiznę poprzez Google Play</string>
   <string name="donation_method_bitcoin">Bitcoin</string>
   <string name="donation_method_bitcoinSummary">Przekaż Bitcoin</string>
   <string name="donation_url_copiedToClipboard">Link URL został skopiowany do schowka.</string>
   <string name="donation_method_bitcoin_copiedToClipboard">Adres Bitcoin został skopiowany do schowka.</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Kod QR z adresem Bitcoin</string>
   <string name="donation_dialog_donate">Dokonaj wpłaty</string>
+  <string name="donation_error_connectingToPlayStoreService">Nie można uzyskać połączenia ze sklepem Play.</string>
+  <string name="donation_toast_completed">Dotacja została otrzymana. Dziękujemy za wsparcie.</string>
 
 </resources>

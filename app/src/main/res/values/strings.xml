@@ -117,6 +117,7 @@
   <string name="donation_method_bitcoin_copiedToClipboard">Bitcoin address was copied to the clipboard.</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR Code</string>
   <string name="donation_dialog_donate">Donate</string>
-
+  <string name="donation_error_connectingToPlayStoreService">Error: Couldn\'t connect to the Play Store service.</string>
+  <string name="donation_toast_completed">Your donation has been received. Thank you for your support.</string>
 
 </resources>
