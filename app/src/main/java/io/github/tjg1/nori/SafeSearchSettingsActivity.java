@@ -210,11 +210,11 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
       final List<String> currentSetting = getSafeSearchCurrentSetting();
 
       // Select radio group item based on current setting.
-      if (currentSetting.contains("e")) {
+      if (currentSetting.contains("x")) { // eXplicit
         this.safeSearchGroup.check(R.id.safe_search_off);
-      } else if (currentSetting.contains("q")) {
+      } else if (currentSetting.contains("q")) { // Questionable
         this.safeSearchGroup.check(R.id.safe_search_moderate);
-      } else if (currentSetting.contains("s")) {
+      } else if (currentSetting.contains("f")) { // saFe
         this.safeSearchGroup.check(R.id.safe_search_on);
       }
 
@@ -235,16 +235,16 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
       // Set SearchClient setting from radio group selected item id.
       switch (safeSearchCheckedRadioButtonId) {
         case R.id.safe_search_on:
-          safeSearchSettings[0] = "s";
+          safeSearchSettings[0] = "f";
           break;
         case R.id.safe_search_moderate:
-          safeSearchSettings[0] = "s q";
+          safeSearchSettings[0] = "f q";
           break;
         case R.id.safe_search_off:
-          safeSearchSettings[0] = "s q e";
+          safeSearchSettings[0] = "f q x";
           break;
         default:
-          safeSearchSettings[0] = "s";
+          safeSearchSettings[0] = "f";
           break;
       }
 

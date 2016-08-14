@@ -33,13 +33,13 @@
   </string-array>
   <!-- SafeSearch preferences entry values. -->
   <string-array translatable="false" name="preference_safeSearch_values">
-    <item>s</item>
+    <item>f</item>
     <item>q</item>
-    <item>e</item>
+    <item>x</item>
     <item>u</item>
   </string-array>
   <string-array translatable="false" name="preference_safeSearch_defaultValues">
-    <item>s</item>
+    <item>f</item>
     <item>u</item>
   </string-array>
   <!-- Service name suggestions shown when adding or editing service API settings. -->

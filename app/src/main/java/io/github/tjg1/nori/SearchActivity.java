@@ -310,7 +310,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   protected boolean shouldLoadDefaultQuery() {
     String filters = sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "");
 
-    return !(filters.contains("q") || filters.contains("e"));
+    return !(filters.contains("q") || filters.contains("x"));
   }
 
   @Override
