@@ -39,6 +39,8 @@ import io.github.tjg1.nori.fragment.EditAPISettingDialogFragment;
 
 /** Adds, edits or removes API settings from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
 public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener {
+  /** Intent action used to indicate that the add service dialog should be displayed, when the Activity is created. */
+  public static final String ACTION_CREATE_SERVICE = "CREATE_SERVICE";
   /** A new row will be inserted into the database when this row ID value is passed to {@link #editService(long, String, String, String, String)}. */
   private static final long ROW_ID_INSERT = -1L;
 
@@ -64,6 +66,12 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
     ListAdapter listAdapter = new ListAdapter();
     listView.setOnItemClickListener(listAdapter);
     listView.setAdapter(listAdapter);
+
+    // Show the service creation dialog, if started with the create service intent action.
+    Intent intent = getIntent();
+    if (savedInstanceState == null && ACTION_CREATE_SERVICE.equals(intent.getAction())) {
+      showCreateServiceDialog();
+    }
   }
 
   @Override
@@ -99,7 +107,7 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
         return true;
       case R.id.action_add:
         // Show dialog to let user add a new service.
-        new EditAPISettingDialogFragment().show(getSupportFragmentManager(), "EditAPISettingDialogFragment");
+        showCreateServiceDialog();
         return true;
       default:
         // Perform default action.
@@ -164,6 +172,11 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
     Intent serviceIntent = new Intent(this, ServiceTypeDetectionService.class);
     serviceIntent.putExtra(ServiceTypeDetectionService.ENDPOINT_URL, url);
     startService(serviceIntent);
+  }
+
+  /** Displays the service creation dialog. */
+  private void showCreateServiceDialog() {
+    new EditAPISettingDialogFragment().show(getSupportFragmentManager(), "EditAPISettingDialogFragment");
   }
 
   /** Populates the {@link android.widget.ListView} with data from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */

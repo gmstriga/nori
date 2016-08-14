@@ -623,6 +623,11 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
         // Reselect last active item.
         if (!data.isEmpty()) {
           serviceSpinner.setSelection(getPositionByItemId(lastSelectedItem));
+        } else {
+          // Start APISettingActivity.
+          Intent intent = new Intent(SearchActivity.this, APISettingsActivity.class);
+          intent.setAction(APISettingsActivity.ACTION_CREATE_SERVICE);
+          startActivity(intent);
         }
       }
     }
