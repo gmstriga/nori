@@ -67,6 +67,14 @@
   <PreferenceCategory
     android:title="@string/app_name">
     <Preference
+      android:title="@string/preference_about">
+      <intent
+        android:targetClass="io.github.tjg1.nori.WebViewActivity"
+        android:targetPackage="io.github.tjg1.nori"
+        android:action="io.github.tjg1.nori.ABOUT">
+      </intent>
+    </Preference>
+    <Preference
       android:summary="@string/preference_donate_summary"
       android:title="@string/preference_donate">
       <intent

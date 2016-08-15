@@ -56,6 +56,7 @@
   <string name="toast_error_serviceUriInvalid">The given service URL is invalid.</string>
   <string name="toast_error_noNetwork">Couldn\'t connect to network.</string>
   <string name="toast_error_noServiceAtGivenUri">Couldn\'t find a supported API at the given URL.</string>
+  <string name="toast_error_noApplicationFound">No application found to handle this request.</string>
   <string name="toast_searchHistoryCleared">Search history cleared.</string>
   <string name="toast_imageDownloadPermissionDenied">You need to grant storage permissions to download images.</string>
 
@@ -78,6 +79,8 @@
   <string name="preference_service_settings_title">Service Settings</string>
   <string name="preference_donate_summary">Support the development of Nori</string>
   <string name="preference_donate">Donate</string>
+  <string name="preference_about">About Nori</string>
+  <string name="preference_about_summary">Support information and developer contact form</string>
   <!-- Untranslatable -->
   <string name="preference_previewSize_key" translatable="false">preference_previewSize</string>
   <string name="preference_previewSize_default" translatable="false">medium</string>
