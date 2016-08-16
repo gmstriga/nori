@@ -20,7 +20,6 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontobfuscate
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
