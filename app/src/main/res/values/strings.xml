@@ -5,7 +5,7 @@
   ~ License: GNU GPLv2
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
   <string name="app_name">Nori</string>
   <string name="ok">OK</string>
@@ -16,7 +16,7 @@
   <string name="activity_image_viewer_titleFormat" formatted="false">%s: %s</string>
   <string name="activity_settings">Settings</string>
   <string name="activity_tag_filter_settings">Tag Filter</string>
-  <string name="activity_nsfwfilter_settings">Obscenity Filter</string>
+  <string name="activity_safeSearch_settings">SafeSearch</string>
   <string name="activity_service_settings">Service Settings</string>
   <string name="activity_donations">Donate</string>
 
@@ -56,14 +56,15 @@
   <string name="toast_error_serviceUriInvalid">The given service URL is invalid.</string>
   <string name="toast_error_noNetwork">Couldn\'t connect to network.</string>
   <string name="toast_error_noServiceAtGivenUri">Couldn\'t find a supported API at the given URL.</string>
+  <string name="toast_error_noApplicationFound" tools:ignore="MissingTranslation">No application found to handle this request.</string>
   <string name="toast_searchHistoryCleared">Search history cleared.</string>
   <string name="toast_imageDownloadPermissionDenied">You need to grant storage permissions to download images.</string>
 
   <!-- Preferences -->
   <string name="preference_category_search">Search</string>
   <string name="preference_previewSize_title">Thumbnail size</string>
-  <string name="preference_nsfwFilter_title">Obscenity Filter</string>
-  <string name="preference_nsfwFilter_summary">Manage the NSFW filter settings</string>
+  <string name="preference_safeSearch_title">SafeSearch</string>
+  <string name="preference_safeSearch_summary">Manage the SafeSearch filter settings</string>
   <string name="preference_tagFilter_summary">Manage tags to remove from search results</string>
   <string name="preference_tagFilter_title">Tag Filter</string>
   <string name="preference_clearSearchHistory_summary">Clear the search history</string>
@@ -78,10 +79,12 @@
   <string name="preference_service_settings_title">Service Settings</string>
   <string name="preference_donate_summary">Support the development of Nori</string>
   <string name="preference_donate">Donate</string>
+  <string name="preference_about" tools:ignore="MissingTranslation">About Nori</string>
+  <string name="preference_about_summary" tools:ignore="MissingTranslation">Support information and developer contact form</string>
   <!-- Untranslatable -->
   <string name="preference_previewSize_key" translatable="false">preference_previewSize</string>
   <string name="preference_previewSize_default" translatable="false">medium</string>
-  <string name="preference_nsfwFilter_key" translatable="false">preference_nsfwFilter</string>
+  <string name="preference_safeSearch_key" translatable="false">preference_safeSearch</string>
   <string name="preference_tagFilter_key" translatable="false">preference_tagFilter</string>
   <string name="preference_image_viewer_keepScreenOn_key" translatable="false">preference_image_viewer_keepScreenOn</string>
   <string name="preference_image_viewer_conserveBandwidth_key" translatable="false">preference_image_viewer_conserveBandwidth</string>
@@ -92,15 +95,15 @@
   <string name="preference_previewSize_medium">Medium</string>
   <string name="preference_previewSize_large">Large</string>
 
-  <!-- NSFW ratings -->
-  <string name="obscenity_rating_safe">Safe</string>
-  <string name="obscenity_rating_questionable">Questionable</string>
-  <string name="obscenity_rating_explicit">Explicit</string>
-  <string name="obscenity_rating_undefined">Undefined</string>
-  <string name="obscenity_rating_safe_summary">Safe for work</string>
-  <string name="obscenity_rating_questionable_summary">Mild nudity and sexually-suggestive content</string>
-  <string name="obscenity_rating_explicit_summary">Full nudity and sexually-explicit content</string>
-  <string name="obscenity_rating_undefined_summary">Show content for which no obscenity rating has been defined</string>
+  <!-- SafeSearch settings -->
+  <string name="safe_search_on">Safe</string>
+  <string name="safe_search_moderate">Questionable</string>
+  <string name="safe_search_off">Explicit</string>
+  <string name="safe_search_undefined">Undefined</string>
+  <string name="safe_search_on_summary">Safe for work</string>
+  <string name="safe_search_moderate_summary">Mild nudity and sexually-suggestive content</string>
+  <string name="safe_search_off_summary">Full nudity and sexually-explicit content</string>
+  <string name="safe_search_undefined_summary">Show content for which no obscenity rating has been defined</string>
 
   <!-- Donations -->
   <string name="donation_summary">If you enjoy Nori, please consider making a donation to support its continued development.\nWe rely on your support to keep Nori free and free of ads.</string>
@@ -117,6 +120,7 @@
   <string name="donation_method_bitcoin_copiedToClipboard">Bitcoin address was copied to the clipboard.</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR Code</string>
   <string name="donation_dialog_donate">Donate</string>
-
+  <string name="donation_error_connectingToPlayStoreService">Error: Couldn\'t connect to the Play Store service.</string>
+  <string name="donation_toast_completed">Your donation has been received. Thank you for your support.</string>
 
 </resources>

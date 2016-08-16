@@ -291,7 +291,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     searchClientSettings = settings;
 
     // If a SearchClient wasn't included in the Intent that started this activity, create one now and search for the default query.
-    // Only do this if NSFW images would not be included in the search result.
+    // Only do this if SearchSearch filter is enabled.
     if (searchClient == null && searchResultGridFragment.getSearchResult() == null) {
       searchClient = settings.createSearchClient();
       if (shouldLoadDefaultQuery()) {
@@ -303,14 +303,14 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   }
 
   /**
-   * Only load the default query on app launch if NSFW images would not be shown.
+   * Only load the default query on app launch if the SafeSearch filter is enabled.
    *
    * @return True if default query search results should be shown on first launch.
    */
   protected boolean shouldLoadDefaultQuery() {
-    String filters = sharedPreferences.getString(getString(R.string.preference_nsfwFilter_key), "");
+    String filters = sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "");
 
-    return !(filters.contains("questionable") || filters.contains("explicit"));
+    return !(filters.contains("q") || filters.contains("x"));
   }
 
   @Override
@@ -466,14 +466,14 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
 
         // Filter the received SearchResult.
         final int resultCount = searchResult.getImages().length;
-        if (sharedPreferences.contains(getString(R.string.preference_nsfwFilter_key)) &&
-            !TextUtils.isEmpty(sharedPreferences.getString(getString(R.string.preference_nsfwFilter_key), "").trim())) {
+        if (sharedPreferences.contains(getString(R.string.preference_safeSearch_key)) &&
+            !TextUtils.isEmpty(sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "").trim())) {
           // Get filter from shared preferences.
-          searchResult.filter(Image.ObscenityRating.arrayFromStrings(
-              sharedPreferences.getString(getString(R.string.preference_nsfwFilter_key), "").split(" ")));
+          searchResult.filter(Image.SafeSearchRating.arrayFromStrings(
+              sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "").split(" ")));
         } else {
           // Get default filter from resources.
-          searchResult.filter(Image.ObscenityRating.arrayFromStrings(getResources().getStringArray(R.array.preference_nsfwFilter_defaultValues)));
+          searchResult.filter(Image.SafeSearchRating.arrayFromStrings(getResources().getStringArray(R.array.preference_safeSearch_defaultValues)));
         }
         if (sharedPreferences.contains(getString(R.string.preference_tagFilter_key))) {
           // Get tag filters from shared preferences and filter the result.
@@ -623,6 +623,11 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
         // Reselect last active item.
         if (!data.isEmpty()) {
           serviceSpinner.setSelection(getPositionByItemId(lastSelectedItem));
+        } else {
+          // Start APISettingActivity.
+          Intent intent = new Intent(SearchActivity.this, APISettingsActivity.class);
+          intent.setAction(APISettingsActivity.ACTION_CREATE_SERVICE);
+          startActivity(intent);
         }
       }
     }

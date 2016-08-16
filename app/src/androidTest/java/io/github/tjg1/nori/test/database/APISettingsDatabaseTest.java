@@ -44,7 +44,7 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
     // The database should contain Safebooru API settings by default.
     SearchClient.Settings settings = settingsList.get(0).second;
     assertThat(settings).isNotNull();
-    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.GELBOORU);
+    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.GELBOARD);
     assertThat(settings.getName()).isEqualTo("Safebooru");
     assertThat(settings.getEndpoint()).isEqualTo("http://safebooru.org");
     assertThat(settings.getUsername()).isNull();
@@ -75,13 +75,13 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
   public void testInsert() throws Throwable {
     APISettingsDatabase database = new APISettingsDatabase(context);
     // Insert new row into the database.
-    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU,
+    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD,
         "Danbooru", "http://danbooru.donmai.us"));
 
     // Now get row from database and verify the data.
     SearchClient.Settings settings = database.get(rowID);
     database.close();
-    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.DANBOORU);
+    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.DANBOARD);
     assertThat(settings.getName()).isEqualTo("Danbooru");
     assertThat(settings.getEndpoint()).isEqualTo("http://danbooru.donmai.us");
     assertThat(settings.getUsername()).isNull();
@@ -93,18 +93,18 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
     APISettingsDatabase database = new APISettingsDatabase(context);
 
     // Insert new row into the database.
-    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU,
+    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD,
         "Danbooru", "http://danbooru.donmai.us"));
 
     // Update the newly created row.
-    int rowsAffected = database.update(rowID, new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU_LEGACY,
+    int rowsAffected = database.update(rowID, new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD_LEGACY,
         "Danbooru", "http://danbooru.donmai.us"));
     assertThat(rowsAffected).isEqualTo(1);
 
     // Now get the row from the database and verify the data.
     SearchClient.Settings settings = database.get(rowID);
     database.close();
-    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.DANBOORU_LEGACY);
+    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.DANBOARD_LEGACY);
   }
 
   /** Test the {@link io.github.tjg1.nori.database.APISettingsDatabase#delete(long)} method. */
@@ -112,7 +112,7 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
     APISettingsDatabase database = new APISettingsDatabase(context);
 
     // Insert new row into the database.
-    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU,
+    long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD,
         "Danbooru", "http://danbooru.donmai.us"));
 
     // Delete the newly created row.
@@ -147,9 +147,9 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
         }, new IntentFilter(APISettingsDatabase.BROADCAST_UPDATE));
         // Trigger database change broadcasts.
         APISettingsDatabase database = new APISettingsDatabase(context);
-        long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU,
+        long rowID = database.insert(new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD,
             "Danbooru", "http://danbooru.donmai.us"));
-        database.update(rowID, new SearchClient.Settings(SearchClient.Settings.APIType.DANBOORU_LEGACY,
+        database.update(rowID, new SearchClient.Settings(SearchClient.Settings.APIType.DANBOARD_LEGACY,
             "Danbooru", "http://danbooru.donmai.us"));
         database.delete(rowID);
         database.close();

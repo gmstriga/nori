@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of nori.
+  ~ Copyright (c) 2014-2016 Tomasz Jan Góralczyk <tomg@fastmail.uk>
+  ~ License: GNU GPLv2
+  -->
+
+<resources>
+
+  <!-- SafeSearch settings -->
+  <string name="safe_search_on">On</string>
+  <string name="safe_search_moderate">Moderate</string>
+  <string name="safe_search_off">Off</string>
+  <string name="safe_search_on_summary"/>
+  <string name="safe_search_moderate_summary"/>
+  <string name="safe_search_off_summary"/>
+
+</resources>

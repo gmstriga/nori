@@ -16,7 +16,7 @@
   <string name="activity_image_viewer_titleFormat" formatted="false">%s: %s</string>
   <string name="activity_settings">設定</string>
   <string name="activity_tag_filter_settings">タグフィルター</string>
-  <string name="activity_nsfwfilter_settings">成人向けフィルター</string>
+  <string name="activity_safeSearch_settings">成人向けフィルター</string>
   <string name="activity_service_settings">サービス設定</string>
   <string name="activity_donations">寄付</string>
 
@@ -62,8 +62,8 @@
   <!-- Preferences -->
   <string name="preference_category_search">検索</string>
   <string name="preference_previewSize_title">サムネイルのサイズ</string>
-  <string name="preference_nsfwFilter_title">成人向けフィルター</string>
-  <string name="preference_nsfwFilter_summary">成人向けコンテンツフィルターの設定を管理します</string>
+  <string name="preference_safeSearch_title">成人向けフィルター</string>
+  <string name="preference_safeSearch_summary">成人向けコンテンツフィルターの設定を管理します</string>
   <string name="preference_tagFilter_summary">タグを管理して、検索結果から削除します</string>
   <string name="preference_tagFilter_title">タグフィルター</string>
   <string name="preference_clearSearchHistory_summary">検索履歴をクリアします</string>
@@ -84,15 +84,15 @@
   <string name="preference_previewSize_medium">中</string>
   <string name="preference_previewSize_large">大</string>
 
-  <!-- NSFW ratings -->
-  <string name="obscenity_rating_safe">安全</string>
-  <string name="obscenity_rating_questionable">疑い</string>
-  <string name="obscenity_rating_explicit">明らか</string>
-  <string name="obscenity_rating_undefined">未定義</string>
-  <string name="obscenity_rating_safe_summary">安全に利用できます</string>
-  <string name="obscenity_rating_questionable_summary">軽度の裸や性的なものを暗示するコンテンツ</string>
-  <string name="obscenity_rating_explicit_summary">全裸や性的に露骨なコンテンツ</string>
-  <string name="obscenity_rating_undefined_summary">わいせつの評価が定義されていないコンテンツを表示します</string>
+  <!-- SafeSearch ratings -->
+  <string name="safe_search_on">安全</string>
+  <string name="safe_search_moderate">疑い</string>
+  <string name="safe_search_off">明らか</string>
+  <string name="safe_search_undefined">未定義</string>
+  <string name="safe_search_on_summary">安全に利用できます</string>
+  <string name="safe_search_moderate_summary">軽度の裸や性的なものを暗示するコンテンツ</string>
+  <string name="safe_search_off_summary">全裸や性的に露骨なコンテンツ</string>
+  <string name="safe_search_undefined_summary">わいせつの評価が定義されていないコンテンツを表示します</string>
 
   <!-- Donations -->
   <string name="donation_summary">Nori をお楽しみいただけた場合、寄付を検討して頂き、継続的な開発をサポートしてください。\nあなた方のサポートに依存して、無料で、広告のない Nori を維持しています。</string>
@@ -108,6 +108,8 @@
   <string name="donation_method_bitcoin_copiedToClipboard">Bitcoin アドレスをクリップボードにコピーしました。</string>
   <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR コード</string>
   <string name="donation_dialog_donate">寄付</string>
+  <string name="donation_error_connectingToPlayStoreService">Play Store への接続エラーです - サービスへ届きません。</string>
+  <string name="donation_toast_completed">ご寄付をいただきました。 ご厚意、誠にありがとうございました。</string>
 
 
 </resources>

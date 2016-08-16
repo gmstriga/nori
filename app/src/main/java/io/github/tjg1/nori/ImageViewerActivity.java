@@ -398,13 +398,13 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
         this.searchResult.onLastPage();
       } else {
         // Filter the received SearchResult.
-        if (sharedPreferences.contains(getString(R.string.preference_nsfwFilter_key))) {
+        if (sharedPreferences.contains(getString(R.string.preference_safeSearch_key))) {
           // Get filter from shared preferences.
-          searchResult.filter(Image.ObscenityRating.arrayFromStrings(
-              sharedPreferences.getString(getString(R.string.preference_nsfwFilter_key), "").split(" ")));
+          searchResult.filter(Image.SafeSearchRating.arrayFromStrings(
+              sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "").split(" ")));
         } else {
           // Get default filter from resources.
-          searchResult.filter(Image.ObscenityRating.arrayFromStrings(getResources().getStringArray(R.array.preference_nsfwFilter_defaultValues)));
+          searchResult.filter(Image.SafeSearchRating.arrayFromStrings(getResources().getStringArray(R.array.preference_safeSearch_defaultValues)));
         }
         if (sharedPreferences.contains(getString(R.string.preference_tagFilter_key))) {
           // Get tag filters from shared preferences and filter the result.

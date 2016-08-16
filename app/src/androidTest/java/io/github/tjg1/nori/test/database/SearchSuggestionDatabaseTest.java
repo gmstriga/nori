@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.InstrumentationTestCase;
 import android.test.RenamingDelegatingContext;
 
+import io.github.tjg1.nori.BuildConfig;
 import io.github.tjg1.nori.database.SearchSuggestionDatabase;
 
 import static io.github.tjg1.nori.database.SearchSuggestionDatabase.COLUMN_ICON;
@@ -40,7 +41,9 @@ public class SearchSuggestionDatabaseTest extends InstrumentationTestCase {
     Cursor c = db.query(TABLE_NAME, null, COLUMN_ICON + " IS NULL", null, null, null, COLUMN_ID);
 
     // Number of returned rows should match the number of lines in the "tags.txt" asset file.
-    assertThat(c.getCount()).isEqualTo(962);
+    if (!"google".equals(BuildConfig.FLAVOR)) {
+      assertThat(c.getCount()).isEqualTo(962);
+    }
 
     // Clean-up native resources.
     c.close();

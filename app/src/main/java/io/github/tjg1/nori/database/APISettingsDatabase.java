@@ -19,6 +19,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.nori.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,14 +199,16 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
     String createSQL = String.format(Locale.US,
         "CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s TEXT NOT NULL, %s TEXT, %s TEXT);",
         TABLE_NAME, COLUMN_ID, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, COLUMN_USERNAME, COLUMN_PASSPHRASE);
-    // SQL query used to populate the database with initial data (when the app is first launched).
-    String populateSQL = String.format(Locale.US,
-        "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
-        TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Safebooru", SearchClient.Settings.APIType.GELBOORU.ordinal(), "http://safebooru.org");
-
-    // Execute SQL queries.
     db.execSQL(createSQL);
-    db.execSQL(populateSQL);
+
+    // SQL query used to populate the database with initial data (when the app is first launched).
+    //noinspection PointlessBooleanExpression
+    if (!BuildConfig.GOOGLE_BUILD) {
+      String populateSQL = String.format(Locale.US,
+          "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
+          TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Safebooru", SearchClient.Settings.APIType.GELBOARD.ordinal(), "http://safebooru.org");
+      db.execSQL(populateSQL);
+    }
   }
 
   @Override

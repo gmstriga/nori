@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.library.norilib.util.HashUtils;
 import io.github.tjg1.nori.R;
 
 /** Dialog fragment used to add new and edit existing {@link io.github.tjg1.nori.database.APISettingsDatabase} entries in {@link io.github.tjg1.nori.APISettingsActivity}. */
@@ -33,7 +35,7 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   /** Bundle ID of the database row ID passed into the arguments bundle when editing an existing object. */
   private static final String BUNDLE_ID_ROW_ID = "io.github.tjg1.nori.SearchClient.Settings.rowId";
   /** Danbooru API URL. Used to only show the optional authentication fields for the Danbooru API. */
-  private static final String DANBOORU_API_URL = "danbooru.donmai.us";
+  private static final String DANBOORU_API_URL = "b163eea7c4d359284718c64ed351b92ff2d2144c9cf85a6ef40253c87fb1c4e6df8c5b7e78f04c747d5e674c103320672bc769a68e28d202e092b49a5a13a768";
   /** Interface in the parent Context waiting to receive data from the dialog. */
   private Listener listener;
   /** Database ID of the object being edited (if not creating a new settings object). */
@@ -205,7 +207,8 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   @Override
   public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
     // Only show optional authentication inputs for the Danbooru API.
-    if (uri.getText().toString().contains(DANBOORU_API_URL)) {
+    Uri parsedUri = Uri.parse(uri.getText().toString());
+    if (DANBOORU_API_URL.equals(HashUtils.sha512(parsedUri.getHost(),"nori"))) {
       username.setVisibility(View.VISIBLE);
       passphrase.setVisibility(View.VISIBLE);
     } else if (username.getVisibility() != View.GONE) {

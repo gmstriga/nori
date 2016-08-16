@@ -54,8 +54,8 @@
         android:name=".SettingsActivity"
         android:label="@string/activity_settings"/>
     <activity
-        android:name=".NSFWFilterSettingsActivity"
-        android:label="@string/activity_nsfwfilter_settings"/>
+        android:name=".SafeSearchSettingsActivity"
+        android:label="@string/activity_safeSearch_settings"/>
     <activity
         android:name=".TagFilterSettingsActivity"
         android:label="@string/activity_tag_filter_settings"/>
@@ -64,6 +64,8 @@
         android:label="@string/activity_service_settings"/>
     <activity android:name=".DonationActivity"
               android:label="@string/activity_donations"/>
+    <activity android:name=".WebViewActivity"
+              android:label="@string/app_name"/>
 
     <provider
         android:name=".database.SearchSuggestionProvider"
