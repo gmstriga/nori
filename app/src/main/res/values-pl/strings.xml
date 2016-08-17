@@ -56,6 +56,8 @@
   <string name="toast_error_serviceUriInvalid">Adres URL jest nieprawidłowy.</string>
   <string name="toast_error_noNetwork">Nie można uzyskać połączenia z Internetem.</string>
   <string name="toast_error_noServiceAtGivenUri">Nie znaleziono obsługiwanego API pod danym adresem URL.</string>
+  <string name="toast_error_noApplicationFound">Nie znaleziono aplikacji do obsługi tego polecenia.</string>
+  <string name="toast_error_videoMeteredConnection">Nie można pobierać plików wideo podczas korzystania z połączenia taryfowego.</string>
   <string name="toast_searchHistoryCleared">Wyczyszczono historię wyszukiwania.</string>
   <string name="toast_imageDownloadPermissionDenied">Pobieranie obrazów wymaga uprawnień dostępu do plików.</string>
 
@@ -78,6 +80,8 @@
   <string name="preference_service_settings_title">Lista serwerów</string>
   <string name="preference_donate_summary">Wspieraj autorów aplikacji</string>
   <string name="preference_donate">Dotacje</string>
+  <string name="preference_about">Informacje o Nori</string>
+  <string name="preference_about_summary">Informacje o wersji Nori </string>
 
   <!-- Thumbnail sizes -->
   <string name="preference_previewSize_small">Małe</string>

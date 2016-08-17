@@ -56,6 +56,8 @@
   <string name="toast_error_serviceUriInvalid">指定したサービス URL が正しくありません。</string>
   <string name="toast_error_noNetwork">ネットワークに接続できませんでした。</string>
   <string name="toast_error_noServiceAtGivenUri">指定した URL で サポートされた API が見つかりませんでした。</string>
+  <string name="toast_error_noApplicationFound">アプリケーションが見つかりません</string>
+  <string name="toast_error_videoMeteredConnection">従量制課金接続を使っている間、ビデオはダウンロードされません。</string>
   <string name="toast_searchHistoryCleared">検索履歴をクリアしました。</string>
   <string name="toast_imageDownloadPermissionDenied">画像をダウンロードするために、ストレージのアクセス許可を付与する必要があります。</string>
 
@@ -78,6 +80,8 @@
   <string name="preference_service_settings_title">サービス設定</string>
   <string name="preference_donate_summary">Nori の開発をサポートします</string>
   <string name="preference_donate">寄付</string>
+  <string name="preference_about">バージョン情報</string>
+  <string name="preference_about_summary">Nori のバージョン情報を表示します。</string>
 
   <!-- Thumbnail sizes -->
   <string name="preference_previewSize_small">小</string>
