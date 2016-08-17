@@ -8,10 +8,10 @@
 <resources>
   <!-- Service name suggestions shown when adding or editing service API settings. -->
   <string-array translatable="false" name="service_suggestions_names">
-    <!-- Disabled in the Google Play version. -->
+    <item>Flickr</item>
   </string-array>
   <!-- Service URLs automatically filled in when a suggested service name is picked. -->
   <string-array translatable="false" name="service_suggestions_uris">
-    <!-- Disabled in the Google Play version. -->
+    <item>https://api.flickr.com/</item>
   </string-array>
 </resources>
