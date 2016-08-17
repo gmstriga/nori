@@ -6,7 +6,6 @@
 
 package io.github.tjg1.nori.fragment;
 
-import android.app.DownloadManager;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
@@ -119,6 +118,17 @@ public abstract class ImageFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
   }
+
+  /**
+   * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
+   * (shown to the user).
+   */
+  public abstract void onShown();
+
+  /**
+   * Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden).
+   */
+  public abstract void onHidden();
 
   /**
    * Evaluate the current network conditions using the {@link io.github.tjg1.nori.util.NetworkUtils} class to decide

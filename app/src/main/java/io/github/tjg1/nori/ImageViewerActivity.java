@@ -26,11 +26,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
@@ -38,6 +40,7 @@ import io.github.tjg1.library.norilib.Tag;
 import io.github.tjg1.library.norilib.clients.SearchClient;
 import io.github.tjg1.nori.fragment.ImageFragment;
 import io.github.tjg1.nori.fragment.RemoteImageFragment;
+import io.github.tjg1.nori.fragment.VideoPlayerFragment;
 import io.github.tjg1.nori.view.ImageViewerPager;
 
 /** Activity used to display full-screen images. */
@@ -268,6 +271,7 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
   /**
    * Create a new {@link DownloadManager} or re-use the existing one.
+   *
    * @return {@link DownloadManager} used to download images.
    */
   @NonNull
@@ -302,6 +306,8 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
   /** Adapter used to populate {@link android.support.v4.view.ViewPager} with {@link io.github.tjg1.nori.fragment.ImageFragment}s. */
   private class ImagePagerAdapter extends FragmentStatePagerAdapter {
+    private ImageFragment activeFragment;
+
     public ImagePagerAdapter(FragmentManager fm) {
       super(fm);
     }
@@ -311,11 +317,23 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       // Create a new instance of ImageFragment for the given image.
       Image image = searchResult.getImages()[position];
 
-      //if (shouldUseWebViewImageFragment(image)) {
-      //  return WebViewImageFragment.newInstance(image);
-      //} else {
+      if (shouldUseVideoPlayerFragment(image)) {
+        return VideoPlayerFragment.newInstance(image);
+      } else {
         return RemoteImageFragment.newInstance(image);
-      //}
+      }
+    }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+      super.setPrimaryItem(container, position, object);
+      if (activeFragment != object) {
+        if (activeFragment != null) {
+          activeFragment.onHidden();
+        }
+        activeFragment = (ImageFragment) object;
+        activeFragment.onShown();
+      }
     }
 
     @Override
@@ -325,6 +343,14 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
         return 0;
       }
       return searchResult.getImages().length;
+    }
+
+    /** Returns true if the {@link Image} object is a WebM/MP4 animation. */
+    private boolean shouldUseVideoPlayerFragment(Image image) {
+      String path = Uri.parse(image.fileUrl).getPath();
+      String fileExt = path.contains(".") ? path.toLowerCase(Locale.US)
+          .substring(path.lastIndexOf(".") + 1) : null;
+      return "mp4".equals(fileExt) || "webm".equals(fileExt);
     }
   }
 

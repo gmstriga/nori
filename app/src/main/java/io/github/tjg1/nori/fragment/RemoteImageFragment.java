@@ -78,4 +78,15 @@ public class RemoteImageFragment extends ImageFragment {
 
     return view;
   }
+
+  @Override
+  public void onShown() {
+    // Do nothing.
+  }
+
+  /** Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden). */
+  @Override
+  public void onHidden() {
+    // Do nothing.
+  }
 }

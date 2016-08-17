@@ -37,13 +37,38 @@ public abstract class NetworkUtils {
 
     // Get system connectivity manager service.
     ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+    if (networkInfo == null) return true;
+
     // Check if network is metered.
-    if (isActiveNetworkMetered(cm)) {
+    if (networkInfo.getType() != ConnectivityManager.TYPE_WIFI && isActiveNetworkMetered(cm)) {
       return true;
     }
     // Check link quality.
-    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
     return !isConnectionFast(networkInfo.getType(), networkInfo.getSubtype());
+  }
+
+  /**
+   * Decides if WebM/MP4 files should be downloaded. Returns false, if the device is:
+   * - On a metered Internet connection.
+   * - On a slow mobile connection (less than 3G).
+   *
+   * @param context Activity context
+   * @return True if videos can be downloaded.
+   */
+  public static boolean shouldDownloadVideos(Context context) {
+    // Get system connectivity manager service.
+    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+    if (networkInfo == null) return false;
+
+    // Check if network is metered.
+    if (networkInfo.getType() != ConnectivityManager.TYPE_WIFI && isActiveNetworkMetered(cm)) {
+      return false;
+    }
+
+    // Check link quality.
+    return isConnectionFast(networkInfo.getType(), networkInfo.getSubtype());
   }
 
   /**
