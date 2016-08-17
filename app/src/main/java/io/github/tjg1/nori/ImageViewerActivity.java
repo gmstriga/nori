@@ -24,9 +24,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.GestureDetector;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -39,13 +37,12 @@ import io.github.tjg1.library.norilib.SearchResult;
 import io.github.tjg1.library.norilib.Tag;
 import io.github.tjg1.library.norilib.clients.SearchClient;
 import io.github.tjg1.nori.fragment.ImageFragment;
-import io.github.tjg1.nori.fragment.PicassoImageFragment;
-import io.github.tjg1.nori.fragment.WebViewImageFragment;
+import io.github.tjg1.nori.fragment.RemoteImageFragment;
 import io.github.tjg1.nori.view.ImageViewerPager;
 
 /** Activity used to display full-screen images. */
 public class ImageViewerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
-    ImageFragment.ImageFragmentListener, ImageViewerPager.OnMotionEventListener {
+    ImageFragment.ImageFragmentListener {
   /** Identifier used to keep the displayed {@link io.github.tjg1.library.norilib.SearchResult} in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
   /** Identifier used to keep the position of the selected {@link io.github.tjg1.library.norilib.Image} in {@link #onSaveInstanceState(android.os.Bundle)}. */
@@ -60,16 +57,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   private static final int INFINITE_SCROLLING_THRESHOLD = 3;
   /** Default shared preferences. */
   private SharedPreferences sharedPreferences;
-  /** Used to detect single taps on the ViewPager widget which toggle the visibility of this activity's ActionBar. */
-  private GestureDetector gestureDetector;
-  /** Used to toggle the action bar when a single tap gesture is detected. */
-  private GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-      toggleActionBar();
-      return true;
-    }
-  };
   /** View pager used to display the images. */
   private ImageViewerPager viewPager;
   /** Search result shown by the {@link android.support.v4.app.FragmentStatePagerAdapter}. */
@@ -104,7 +91,7 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       searchResult = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_RESULT);
       SearchClient.Settings searchClientSettings = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
       if (searchClientSettings != null) {
-        searchClient = searchClientSettings.createSearchClient();
+        searchClient = searchClientSettings.createSearchClient(this);
       }
       if (savedInstanceState.containsKey(BUNDLE_ID_QUEUED_DOWNLOAD_REQUEST)) {
         String fileUrl = savedInstanceState.getString(BUNDLE_ID_QUEUED_DOWNLOAD_REQUEST);
@@ -117,7 +104,7 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       imageIndex = intent.getIntExtra(SearchActivity.BUNDLE_ID_IMAGE_INDEX, 0);
       searchResult = intent.getParcelableExtra(SearchActivity.BUNDLE_ID_SEARCH_RESULT);
       searchClient = ((SearchClient.Settings) intent.getParcelableExtra(SearchActivity.BUNDLE_ID_SEARCH_CLIENT_SETTINGS))
-          .createSearchClient();
+          .createSearchClient(this);
     }
 
     // Keep screen on, if enabled by the user.
@@ -145,10 +132,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     viewPager.setAdapter(imagePagerAdapter);
     viewPager.addOnPageChangeListener(this);
     viewPager.setCurrentItem(imageIndex);
-
-    // Set up the GestureDetector used to toggle the action bar.
-    gestureDetector = new GestureDetector(this, gestureListener);
-    viewPager.setOnMotionEventListener(this);
 
     // Set activity title.
     setTitle(searchResult.getImages()[imageIndex]);
@@ -236,11 +219,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     // Do nothing.
   }
 
-  @Override
-  public void onMotionEvent(MotionEvent ev) {
-    gestureDetector.onTouchEvent(ev);
-  }
-
   public void toggleActionBar() {
     // Toggle the action bar and UI dim.
     ActionBar actionBar = getSupportActionBar();
@@ -269,6 +247,11 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       queuedDownloadRequestUrl = fileUrl;
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_DOWNLOAD_IMAGE);
     }
+  }
+
+  @Override
+  public void onViewTap(View view, float x, float y) {
+    toggleActionBar();
   }
 
   @Override
@@ -328,27 +311,11 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       // Create a new instance of ImageFragment for the given image.
       Image image = searchResult.getImages()[position];
 
-      if (shouldUseWebViewImageFragment(image)) {
-        return WebViewImageFragment.newInstance(image);
-      } else {
-        return PicassoImageFragment.newInstance(image);
-      }
-    }
-
-    /**
-     * Check if {@link io.github.tjg1.nori.fragment.WebViewImageFragment} should be used to display given image object.
-     *
-     * @param image Image object.
-     * @return True if the WebKit-based fragment should be used, instead of the ImageView based one.
-     */
-    @SuppressWarnings("RedundantIfStatement")
-    private boolean shouldUseWebViewImageFragment(Image image) {
-      // GIF images should use the WebKit fragment.
-      String path = Uri.parse(image.fileUrl).getPath();
-      if (path.contains(".") && path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
-        return true;
-      }
-      return false;
+      //if (shouldUseWebViewImageFragment(image)) {
+      //  return WebViewImageFragment.newInstance(image);
+      //} else {
+        return RemoteImageFragment.newInstance(image);
+      //}
     }
 
     @Override

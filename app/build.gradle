@@ -61,13 +61,10 @@ dependencies {
     compile 'com.android.support:support-v4:24.1.1'
 
     // Third-party libraries.
-    // An HTTP+SPDY client for Android and Java applications. http://square.github.io/okhttp/
-    compile 'com.squareup.okhttp:okhttp:2.7.5'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.5'
-    // A powerful image downloading and caching library for Android http://square.github.io/picasso/
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    // ImageView with Pan & Zoom support for viewing images
-    compile 'it.sephiroth.android.library.imagezoom:imagezoom:2.2.5'
+    // An HTTP+SPDY client and image loader for Android. https://github.com/koush/ion
+    compile 'com.koushikdutta.ion:ion:2.1.8'
+    // Implementation of ImageView for Android that supports zooming, by various touch gestures.
+    compile 'com.github.chrisbanes.photoview:library:1.2.4'
     // Utility library for easier unit testing.
     androidTestCompile 'org.easytesting:fest-assert-core:2.0M10'
 

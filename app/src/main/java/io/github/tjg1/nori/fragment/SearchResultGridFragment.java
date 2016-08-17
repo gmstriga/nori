@@ -21,10 +21,12 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.builder.AnimateGifMode;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
+import io.github.tjg1.nori.BuildConfig;
 import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.widget.SquareImageView;
 
@@ -83,12 +85,16 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
       }
 
       // Load image into view.
-      Picasso.with(getContext())
+      Ion.with(getContext())
           .load(image.previewUrl)
+          .userAgent("nori/" + BuildConfig.VERSION_NAME)
+          .withBitmap()
           .resize(previewSize, previewSize)
-          .centerCrop()
+          .animateGif(AnimateGifMode.NO_ANIMATE)
           .placeholder(R.color.network_thumbnail_placeholder)
-          .into(imageView);
+          .centerCrop()
+          .intoImageView(imageView);
+      // TODO: Error image.
 
       return imageView;
     }

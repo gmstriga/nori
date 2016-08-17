@@ -50,15 +50,6 @@ public abstract class ImageFragment extends Fragment {
   /** Class used for communication with the class that contains this fragment. */
   protected ImageFragmentListener listener;
 
-  /**
-   * Check if the {@link android.support.v4.view.ViewPager} containing this fragment can scroll horizontally.
-   *
-   * @param direction Direction being scrolled in.
-   * @return true if the {@link android.support.v4.view.ViewPager} containing this fragment can scroll horizontally.
-   */
-  public abstract boolean canScroll(int direction);
-
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -230,5 +221,8 @@ public abstract class ImageFragment extends Fragment {
 
     /** Downloads an image using {@link android.app.DownloadManager}, asking the user to grant storage write permission, if necessary. */
     public void downloadImage(@NonNull String fireUrl);
+
+    /** Called when the ImageView within the fragment is single-tapped. */
+    public void onViewTap(View view, float x, float y);
   }
 }

@@ -293,7 +293,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     // If a SearchClient wasn't included in the Intent that started this activity, create one now and search for the default query.
     // Only do this if SearchSearch filter is enabled.
     if (searchClient == null && searchResultGridFragment.getSearchResult() == null) {
-      searchClient = settings.createSearchClient();
+      searchClient = settings.createSearchClient(this);
       if (shouldLoadDefaultQuery()) {
         doSearch(searchClient.getDefaultQuery());
       } else if (searchMenuItem != null) {
@@ -333,7 +333,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
       if (this.searchClient == null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_CLIENT_SETTINGS)) {
         searchClientSettings = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
         if (searchClientSettings != null) {
-          searchClient = searchClientSettings.createSearchClient();
+          searchClient = searchClientSettings.createSearchClient(this);
         }
       }
     } else {
@@ -341,7 +341,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
       // If the activity was started from a Search intent, create the SearchClient object and submit search.
       if (intent != null && intent.getAction().equals(Intent.ACTION_SEARCH) && searchResultGridFragment.getSearchResult() == null) {
         searchClientSettings = intent.getParcelableExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
-        searchClient = searchClientSettings.createSearchClient();
+        searchClient = searchClientSettings.createSearchClient(this);
         doSearch(intent.getStringExtra(BUNDLE_ID_SEARCH_QUERY));
       }
       showDonationDialog();
