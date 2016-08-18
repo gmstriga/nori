@@ -109,7 +109,7 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
     passphrase = (EditText) view.findViewById(R.id.passphrase);
 
     // Set service name autosuggestion adapter.
-    name.setAdapter(new ArrayAdapter<>(getContext(), R.layout.simple_dropdown_item, getResources().getStringArray(R.array.service_suggestions_names)));
+    name.setAdapter(new ArrayAdapter<>(getContext(), R.layout.api_suggestion_dropdown_item, getResources().getStringArray(R.array.service_suggestions_names)));
     name.setThreshold(1);
     name.setOnItemClickListener(this);
 
