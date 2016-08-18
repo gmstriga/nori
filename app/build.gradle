@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
@@ -64,6 +70,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.android.support:design:24.2.0'
+    // Material settings activity.
+    compile 'com.github.kenumir:MaterialSettings:v.1.2.2'
 
     // Third-party libraries.
     // An HTTP+SPDY client and image loader for Android. https://github.com/koush/ion
