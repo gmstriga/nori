@@ -19,17 +19,22 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 public class WebViewActivity extends AppCompatActivity {
   /** Intent extra used to pass the URL to display in the {@link WebView}. */
   private static final String INTENT_EXTRA_URL = "WebViewActivity.URL";
   /** Intent extra used to set the title of this {@link android.app.Activity}. */
   private static final String INTENT_EXTRA_TITLE = "WebViewActivity.TITLE";
+  /** Progress bar used to display fetch progress. */
+  private ProgressBar mProgressBar;
 
   /** WebView client used to intercept webview events. */
   private final WebViewClient mWebViewClient = new WebViewClient() {
@@ -66,12 +71,27 @@ public class WebViewActivity extends AppCompatActivity {
     }
   };
 
+  /** WebView Chrome client used to intercept progress events. */
+  private final WebChromeClient mWebChromeClient = new WebChromeClient() {
+    @Override
+    public void onProgressChanged(WebView view, int newProgress) {
+      if (newProgress < 100 && mProgressBar != null) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setIndeterminate(false);
+        mProgressBar.setProgress(newProgress);
+      } else if (newProgress == 100) {
+        mProgressBar.setVisibility(View.GONE);
+      }
+    }
+  };
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_web_view);
     setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
     Intent intent = getIntent();
+    mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
     // Set up the web view.
     WebView webView = setUpWebView((WebView) findViewById(R.id.webView));
@@ -85,6 +105,7 @@ public class WebViewActivity extends AppCompatActivity {
     if (intent.hasExtra(INTENT_EXTRA_URL)) {
       webView.loadUrl(intent.getStringExtra(INTENT_EXTRA_URL));
     } else if ("io.github.tjg1.nori.ABOUT".equals(intent.getAction())) {
+      mProgressBar.setVisibility(View.VISIBLE);
       webView.loadUrl("https://tjg1.github.io/nori/about.html?version=" + Uri.encode(BuildConfig.VERSION_NAME));
     } else {
       this.finish();
@@ -123,6 +144,7 @@ public class WebViewActivity extends AppCompatActivity {
   @SuppressLint("SetJavaScriptEnabled")
   private WebView setUpWebView(WebView webView) {
     webView.setWebViewClient(mWebViewClient);
+    webView.setWebChromeClient(mWebChromeClient);
     WebSettings webSettings = webView.getSettings();
     webSettings.setJavaScriptEnabled(true);
 
