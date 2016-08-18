@@ -139,7 +139,7 @@ public abstract class ImageFragment extends Fragment {
   protected boolean shouldLoadImageSamples() {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-    return preferences.getBoolean(getString(R.string.preference_image_viewer_conserveBandwidth_key), false)
+    return preferences.getBoolean(getString(R.string.preference_image_viewer_conserveBandwidth_key), true)
         || NetworkUtils.shouldFetchImageSamples(getContext());
   }
 
