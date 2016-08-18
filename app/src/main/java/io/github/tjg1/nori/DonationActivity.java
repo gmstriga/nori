@@ -46,26 +46,25 @@ import io.github.tjg1.nori.util.iab.Purchase;
  */
 public class DonationActivity extends AppCompatActivity {
 
+  /** List of Play Store IAP items. */
+  private static final String[] GOOGLE_IAP_ITEMS =
+      new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
   /** Currency used for donations. */
   private String mDonationCurrency;
-
   /** PayPal donations enabled. */
   private boolean mPayPalEnabled = false;
   /** PayPal donations email. */
   private String mPayPalDonationEmail;
   /** PayPal item name. */
   private String mPayPalItemName;
-
   /** Patreon donations enabled. */
   private boolean mPatreonEnabled = false;
   /** Patreon account name. */
   private String mPatreonAccountName;
-
   /** Bitcoin donations enabled. */
   private boolean mBitcoinEnabled = false;
   /** Bitcoin donations address. */
   private String mBitcoinAddress;
-
   /** Google IAP donations enabled. */
   private boolean mGoogleIAPEnabled = false;
   /** Google IAP public key. */
@@ -74,28 +73,6 @@ public class DonationActivity extends AppCompatActivity {
   private IabHelper iabHelper;
   /** Google IAP handler acting as the event listener and ListView adapter. */
   private GoogleIAPHandler iapHandler;
-  /** List of Play Store IAP items. */
-  private static final String[] GOOGLE_IAP_ITEMS =
-      new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
-
-  /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
-  private IabHelper getIabHelper() {
-    if (iabHelper == null) {
-      iabHelper = new IabHelper(this, BuildConfig.DONATIONS_GOOGLE_PUB_KEY);
-      iabHelper.enableDebugLogging(BuildConfig.DEBUG);
-    }
-    return iabHelper;
-  }
-
-  /** Get the Google IAP listener/adapter. */
-  private GoogleIAPHandler getIapHandler() {
-    if (iapHandler == null) {
-      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1);
-    }
-    return iapHandler;
-  }
-
-
   /** Handle donation button method clicks. */
   private View.OnClickListener donationButtonListener = new View.OnClickListener() {
     @Override
@@ -116,7 +93,6 @@ public class DonationActivity extends AppCompatActivity {
       }
     }
   };
-
   /** Show the Bitcoin donation {@link AlertDialog}, even if a Bitcoin wallet app is installed. */
   private View.OnLongClickListener bitcoinButtonLongClickListener = new View.OnLongClickListener() {
     @Override
@@ -143,6 +119,23 @@ public class DonationActivity extends AppCompatActivity {
       return true;
     }
   };
+
+  /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
+  private IabHelper getIabHelper() {
+    if (iabHelper == null) {
+      iabHelper = new IabHelper(this, BuildConfig.DONATIONS_GOOGLE_PUB_KEY);
+      iabHelper.enableDebugLogging(BuildConfig.DEBUG);
+    }
+    return iabHelper;
+  }
+
+  /** Get the Google IAP listener/adapter. */
+  private GoogleIAPHandler getIapHandler() {
+    if (iapHandler == null) {
+      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1);
+    }
+    return iapHandler;
+  }
 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -312,7 +305,7 @@ public class DonationActivity extends AppCompatActivity {
   }
 
   /** Listener handling interactions with the Google Play IAB helper. */
-  private class GoogleIAPHandler extends ArrayAdapter<Pair<String,String>>
+  private class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
       implements IabHelper.OnIabSetupFinishedListener, IabHelper.QueryInventoryFinishedListener,
       IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener,
       AdapterView.OnItemClickListener {
@@ -321,7 +314,7 @@ public class DonationActivity extends AppCompatActivity {
      * Create a new object acting as a listener for {@link IabHelper} events and as an Adapter
      * for the donation amount {@link android.widget.ListView}.
      *
-     * @param context Activity context.
+     * @param context  Activity context.
      * @param resource Layout resource used to display donation amounts.
      */
     public GoogleIAPHandler(Context context, int resource) {

@@ -29,29 +29,29 @@
   </android.support.design.widget.AppBarLayout>
 
   <TextView
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_height="wrap_content"
+    android:layout_weight="0"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:textColor="@android:color/primary_text_light"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:text="@string/donation_summary"
-    android:layout_weight="0" />
+    android:textColor="@android:color/primary_text_light"/>
 
   <ListView
     android:id="@+id/list_donation_amount"
     android:layout_width="match_parent"
-    android:scrollbarStyle="outsideOverlay"
     android:layout_height="wrap_content"
-    android:visibility="visible"
-    android:layout_weight="1"/>
+    android:layout_weight="1"
+    android:scrollbarStyle="outsideOverlay"
+    android:visibility="visible"/>
 
   <Button
     android:id="@+id/button_donate_paypal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
     android:layout_weight="0"
+    android:minHeight="56dp"
     android:text="@string/donation_method_paypalSummary"
     android:visibility="gone"/>
 
@@ -59,8 +59,8 @@
     android:id="@+id/button_donate_patreon"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
     android:layout_weight="0"
+    android:minHeight="56dp"
     android:text="@string/donation_method_patreonSummary"
     android:visibility="gone"/>
 

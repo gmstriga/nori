@@ -27,6 +27,10 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class RemoteImageFragment extends ImageFragment {
 
+  /** Required public empty constructor. */
+  public RemoteImageFragment() {
+  }
+
   /**
    * Factory method used to construct new fragments
    *
@@ -43,10 +47,6 @@ public class RemoteImageFragment extends ImageFragment {
     fragment.setArguments(arguments);
 
     return fragment;
-  }
-
-  /** Required public empty constructor. */
-  public RemoteImageFragment() {
   }
 
   @Override

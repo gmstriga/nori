@@ -23,10 +23,10 @@ import io.github.tjg1.nori.R;
 
 /** {@link android.support.v4.app.DialogFragment} to let the users add new tags in {@link io.github.tjg1.nori.TagFilterSettingsActivity}. */
 public class AddTagFilterDialogFragment extends DialogFragment implements View.OnClickListener {
-  /** Regular expression pattern used to validate tags before they are added to the database. */
-  private static final String TAG_VALIDATION_PATTERN = "^\\S+$";
   /** Bundle ID used to preserve the entered text and send results to the parent activity. */
   protected static final String BUNDLE_ID_TAG_FILTER = "io.github.tjg1.nori.TagFilter";
+  /** Regular expression pattern used to validate tags before they are added to the database. */
+  private static final String TAG_VALIDATION_PATTERN = "^\\S+$";
   /** Text box with tag to add to the tag filter list. */
   private EditText tagEditText;
   /** Context listening for the result from this dialog. */

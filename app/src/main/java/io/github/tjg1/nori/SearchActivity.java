@@ -268,7 +268,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   /**
    * Called when a new Search API is selected by the user from the action bar dropdown.
    *
-   * @param settings Selected {@link SearchClient.Settings} object.
+   * @param settings         Selected {@link SearchClient.Settings} object.
    * @param expandActionView Should the SearchView action view be expanded?
    */
   protected void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView) {

@@ -29,11 +29,11 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import io.github.tjg1.nori.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import io.github.tjg1.nori.util.StringUtils;
 
 public class SafeSearchSettingsActivity extends AppCompatActivity {
 
@@ -184,6 +184,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
     /**
      * Create a new listener for SafeSearch setting {@link RadioGroup} and {@link CheckBox}.
+     *
      * @param safeSearchGroup   SafeSearch filter setting {@link RadioGroup}.
      * @param undefinedCheckBox Display images with undefined SafeSearch rating, if checked.
      */

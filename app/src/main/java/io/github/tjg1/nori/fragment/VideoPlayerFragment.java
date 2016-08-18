@@ -46,6 +46,10 @@ public class VideoPlayerFragment extends ImageFragment {
     }
   };
 
+  /** Required public empty constructor. */
+  public VideoPlayerFragment() {
+  }
+
   /**
    * Factory method used to construct new fragments
    *
@@ -62,10 +66,6 @@ public class VideoPlayerFragment extends ImageFragment {
     fragment.setArguments(arguments);
 
     return fragment;
-  }
-
-  /** Required public empty constructor. */
-  public VideoPlayerFragment() {
   }
 
   @Override

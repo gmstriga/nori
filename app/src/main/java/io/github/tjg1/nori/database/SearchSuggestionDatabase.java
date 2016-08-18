@@ -12,12 +12,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import io.github.tjg1.nori.R;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
+
+import io.github.tjg1.nori.R;
 
 /**
  * Backing store for the custom search suggestions in {@link io.github.tjg1.nori.SearchActivity}.
@@ -25,8 +25,6 @@ import java.util.Locale;
  * It also stores and suggests queries searched  previously by the user that are not part of the Safebooru data set.
  */
 public class SearchSuggestionDatabase extends SQLiteOpenHelper {
-  /** Filename of the underlying SQLite database. */
-  private static final String DATABASE_NAME = "search_suggestions.db";
   /** Search suggestion table name. */
   public static final String TABLE_NAME = "search_suggestions";
   /** Unique ID (primary key) column. */
@@ -35,6 +33,8 @@ public class SearchSuggestionDatabase extends SQLiteOpenHelper {
   public static final String COLUMN_NAME = SearchManager.SUGGEST_COLUMN_TEXT_1;
   /** Column holding the resource ID of the icon displayed next to the suggestion to indicate its type (recent/Safebooru top 1000). */
   public static final String COLUMN_ICON = SearchManager.SUGGEST_COLUMN_ICON_1;
+  /** Filename of the underlying SQLite database. */
+  private static final String DATABASE_NAME = "search_suggestions.db";
   /** Resource ID of the icon used to represent recent search history items. */
   private static final String RESOURCE_ICON_RECENT_HISTORY = Integer.toString(R.drawable.ic_search_suggestion_recent);
   /** Resource ID of the icon used to represent suggestions from the built-in tag data set */
@@ -111,7 +111,7 @@ public class SearchSuggestionDatabase extends SQLiteOpenHelper {
       // Insert each line into the database.
       while ((line = in.readLine()) != null) {
         db.execSQL(String.format(Locale.US, "INSERT INTO %s (%s, %s) VALUES (?, ?);",
-                TABLE_NAME, COLUMN_NAME, COLUMN_ICON),
+            TABLE_NAME, COLUMN_NAME, COLUMN_ICON),
             new String[]{line, RESOURCE_ICON_BUILT_IN});
       }
 

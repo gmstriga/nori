@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
@@ -156,8 +155,8 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
         }
 
         // Set progress bar position relative to action bar.
-        FrameLayout.LayoutParams params  = (FrameLayout.LayoutParams) searchProgressBar.getLayoutParams();
-        params.setMargins(0,appBarLayout.getTotalScrollRange()+verticalOffset+layoutMargin,0,0);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) searchProgressBar.getLayoutParams();
+        params.setMargins(0, appBarLayout.getTotalScrollRange() + verticalOffset + layoutMargin, 0, 0);
         searchProgressBar.setLayoutParams(params);
       }
     });

@@ -18,12 +18,12 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 
-import io.github.tjg1.library.norilib.clients.SearchClient;
-import io.github.tjg1.nori.BuildConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.nori.BuildConfig;
 
 /** Utility class providing access to the SQLite API endpoint settings database. */
 public class APISettingsDatabase extends SQLiteOpenHelper {
@@ -218,10 +218,6 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
 
   /** Loader class used to asynchronously offload database access to a background thread. */
   public static class Loader extends AsyncTaskLoader<List<Pair<Integer, SearchClient.Settings>>> {
-    /** Database access helper. */
-    private APISettingsDatabase db;
-    /** Cached result. */
-    private List<Pair<Integer, SearchClient.Settings>> settingsList;
     /** {@link android.content.BroadcastReceiver} receiving database change notifications. */
     private final BroadcastReceiver contentChangedBroadcastReceiver = new BroadcastReceiver() {
       @Override
@@ -229,6 +225,10 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
         Loader.this.onContentChanged();
       }
     };
+    /** Database access helper. */
+    private APISettingsDatabase db;
+    /** Cached result. */
+    private List<Pair<Integer, SearchClient.Settings>> settingsList;
 
     /**
      * Create a new loader to asynchronously offloads {@link APISettingsDatabase} access to a background thread.

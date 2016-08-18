@@ -23,11 +23,6 @@ import static io.github.tjg1.nori.database.SearchSuggestionDatabase.COLUMN_NAME;
 import static io.github.tjg1.nori.database.SearchSuggestionDatabase.TABLE_NAME;
 
 public class SearchSuggestionProvider extends ContentProvider {
-  /** Content provider authority. (Unique ID) */
-  public static String AUTHORITY = "io.github.tjg1.nori.SearchSuggestionProvider";
-  /** Read-only instance of the SQLite database. */
-  private SQLiteDatabase db;
-
   /**
    * Uri path ID for queried suggestions data.
    * This is the path that the search manager will use when querying your content provider for suggestions data based on user input (e.g. looking for partial matches).
@@ -42,13 +37,26 @@ public class SearchSuggestionProvider extends ContentProvider {
   private static final int SHORTCUT_REFRESH = 1;
   /** URI parser used to match content provider paths. */
   private static final UriMatcher sURIMatcher;
-
   /** Columns to include in queries to the underlying SQLite database. */
   private static final String[] COLUMNS = {
       COLUMN_ID,
       COLUMN_NAME,
       COLUMN_ICON
   };
+  /** Content provider authority. (Unique ID) */
+  public static String AUTHORITY = "io.github.tjg1.nori.SearchSuggestionProvider";
+
+  static {
+    // Set up the parser used to match ContentProvider URIs.
+    sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
+    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
+    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, SHORTCUT_REFRESH);
+    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SHORTCUT_REFRESH);
+  }
+
+  /** Read-only instance of the SQLite database. */
+  private SQLiteDatabase db;
 
   @Override
   public boolean onCreate() {
@@ -122,14 +130,5 @@ public class SearchSuggestionProvider extends ContentProvider {
   public int update(@NonNull Uri uri, ContentValues contentValues, String s, String[] strings) {
     // Use SearchSuggestionDatabase methods instead.
     throw new UnsupportedOperationException();
-  }
-
-  static {
-    // Set up the parser used to match ContentProvider URIs.
-    sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
-    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
-    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, SHORTCUT_REFRESH);
-    sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SHORTCUT_REFRESH);
   }
 }

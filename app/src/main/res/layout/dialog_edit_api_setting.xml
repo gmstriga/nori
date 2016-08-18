@@ -16,13 +16,13 @@
     android:layout_height="wrap_content">
 
     <AutoCompleteTextView
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:hint="@string/hint_service_name"
-        android:inputType="text"
-        android:singleLine="true"/>
+      android:id="@+id/name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="4dp"
+      android:hint="@string/hint_service_name"
+      android:inputType="text"
+      android:singleLine="true"/>
 
   </android.support.design.widget.TextInputLayout>
 
@@ -31,13 +31,13 @@
     android:layout_height="wrap_content">
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/uri"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:hint="@string/hint_service_uri"
-        android:inputType="textUri"
-        android:singleLine="true"/>
+      android:id="@+id/uri"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="4dp"
+      android:hint="@string/hint_service_uri"
+      android:inputType="textUri"
+      android:singleLine="true"/>
 
   </android.support.design.widget.TextInputLayout>
 
@@ -46,14 +46,14 @@
     android:layout_height="wrap_content">
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:hint="@string/hint_service_username"
-        android:inputType="textVisiblePassword"
-        android:singleLine="true"
-        android:visibility="gone"/>
+      android:id="@+id/username"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="4dp"
+      android:hint="@string/hint_service_username"
+      android:inputType="textVisiblePassword"
+      android:singleLine="true"
+      android:visibility="gone"/>
 
   </android.support.design.widget.TextInputLayout>
 
@@ -61,7 +61,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-  <android.support.design.widget.TextInputEditText
+    <android.support.design.widget.TextInputEditText
       android:id="@+id/passphrase"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

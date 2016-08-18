@@ -5,7 +5,7 @@
   ~ License: GNU GPLv2
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
   <string name="app_name">Nori</string>
   <string name="ok">OK</string>

@@ -208,7 +208,7 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
     // Only show optional authentication inputs for the Danbooru API.
     Uri parsedUri = Uri.parse(uri.getText().toString());
-    if (DANBOORU_API_URL.equals(HashUtils.sha512(parsedUri.getHost(),"nori"))) {
+    if (DANBOORU_API_URL.equals(HashUtils.sha512(parsedUri.getHost(), "nori"))) {
       username.setVisibility(View.VISIBLE);
       passphrase.setVisibility(View.VISIBLE);
     } else if (username.getVisibility() != View.GONE) {

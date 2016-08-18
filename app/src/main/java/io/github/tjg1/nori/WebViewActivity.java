@@ -33,9 +33,6 @@ public class WebViewActivity extends AppCompatActivity {
   private static final String INTENT_EXTRA_URL = "WebViewActivity.URL";
   /** Intent extra used to set the title of this {@link android.app.Activity}. */
   private static final String INTENT_EXTRA_TITLE = "WebViewActivity.TITLE";
-  /** Progress bar used to display fetch progress. */
-  private ProgressBar mProgressBar;
-
   /** WebView client used to intercept webview events. */
   private final WebViewClient mWebViewClient = new WebViewClient() {
     @Override
@@ -70,7 +67,8 @@ public class WebViewActivity extends AppCompatActivity {
       return shouldOverrideUrlLoading(view, request.getUrl().toString());
     }
   };
-
+  /** Progress bar used to display fetch progress. */
+  private ProgressBar mProgressBar;
   /** WebView Chrome client used to intercept progress events. */
   private final WebChromeClient mWebChromeClient = new WebChromeClient() {
     @Override

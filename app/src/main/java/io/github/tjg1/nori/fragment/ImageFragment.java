@@ -40,10 +40,10 @@ import io.github.tjg1.nori.util.NetworkUtils;
 
 /** Fragment used to display images in {@link io.github.tjg1.nori.ImageViewerActivity}. */
 public abstract class ImageFragment extends Fragment {
-  /** String to prepend to Pixiv IDs to open them in the system web browser. */
-  private static final String PIXIV_URL_PREFIX = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
   /** Bundle identifier used to save the displayed image object in {@link #onSaveInstanceState(android.os.Bundle)}. */
   protected static final String BUNDLE_ID_IMAGE = "io.github.tjg1.nori.Image";
+  /** String to prepend to Pixiv IDs to open them in the system web browser. */
+  private static final String PIXIV_URL_PREFIX = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
   /** Image object displayed in this fragment. */
   protected Image image;
   /** Class used for communication with the class that contains this fragment. */

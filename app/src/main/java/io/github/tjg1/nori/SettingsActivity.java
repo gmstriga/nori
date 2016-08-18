@@ -6,8 +6,6 @@
 
 package io.github.tjg1.nori;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,7 +60,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
       TypedValue tv = new TypedValue();
       if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
         height = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-      }else{
+      } else {
         height = bar.getHeight();
       }
 
