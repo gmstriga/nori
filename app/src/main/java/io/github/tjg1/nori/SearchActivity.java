@@ -190,7 +190,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   private void setUpActionBar() {
     Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolBar);
-    searchProgressBar = (ProgressBar) toolBar.findViewById(R.id.progressBar);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -323,6 +322,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
 
     // Inflate views.
     setContentView(R.layout.activity_search);
+    searchProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
     // Get search result grid fragment from fragment manager.
     searchResultGridFragment = (SearchResultGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_searchResultGrid);

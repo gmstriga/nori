@@ -9,6 +9,9 @@
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Customize your theme here. -->
+    <item name="colorPrimary">#2196f3</item>
+    <item name="colorPrimaryDark">#01579b</item>
+    <item name="colorAccent">#2962ff</item>
   </style>
   <!-- Dark theme used by the image viewer activity. -->
   <style name="ImageViewerTheme" parent="Theme.AppCompat.NoActionBar">

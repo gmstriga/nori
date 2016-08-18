@@ -18,32 +18,46 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_weight="0">
+    android:layout_weight="0"
+    android:background="?attr/colorPrimary"
+    app:layout_scrollFlags="scroll|enterAlways"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <Spinner
       android:id="@+id/spinner_service"
       android:layout_width="wrap_content"
-      android:layout_height="match_parent"/>
-
-    <ProgressBar
-      android:id="@+id/progressBar"
-      android:layout_width="wrap_content"
       android:layout_height="match_parent"
-      android:layout_gravity="right"
-      android:visibility="gone"/>
+      app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
   </android.support.v7.widget.Toolbar>
 
-  <fragment
-    android:id="@+id/fragment_searchResultGrid"
-    android:name="io.github.tjg1.nori.fragment.SearchResultGridFragment"
+  <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    tools:context="io.github.tjg1.nori.SearchActivity"
-    tools:layout="@layout/fragment_search_result_grid"/>
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
+
+    <fragment
+      android:id="@+id/fragment_searchResultGrid"
+      android:name="io.github.tjg1.nori.fragment.SearchResultGridFragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:paddingLeft="@dimen/activity_horizontal_margin"
+      android:paddingRight="@dimen/activity_horizontal_margin"
+      tools:context="io.github.tjg1.nori.SearchActivity"
+      tools:layout="@layout/fragment_search_result_grid"/>
+
+    <ProgressBar
+      android:id="@+id/progressBar"
+      style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:layout_marginTop="-8dp"
+      android:indeterminate="true"
+      android:visibility="gone" />
+
+  </FrameLayout>
 
 </LinearLayout>
 

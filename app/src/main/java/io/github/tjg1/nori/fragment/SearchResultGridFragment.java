@@ -21,6 +21,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.AnimateGifMode;
 
@@ -94,7 +95,6 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
           .placeholder(R.color.network_thumbnail_placeholder)
           .centerCrop()
           .intoImageView(imageView);
-      // TODO: Error image.
 
       return imageView;
     }
