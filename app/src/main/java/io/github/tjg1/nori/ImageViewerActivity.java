@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
@@ -76,6 +79,8 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   private DownloadManager downloadManager;
   /** URL to an image to be downloaded once the user grants us permission to write to the SD card. */
   private String queuedDownloadRequestUrl;
+  /** True if the {@link AppBarLayout} is currently collapsed. */
+  private boolean appBarCollapsed = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -117,16 +122,17 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
     // Populate content view.
     setContentView(R.layout.activity_image_viewer);
+    searchProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+    final int layoutMargin = ((FrameLayout.LayoutParams) searchProgressBar.getLayoutParams())
+        .topMargin;
 
     // Set up the action bar.
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    searchProgressBar = (ProgressBar) toolbar.findViewById(R.id.progressBar);
     setSupportActionBar(toolbar);
     final ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.setDisplayShowHomeEnabled(false);
       actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.hide();
     }
 
     // Create and set the image viewer Fragment pager adapter.
@@ -135,6 +141,27 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     viewPager.setAdapter(imagePagerAdapter);
     viewPager.addOnPageChangeListener(this);
     viewPager.setCurrentItem(imageIndex);
+
+    // Collapse the ActionBar.
+    final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+    appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+      @Override
+      public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (verticalOffset < 0) {
+          appBarCollapsed = true;
+          viewPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        } else {
+          appBarCollapsed = false;
+          viewPager.setSystemUiVisibility(0);
+        }
+
+        // Set progress bar position relative to action bar.
+        FrameLayout.LayoutParams params  = (FrameLayout.LayoutParams) searchProgressBar.getLayoutParams();
+        params.setMargins(0,appBarLayout.getTotalScrollRange()+verticalOffset+layoutMargin,0,0);
+        searchProgressBar.setLayoutParams(params);
+      }
+    });
+    appBarLayout.setExpanded(false, true);
 
     // Set activity title.
     setTitle(searchResult.getImages()[imageIndex]);
@@ -224,15 +251,11 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
   public void toggleActionBar() {
     // Toggle the action bar and UI dim.
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      if (actionBar.isShowing()) {
-        actionBar.hide();
-        viewPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-      } else {
-        actionBar.show();
-        viewPager.setSystemUiVisibility(0);
-      }
+    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+    if (appBarCollapsed) {
+      appBarLayout.setExpanded(true, true);
+    } else {
+      appBarLayout.setExpanded(false, true);
     }
   }
 

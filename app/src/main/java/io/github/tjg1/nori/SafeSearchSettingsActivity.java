@@ -278,7 +278,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
       View view = recycledView;
       if (view == null) {
         final LayoutInflater inflater = getLayoutInflater();
-        view = inflater.inflate(R.layout.listitem_obscenity_rating, container, false);
+        view = inflater.inflate(R.layout.listitem_safesearch_rating, container, false);
       }
 
       // Populate views.

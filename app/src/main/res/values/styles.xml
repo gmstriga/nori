@@ -15,6 +15,9 @@
   </style>
   <!-- Dark theme used by the image viewer activity. -->
   <style name="ImageViewerTheme" parent="Theme.AppCompat.NoActionBar">
+    <item name="colorPrimary">#000000</item>
+    <item name="colorPrimaryDark">#000000</item>
+    <item name="colorAccent">#ffffff</item>
   </style>
 
   <style name="ImageViewerActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
