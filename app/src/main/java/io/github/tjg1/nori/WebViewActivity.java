@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +24,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 public class WebViewActivity extends AppCompatActivity {
   /** Intent extra used to pass the URL to display in the {@link WebView}. */
@@ -36,7 +36,8 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     @SuppressWarnings("deprecation")
     public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-      Toast.makeText(WebViewActivity.this, R.string.toast_error_noNetwork, Toast.LENGTH_SHORT).show();
+      Snackbar.make(findViewById(R.id.root), R.string.toast_error_noNetwork,
+          Snackbar.LENGTH_SHORT).show();
       WebViewActivity.this.finish();
     }
 
@@ -52,7 +53,8 @@ public class WebViewActivity extends AppCompatActivity {
       try {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); // Open links in relevant app.
       } catch (ActivityNotFoundException ignored) {
-        Toast.makeText(WebViewActivity.this, R.string.toast_error_noApplicationFound, Toast.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.root), R.string.toast_error_noApplicationFound,
+            Snackbar.LENGTH_LONG).show();
       }
       return true;
     }

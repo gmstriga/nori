@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -26,7 +27,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -216,8 +216,11 @@ public abstract class ImageFragment extends Fragment {
       protected void onPostExecute(Exception error) {
         if (error != null) {
           // Show error message to the user.
-          Toast.makeText(context, String.format(context.getString(R.string.toast_couldNotSetWallpaper),
-              error.getLocalizedMessage()), Toast.LENGTH_LONG).show();
+          View view = getView();
+          if (view != null) {
+            Snackbar.make(view, String.format(context.getString(R.string.toast_couldNotSetWallpaper),
+                error.getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+          }
         }
       }
     }.execute();

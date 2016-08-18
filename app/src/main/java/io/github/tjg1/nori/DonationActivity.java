@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -32,7 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Arrays;
 
@@ -252,7 +252,8 @@ public class DonationActivity extends AppCompatActivity {
       startActivity(intent);
     } catch (ActivityNotFoundException e) {
       copyToClipboard(paypalUrl.toString());
-      Toast.makeText(this, R.string.donation_url_copiedToClipboard, Toast.LENGTH_LONG).show();
+      Snackbar.make(findViewById(R.id.root), R.string.donation_url_copiedToClipboard,
+          Snackbar.LENGTH_LONG).show();
     }
   }
 
@@ -269,7 +270,8 @@ public class DonationActivity extends AppCompatActivity {
       startActivity(intent);
     } catch (ActivityNotFoundException e) {
       copyToClipboard(patreonUrl.toString());
-      Toast.makeText(this, R.string.donation_url_copiedToClipboard, Toast.LENGTH_LONG).show();
+      Snackbar.make(findViewById(R.id.root), R.string.donation_url_copiedToClipboard,
+          Snackbar.LENGTH_LONG).show();
     }
   }
 
@@ -281,8 +283,8 @@ public class DonationActivity extends AppCompatActivity {
   private void donateBitcoin() {
     // Copy Bitcoin address to clipboard.
     copyToClipboard(mBitcoinAddress);
-    Toast.makeText(this, R.string.donation_method_bitcoin_copiedToClipboard, Toast.LENGTH_LONG)
-        .show();
+    Snackbar.make(findViewById(R.id.root), R.string.donation_method_bitcoin_copiedToClipboard,
+        Snackbar.LENGTH_LONG).show();
 
     try {
       Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -302,6 +304,13 @@ public class DonationActivity extends AppCompatActivity {
   }
 
   // This could be implemented as a fragment displaying the ListView and handling IAB functions.
+
+  /** Display an error message {@link Snackbar} when connection to the Play Store service fails */
+  private void onError() {
+    Snackbar.make(findViewById(R.id.root), R.string.donation_error_connectingToPlayStoreService,
+        Snackbar.LENGTH_LONG).show();
+  }
+
   /** Listener handling interactions with the Google Play IAB helper. */
   private class GoogleIAPHandler extends ArrayAdapter<Pair<String,String>>
       implements IabHelper.OnIabSetupFinishedListener, IabHelper.QueryInventoryFinishedListener,
@@ -395,8 +404,8 @@ public class DonationActivity extends AppCompatActivity {
         }
 
         // Display thank you toast.
-        Toast.makeText(DonationActivity.this, R.string.donation_toast_completed, Toast.LENGTH_LONG)
-            .show();
+        Snackbar.make(findViewById(R.id.root),
+            R.string.donation_toast_completed, Snackbar.LENGTH_LONG).show();
       }
     }
 
@@ -410,11 +419,5 @@ public class DonationActivity extends AppCompatActivity {
     public void onConsumeFinished(Purchase purchase, IabResult result) {
       // Do nothing.
     }
-  }
-
-  /** Display an error message {@link Toast} when connection to the Play Store service fails */
-  private void onError() {
-    Toast.makeText(DonationActivity.this, R.string.donation_error_connectingToPlayStoreService,
-        Toast.LENGTH_LONG).show();
   }
 }

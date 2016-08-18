@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -264,7 +264,8 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
         getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
         queuedDownloadRequestUrl = null;
       } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-        Toast.makeText(this, R.string.toast_imageDownloadPermissionDenied, Toast.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.root), R.string.toast_imageDownloadPermissionDenied,
+            Snackbar.LENGTH_LONG).show();
       }
     }
   }
@@ -374,9 +375,9 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       searchProgressBar.setVisibility(View.GONE);
 
       // Display error toast notification to the user.
-      Toast.makeText(ImageViewerActivity.this,
+      Snackbar.make(findViewById(R.id.root),
           String.format(getString(R.string.toast_infiniteScrollingFetchError),
-              e.getLocalizedMessage()), Toast.LENGTH_LONG
+              e.getLocalizedMessage()), Snackbar.LENGTH_LONG
       ).show();
     }
 

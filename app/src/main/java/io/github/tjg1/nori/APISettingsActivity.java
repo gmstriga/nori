@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -28,7 +29,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -155,11 +155,11 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
             }
           }).start();
         } else if (resultCode == ServiceTypeDetectionService.RESULT_FAIL_INVALID_URL) {
-          Toast.makeText(APISettingsActivity.this, R.string.toast_error_serviceUriInvalid, Toast.LENGTH_LONG).show();
+          Snackbar.make(findViewById(R.id.root), R.string.toast_error_serviceUriInvalid, Snackbar.LENGTH_LONG).show();
         } else if (resultCode == ServiceTypeDetectionService.RESULT_FAIL_NETWORK) {
-          Toast.makeText(APISettingsActivity.this, R.string.toast_error_noNetwork, Toast.LENGTH_LONG).show();
+          Snackbar.make(findViewById(R.id.root), R.string.toast_error_noNetwork, Snackbar.LENGTH_LONG).show();
         } else if (resultCode == ServiceTypeDetectionService.RESULT_FAIL_NO_API) {
-          Toast.makeText(APISettingsActivity.this, R.string.toast_error_noServiceAtGivenUri, Toast.LENGTH_LONG).show();
+          Snackbar.make(findViewById(R.id.root), R.string.toast_error_noServiceAtGivenUri, Snackbar.LENGTH_LONG).show();
         }
 
         // Unregister the broadcast receiver.

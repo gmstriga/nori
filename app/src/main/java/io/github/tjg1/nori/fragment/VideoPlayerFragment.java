@@ -10,12 +10,12 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.util.HashMap;
@@ -95,8 +95,11 @@ public class VideoPlayerFragment extends ImageFragment {
     if (VideoPlayerFragment.this.isPrepared) {
       videoView.start();
     } else if (!NetworkUtils.shouldDownloadVideos(getContext())) {
-      Toast.makeText(getContext(), R.string.toast_error_videoMeteredConnection, Toast.LENGTH_LONG)
-          .show();
+      View view = getView();
+      if (view != null) {
+        Snackbar.make(view, R.string.toast_error_videoMeteredConnection, Snackbar.LENGTH_LONG)
+            .show();
+      }
     } else {
       // Set the video URL and user agent.
       HashMap<String, String> headers = new HashMap<>(1);

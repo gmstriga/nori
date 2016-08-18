@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -37,7 +38,6 @@ import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -450,7 +450,8 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     public void onFailure(IOException e) {
       if (!isCancelled) {
         // Show error message to user.
-        Toast.makeText(SearchActivity.this, String.format(getString(R.string.toast_networkError), e.getLocalizedMessage()), Toast.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.root), String.format(getString(R.string.toast_networkError),
+            e.getLocalizedMessage()), Snackbar.LENGTH_INDEFINITE).show();
         // Clear callback and hide progress indicator in Action Bar.
         searchProgressBar.setVisibility(View.GONE);
         searchCallback = null;
