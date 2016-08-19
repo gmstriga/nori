@@ -3,15 +3,17 @@
 [![Codacy grade](https://img.shields.io/codacy/grade/116eaec4502d4a88acf6eeb60ad98577.svg?maxAge=2592000)](https://www.codacy.com/app/tjg1/nori)
 [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&maxAge=2592000)](https://twitter.com/Nori_Android)
 
-Nori is a free and open source Android client for tag-based image archives and galleries. Work is currently underway to make a version that does not violate the Google Play Store [Developer Content Policy](https://play.google.com/about/developer-content-policy/).
+Nori is a free and open source Android image search client with support for various third-party APIs.
 
 If you're interested in contributing to Nori, have any questions or just want to hang out, join us in the `#nori` IRC channel on Freenode.
 
 ### Download ###
 
-Nori can be downloaded from [F-Droid](https://f-droid.org/repository/browse/?fdid=io.github.tjg1.nori), the Free and Open Source Android App Repository.
+Nori is available from the Google Play Store, and can be downloaded [here](https://play.google.com/store/apps/details?id=io.github.tjg1.nori).
 
-We also publish APKs for each release, on [GitHub](https://github.com/tjg1/nori/releases).
+It's also available from [F-Droid](https://f-droid.org/repository/browse/?fdid=io.github.tjg1.nori), the Free and Open Source Android App Repository.
+
+If you wish to get it directly from us, we publish APKs for each release on [GitHub](https://github.com/tjg1/nori/releases).
 
 ### Build ###
 
@@ -32,6 +34,6 @@ You can also use [Android Studio](https://developer.android.com/studio/index.htm
 
 ### Donations ###
 
-If you would like to help keep Nori free (and free of ads) by supporting its continued development, you can do so by making a monthly pledge to [my Patreon account](https://www.patreon.com/user?u=3696048). 
+If you would like to help keep Nori free (and free of ads) by supporting its continued development, you can do so by making a monthly pledge to [my Patreon account](https://www.patreon.com/user?u=3696048).
 
 Alternatively, you can make a one-off donation to [my PayPal account](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J).
