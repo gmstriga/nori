@@ -1,3 +1,27 @@
+### Version 3.0.0 (19/08/2016) ###
+Tomasz Jan Góralczyk (46 commits):
+      Create Google Play build flavor
+      Add E926 support
+      Fix ISO8601 datetime parsing
+      Add Play Store donation support
+      Launch APISettingsActivity when no services are configured
+      Add about dialog
+      Update Gradle plugin
+      ProGuard obfuscation
+      Rename APIType enum values
+      Hash hardcoded service URLs
+      Replace okHTTP with koush/ion
+      Default "Conserve Bandwidth" to true
+      WebM support via VideoView
+      Add Flickr to service completion
+      Replace Toasts with Snackbars
+      Material Redesign + updated icons
+      Use AppBarLayouts
+      Replace spinning ProgressBars with horizontal ones
+      Reformat code
+      Use Flickr as the default API in all product flavors
+      Fix donation amount display
+
 ### Version 2.3.0 (08/07/2016) ###
 
 kycklingar (8 commits):
