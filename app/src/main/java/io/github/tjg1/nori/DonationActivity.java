@@ -26,8 +26,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -319,6 +321,26 @@ public class DonationActivity extends AppCompatActivity {
      */
     public GoogleIAPHandler(Context context, int resource) {
       super(context, resource);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      // Create the list view item.
+      View view = convertView;
+
+      if (view == null) {
+        view = LayoutInflater.from(DonationActivity.this)
+            .inflate(android.R.layout.simple_list_item_1, parent, false);
+      }
+
+      // Get SKU details.
+      Pair<String, String> skuPair = getItem(position);
+
+      // Populate the views.
+      TextView textView = (TextView) view.findViewById(android.R.id.text1);
+      textView.setText(skuPair.second);
+
+      return view;
     }
 
     /**
