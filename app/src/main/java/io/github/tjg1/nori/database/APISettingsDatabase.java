@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import io.github.tjg1.library.norilib.clients.Flickr;
 import io.github.tjg1.library.norilib.clients.SearchClient;
-import io.github.tjg1.nori.BuildConfig;
 
 /** Utility class providing access to the SQLite API endpoint settings database. */
 public class APISettingsDatabase extends SQLiteOpenHelper {
@@ -202,13 +202,10 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
     db.execSQL(createSQL);
 
     // SQL query used to populate the database with initial data (when the app is first launched).
-    //noinspection PointlessBooleanExpression
-    if (!BuildConfig.GOOGLE_BUILD) {
-      String populateSQL = String.format(Locale.US,
-          "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
-          TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Safebooru", SearchClient.Settings.APIType.GELBOARD.ordinal(), "http://safebooru.org");
-      db.execSQL(populateSQL);
-    }
+    String populateSQL = String.format(Locale.US,
+        "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
+        TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Flickr", SearchClient.Settings.APIType.FLICKR.ordinal(), Flickr.FLICKR_API_ENDPOINT);
+    db.execSQL(populateSQL);
   }
 
   @Override
