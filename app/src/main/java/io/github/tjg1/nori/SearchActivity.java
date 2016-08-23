@@ -88,7 +88,14 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   private SearchResultGridFragment searchResultGridFragment;
   /** Bundle used when restoring saved instance state (after screen rotation, app restored from background, etc.) */
   private Bundle savedInstanceState;
-
+  /** Getter method for private instance serviceSpinner */
+  public Spinner getServiceSpinner() {
+    return serviceSpinner;
+  }
+  /** Getter method for private instance sharedPreferences*/
+  public SharedPreferences getSharedPreferences() {
+    return sharedPreferences;
+  }
   /**
    * Set up the action bar SearchView and its event handlers.
    *
@@ -199,7 +206,7 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
 
     // Set up service list spinner.
     serviceSpinner = (Spinner) toolBar.findViewById(R.id.spinner_service);
-    ServiceDropdownAdapter serviceDropdownAdapter = new ServiceDropdownAdapter();
+    ServiceDropdownAdapter serviceDropdownAdapter = new ServiceDropdownAdapter(this);
     serviceSpinner.setAdapter(serviceDropdownAdapter);
     serviceSpinner.setOnItemSelectedListener(serviceDropdownAdapter);
   }
@@ -523,138 +530,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     /** Cancels this callback. */
     public void cancel() {
       this.isCancelled = true;
-    }
-  }
-
-  /** Adapter populating the Search API picker in the ActionBar. */
-  private class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemSelectedListener {
-    /** Search client settings loader ID. */
-    private static final int LOADER_ID_API_SETTINGS = 0x00;
-    /** Shared preference key used to store the last active {@link io.github.tjg1.library.norilib.clients.SearchClient}. */
-    private static final String SHARED_PREFERENCE_LAST_SELECTED_INDEX = "io.github.tjg1.nori.SearchActivity.lastSelectedServiceIndex";
-    /** List of service settings loaded from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-    private List<Pair<Integer, SearchClient.Settings>> settingsList;
-    /** ID of the last selected item. */
-    private long lastSelectedItem;
-
-    public ServiceDropdownAdapter() {
-      // Restore last active item from SharedPreferences.
-      lastSelectedItem = sharedPreferences.getLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, 1L);
-      // Initialize the search client settings database loader.
-      getSupportLoaderManager().initLoader(LOADER_ID_API_SETTINGS, null, this);
-    }
-
-    @Override
-    public int getCount() {
-      if (settingsList == null) {
-        return 1;
-      } else {
-        return settingsList.size() + 1;
-      }
-    }
-
-    @Override
-    public SearchClient.Settings getItem(int position) {
-      if (settingsList == null || position == settingsList.size()) // APISettingActivity View.
-        return null;
-      return settingsList.get(position).second;
-    }
-
-    @Override
-    public long getItemId(int position) {
-      if (settingsList == null || position == settingsList.size()) // APISettingActivity View.
-        return -1;
-      // Return database row ID.
-      return settingsList.get(position).first;
-    }
-
-    /**
-     * Get position of the item with given database row ID.
-     *
-     * @param id Row ID.
-     * @return Position of the item.
-     */
-    public int getPositionByItemId(long id) {
-      for (int i = 0; i < getCount(); i++) {
-        if (getItemId(i) == id) {
-          return i;
-        }
-      }
-      return 0;
-    }
-
-    @Override
-    public View getView(int position, View recycledView, ViewGroup container) {
-      // Reuse recycled view, if possible.
-      @SuppressLint("ViewHolder") View view = LayoutInflater.from(SearchActivity.this)
-          .inflate(R.layout.simple_dropdown_item, container, false);
-
-      // Populate views with content.
-      TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-      SearchClient.Settings settings = getItem(position);
-      if (settings != null) {
-        text1.setText(settings.getName());
-      } else {
-        text1.setText(R.string.service_dropdown_settings);
-        view.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            startActivity(new Intent(SearchActivity.this, APISettingsActivity.class));
-          }
-        });
-      }
-
-      return view;
-    }
-
-    @Override
-    public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
-      if (id == LOADER_ID_API_SETTINGS) {
-        return new APISettingsDatabase.Loader(SearchActivity.this);
-      }
-      return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Pair<Integer, SearchClient.Settings>>> loader, List<Pair<Integer, SearchClient.Settings>> data) {
-      if (loader.getId() == LOADER_ID_API_SETTINGS) {
-        // Update adapter data.
-        settingsList = data;
-        notifyDataSetChanged();
-        // Reselect last active item.
-        if (!data.isEmpty()) {
-          serviceSpinner.setSelection(getPositionByItemId(lastSelectedItem));
-        } else {
-          // Start APISettingActivity.
-          Intent intent = new Intent(SearchActivity.this, APISettingsActivity.class);
-          intent.setAction(APISettingsActivity.ACTION_CREATE_SERVICE);
-          startActivity(intent);
-        }
-      }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Pair<Integer, SearchClient.Settings>>> loader) {
-      // Invalidate adapter's data.
-      settingsList = null;
-      notifyDataSetInvalidated();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-      // Save last active item to SharedPreferences.
-      if (id != -1) {
-        // Notify parent activity.
-        onSearchAPISelected(getItem(position), id != lastSelectedItem);
-        // Update last selected item id.
-        lastSelectedItem = id;
-        sharedPreferences.edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
-      }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-      // Do nothing.
     }
   }
 }
