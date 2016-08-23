@@ -1,3 +1,9 @@
+/*
+ * This file is part of nori.
+ * Copyright (c) 2014-2016 Tomasz Jan Góralczyk <tomg@fastmail.uk>
+ * License: GNU GPLv2
+ */
+
 package io.github.tjg1.nori;
 
 import android.net.Uri;
