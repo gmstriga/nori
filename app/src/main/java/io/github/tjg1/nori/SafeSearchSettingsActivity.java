@@ -59,7 +59,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
   /** Get the human-readable labels for each SafeSearch setting. */
   @NonNull
-  private String[] getSafeSearchEntries() {
+  protected String[] getSafeSearchEntries() {
     if (safeSearchEntries == null) {
       safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
     }
@@ -68,7 +68,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
   /** Get the human-readable summaries for each SafeSearch setting. */
   @NonNull
-  private String[] getSafeSearchSummaries() {
+  protected String[] getSafeSearchSummaries() {
     if (safeSearchSummaries == null) {
       safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
     }
@@ -77,7 +77,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
   /** Get values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
   @NonNull
-  private String[] getSafeSearchValues() {
+  protected String[] getSafeSearchValues() {
     if (safeSearchValues == null) {
       safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
     }
@@ -86,7 +86,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
   /** Get current values of the preference_safeSearch preference. */
   @NonNull
-  private List<String> getSafeSearchCurrentSetting() {
+  protected List<String> getSafeSearchCurrentSetting() {
     if (safeSearchCurrentSetting == null) {
       safeSearchCurrentSetting = new ArrayList<>(4);
 
@@ -130,7 +130,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
     } else {
       // Set up ListView.
       final ListView listView = (ListView) findViewById(android.R.id.list);
-      listView.setAdapter(new SafeSearchListAdapter());
+      listView.setAdapter(new SafeSearchListAdapter(this));
       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -166,7 +166,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
   }
 
   /** Update the value of the preference_safeSearch shared preference. */
-  private void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting) {
+  protected void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting) {
     getSharedPreferences().edit()
         .putString(getString(R.string.preference_safeSearch_key),
             StringUtils.mergeStringArray(safeSearchCurrentSetting, " ").trim())
@@ -251,64 +251,6 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
 
       // Update SharedPreferences.
       updateSafeSearchSettings(safeSearchSettings);
-    }
-  }
-
-  /** Adapter for the SafeSearch setting List (in the fdroid version) */
-  private class SafeSearchListAdapter extends BaseAdapter implements
-      CompoundButton.OnCheckedChangeListener {
-
-    public int getCount() {
-      return getSafeSearchEntries().length;
-    }
-
-    @Override
-    public Object getItem(int position) {
-      return getSafeSearchEntries()[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-      // Position == item id.
-      return position;
-    }
-
-    @Override
-    public View getView(int position, View recycledView, ViewGroup container) {
-      // Recycle view if possible.
-      View view = recycledView;
-      if (view == null) {
-        final LayoutInflater inflater = getLayoutInflater();
-        view = inflater.inflate(R.layout.listitem_safesearch_rating, container, false);
-      }
-
-      // Populate views.
-      final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-      checkBox.setChecked(getSafeSearchCurrentSetting().contains(getSafeSearchValues()[position]));
-      checkBox.setOnCheckedChangeListener(this);
-      checkBox.setTag(getSafeSearchValues()[position]);
-      final TextView title = (TextView) view.findViewById(R.id.title);
-      title.setText(getSafeSearchEntries()[position]);
-      final TextView summary = (TextView) view.findViewById(R.id.summary);
-      summary.setText(getSafeSearchSummaries()[position]);
-
-      return view;
-    }
-
-    @SuppressWarnings("SuspiciousMethodCalls")
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-      List<String> safeSearchCurrentSetting = getSafeSearchCurrentSetting();
-
-      if (checked && !safeSearchCurrentSetting.contains(compoundButton.getTag())) {
-        safeSearchCurrentSetting.add((String) compoundButton.getTag());
-      } else if (!checked && safeSearchCurrentSetting.contains(compoundButton.getTag())) {
-        safeSearchCurrentSetting.remove(compoundButton.getTag());
-      }
-
-      // Update SharedPreferences.
-      updateSafeSearchSettings(safeSearchCurrentSetting
-          .toArray(new String[safeSearchCurrentSetting.size()]));
     }
   }
 }
