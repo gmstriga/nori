@@ -49,7 +49,7 @@ import io.github.tjg1.nori.util.iab.Purchase;
 public class DonationActivity extends AppCompatActivity {
 
   /** List of Play Store IAP items. */
-  private static final String[] GOOGLE_IAP_ITEMS =
+  protected static final String[] GOOGLE_IAP_ITEMS =
       new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
   /** Currency used for donations. */
   private String mDonationCurrency;
@@ -123,7 +123,7 @@ public class DonationActivity extends AppCompatActivity {
   };
 
   /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
-  private IabHelper getIabHelper() {
+  protected IabHelper getIabHelper() {
     if (iabHelper == null) {
       iabHelper = new IabHelper(this, BuildConfig.DONATIONS_GOOGLE_PUB_KEY);
       iabHelper.enableDebugLogging(BuildConfig.DEBUG);
@@ -134,7 +134,7 @@ public class DonationActivity extends AppCompatActivity {
   /** Get the Google IAP listener/adapter. */
   private GoogleIAPHandler getIapHandler() {
     if (iapHandler == null) {
-      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1);
+      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1,this);
     }
     return iapHandler;
   }
@@ -301,138 +301,8 @@ public class DonationActivity extends AppCompatActivity {
   // This could be implemented as a fragment displaying the ListView and handling IAB functions.
 
   /** Display an error message {@link Snackbar} when connection to the Play Store service fails */
-  private void onError() {
+  protected void onError() {
     Snackbar.make(findViewById(R.id.root), R.string.donation_error_connectingToPlayStoreService,
         Snackbar.LENGTH_LONG).show();
-  }
-
-  /** Listener handling interactions with the Google Play IAB helper. */
-  private class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
-      implements IabHelper.OnIabSetupFinishedListener, IabHelper.QueryInventoryFinishedListener,
-      IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener,
-      AdapterView.OnItemClickListener {
-
-    /**
-     * Create a new object acting as a listener for {@link IabHelper} events and as an Adapter
-     * for the donation amount {@link android.widget.ListView}.
-     *
-     * @param context  Activity context.
-     * @param resource Layout resource used to display donation amounts.
-     */
-    public GoogleIAPHandler(Context context, int resource) {
-      super(context, resource);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      // Create the list view item.
-      View view = convertView;
-
-      if (view == null) {
-        view = LayoutInflater.from(DonationActivity.this)
-            .inflate(android.R.layout.simple_list_item_1, parent, false);
-      }
-
-      // Get SKU details.
-      Pair<String, String> skuPair = getItem(position);
-
-      // Populate the views.
-      TextView textView = (TextView) view.findViewById(android.R.id.text1);
-      textView.setText(skuPair.second);
-
-      return view;
-    }
-
-    /**
-     * Called to notify that setup is complete.
-     *
-     * @param result The result of the setup process.
-     */
-    @Override
-    public void onIabSetupFinished(IabResult result) {
-      if (result.isSuccess()) {
-        if (iabHelper == null) return;
-
-        try {
-          // Query the prices of IAP items and display them in the ListView.
-          getIabHelper().queryInventoryAsync(true, Arrays.asList(GOOGLE_IAP_ITEMS), null, this);
-          return;
-        } catch (IabHelper.IabAsyncInProgressException ignored) {
-        }
-      }
-      onError();
-    }
-
-    /**
-     * Called to notify that an inventory query operation completed.
-     *
-     * @param result The result of the operation.
-     * @param inv    The inventory.
-     */
-    @Override
-    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-      if (result.isSuccess()) {
-        if (iabHelper == null) return;
-        // Populate adapter with SKU details.
-        for (String sku : GOOGLE_IAP_ITEMS) {
-          if (inv.hasDetails(sku)) {
-            add(new Pair<>(sku, inv.getSkuDetails(sku).getPrice()));
-          }
-        }
-        notifyDataSetChanged();
-        return;
-      }
-      onError();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-      final String sku = getItem(position).first;
-
-      try {
-        // Launch Google Play purchase flow.
-        getIabHelper().launchPurchaseFlow(DonationActivity.this, sku, 0, this);
-      } catch (IabHelper.IabAsyncInProgressException e) {
-        onError();
-      }
-    }
-
-    /**
-     * Called to notify that an in-app purchase finished. If the purchase was successful,
-     * then the sku parameter specifies which item was purchased. If the purchase failed,
-     * the sku and extraData parameters may or may not be null, depending on how far the purchase
-     * process went.
-     *
-     * @param result The result of the purchase.
-     * @param info   The purchase information (null if purchase failed)
-     */
-    @Override
-    public void onIabPurchaseFinished(IabResult result, Purchase info) {
-      if (iabHelper == null) return;
-
-      if (result.isSuccess()) {
-        // Consume the purchase, so that the user can donate multiple times.
-        try {
-          getIabHelper().consumeAsync(info, this);
-        } catch (IabHelper.IabAsyncInProgressException e) {
-          e.printStackTrace();
-        }
-
-        // Display thank you toast.
-        Snackbar.make(findViewById(R.id.root),
-            R.string.donation_toast_completed, Snackbar.LENGTH_LONG).show();
-      }
-    }
-
-    /**
-     * Called to notify that a consumption has finished.
-     *
-     * @param purchase The purchase that was (or was to be) consumed.
-     * @param result   The result of the consumption operation.
-     */
-    @Override
-    public void onConsumeFinished(Purchase purchase, IabResult result) {
-      // Do nothing.
-    }
   }
 }
