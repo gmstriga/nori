@@ -13,32 +13,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.List;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
 import io.github.tjg1.library.norilib.service.ServiceTypeDetectionService;
+import io.github.tjg1.nori.adapter.APISettingsListAdapter;
 import io.github.tjg1.nori.database.APISettingsDatabase;
 import io.github.tjg1.nori.fragment.EditAPISettingDialogFragment;
 
 /** Adds, edits or removes API settings from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener {
+public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener, APISettingsListAdapter.Listener {
   /** Intent action used to indicate that the add service dialog should be displayed, when the Activity is created. */
   public static final String ACTION_CREATE_SERVICE = "CREATE_SERVICE";
   /** A new row will be inserted into the database when this row ID value is passed to {@link #editService(long, String, String, String, String)}. */
@@ -63,7 +52,7 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
 
     // Set up the ListView adapter and OnItemClickListener.
     ListView listView = (ListView) findViewById(android.R.id.list);
-    ListAdapter listAdapter = new ListAdapter();
+    APISettingsListAdapter listAdapter = new APISettingsListAdapter(this, getSupportLoaderManager(), this);
     listView.setOnItemClickListener(listAdapter);
     listView.setAdapter(listAdapter);
 
@@ -79,22 +68,6 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
     // Inflate menu XML.
     getMenuInflater().inflate(R.menu.api_settings, menu);
     return true;
-  }
-
-  /**
-   * Remove setting from the {@link io.github.tjg1.nori.database.APISettingsDatabase}.
-   *
-   * @param id Database row ID.
-   */
-  private void removeSetting(final long id) {
-    // Remove setting from database on a background thread.
-    // This is so database I/O doesn't block the UI thread.
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        new APISettingsDatabase(APISettingsActivity.this).delete(id);
-      }
-    }).start();
   }
 
   @Override
@@ -113,6 +86,25 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
         // Perform default action.
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  @Override
+  public void onServiceSelected(long serviceId, SearchClient.Settings serviceSettings) {
+    // Show dialog to edit the service settings object.
+    EditAPISettingDialogFragment.newInstance(serviceId, serviceSettings)
+        .show(getSupportFragmentManager(), "EditAPISettingsDialogFragment");
+  }
+
+  @Override
+  public void onServiceRemoved(final long serviceId) {
+    // Remove setting from database on a background thread.
+    // This is so database I/O doesn't block the UI thread.
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        new APISettingsDatabase(APISettingsActivity.this).delete(serviceId);
+      }
+    }).start();
   }
 
   @Override
@@ -178,96 +170,5 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
   /** Displays the service creation dialog. */
   private void showCreateServiceDialog() {
     new EditAPISettingDialogFragment().show(getSupportFragmentManager(), "EditAPISettingDialogFragment");
-  }
-
-  /** Populates the {@link android.widget.ListView} with data from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-  private class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemClickListener {
-    /** {@link io.github.tjg1.nori.database.APISettingsDatabase} loader ID. */
-    private static final int LOADER_ID_DATABASE_LOADER = 0x00;
-    /** List of {@link android.util.Pair}s mapping database row IDs to {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} objects. */
-    private List<Pair<Integer, SearchClient.Settings>> settingsList;
-
-    public ListAdapter() {
-      // Initialize the asynchronous database loader.
-      getSupportLoaderManager().initLoader(LOADER_ID_DATABASE_LOADER, null, this);
-    }
-
-    @Override
-    public int getCount() {
-      if (settingsList != null) {
-        return settingsList.size();
-      }
-      return 0;
-    }
-
-    @Override
-    public SearchClient.Settings getItem(int position) {
-      return settingsList.get(position).second;
-    }
-
-    @Override
-    public long getItemId(int position) {
-      return settingsList.get(position).first;
-    }
-
-    @Override
-    public View getView(int position, View recycledView, ViewGroup container) {
-      // Recycle the view, if possible.
-      View view = recycledView;
-
-      if (view == null) {
-        // Create a new instance of the view.
-        view = LayoutInflater.from(APISettingsActivity.this)
-            .inflate(R.layout.listitem_service_setting, container, false);
-      }
-
-      // Get data from the List for current position.
-      SearchClient.Settings settings = getItem(position);
-      final long id = getItemId(position);
-      // Populate views with content.
-      TextView title = (TextView) view.findViewById(R.id.title);
-      title.setText(settings.getName());
-      TextView summary = (TextView) view.findViewById(R.id.summary);
-      summary.setText(settings.getEndpoint());
-      // Attach onClickListener to the remove button and hook it up to the #removeSetting method.
-      ImageButton actionRemove = (ImageButton) view.findViewById(R.id.action_remove);
-      actionRemove.setFocusable(false);
-      actionRemove.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          removeSetting(id);
-        }
-      });
-
-      return view;
-    }
-
-    @Override
-    public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
-      if (id == LOADER_ID_DATABASE_LOADER) {
-        // Initialize the database loader.
-        return new APISettingsDatabase.Loader(APISettingsActivity.this);
-      }
-      return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Pair<Integer, SearchClient.Settings>>> loader, List<Pair<Integer, SearchClient.Settings>> data) {
-      settingsList = data;
-      notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Pair<Integer, SearchClient.Settings>>> loader) {
-      settingsList = null;
-      notifyDataSetInvalidated();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> listView, View view, int position, long itemId) {
-      // Show dialog to edit the service settings object.
-      EditAPISettingDialogFragment.newInstance(itemId, getItem(position))
-          .show(getSupportFragmentManager(), "EditAPISettingDialogFragment");
-    }
   }
 }
