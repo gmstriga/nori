@@ -8,10 +8,10 @@
 
 package io.github.tjg1.nori;
 
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,36 +20,30 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Arrays;
 
+import io.github.tjg1.nori.adapter.GoogleIAPHandler;
 import io.github.tjg1.nori.util.iab.IabHelper;
-import io.github.tjg1.nori.util.iab.IabResult;
-import io.github.tjg1.nori.util.iab.Inventory;
 import io.github.tjg1.nori.util.iab.Purchase;
 
 /**
  * Activity used to support the continued development of Nori using PayPal, Patreon or Google IAP.
  */
-public class DonationActivity extends AppCompatActivity {
+public class DonationActivity extends AppCompatActivity implements GoogleIAPHandler.Listener {
 
   /** List of Play Store IAP items. */
-  protected static final String[] GOOGLE_IAP_ITEMS =
+  private static final String[] GOOGLE_IAP_ITEMS =
       new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
   /** Currency used for donations. */
   private String mDonationCurrency;
@@ -100,6 +94,7 @@ public class DonationActivity extends AppCompatActivity {
     @Override
     public boolean onLongClick(View view) {
       // Inflate the Bitcoin donation dialog View.
+      @SuppressLint("InflateParams")
       View dialogView = getLayoutInflater().inflate(R.layout.dialog_bitcoin_donation, null);
       TextView bitcoinAddress = (TextView) dialogView.findViewById(R.id.bitcoin_address);
       if (bitcoinAddress != null) {
@@ -123,7 +118,7 @@ public class DonationActivity extends AppCompatActivity {
   };
 
   /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
-  protected IabHelper getIabHelper() {
+  private IabHelper getIabHelper() {
     if (iabHelper == null) {
       iabHelper = new IabHelper(this, BuildConfig.DONATIONS_GOOGLE_PUB_KEY);
       iabHelper.enableDebugLogging(BuildConfig.DEBUG);
@@ -131,14 +126,7 @@ public class DonationActivity extends AppCompatActivity {
     return iabHelper;
   }
 
-  /** Get the Google IAP listener/adapter. */
-  private GoogleIAPHandler getIapHandler() {
-    if (iapHandler == null) {
-      iapHandler = new GoogleIAPHandler(this, android.R.layout.simple_list_item_1,this);
-    }
-    return iapHandler;
-  }
-
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -207,6 +195,38 @@ public class DonationActivity extends AppCompatActivity {
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  /**
+   * Called when an error occurs while interacting with the Google in-app purchase service.
+   *
+   * @param error Error that occurred, can be null if not known.
+   */
+  @Override
+  public void onPurchaseError(@Nullable Exception error) {
+    Snackbar.make(findViewById(R.id.root), R.string.donation_error_connectingToPlayStoreService,
+        Snackbar.LENGTH_LONG).show();
+  }
+
+  /**
+   * Called when the Google in-app purchase is completed.
+   *
+   * @param info Information about the purchase.
+   */
+  @Override
+  public void onPurchaseComplete(Purchase info) {
+    // Display thank you toast.
+    Snackbar.make(findViewById(R.id.root),
+            R.string.donation_toast_completed, Snackbar.LENGTH_LONG).show();
+  }
+
+  /** Get the Google IAP listener/adapter. */
+  private GoogleIAPHandler getIapHandler() {
+    if (iapHandler == null) {
+      iapHandler = new GoogleIAPHandler(this, getIabHelper(), android.R.layout.simple_list_item_1,
+          Arrays.asList(GOOGLE_IAP_ITEMS), this);
+    }
+    return iapHandler;
   }
 
   /** Set donation configuration based on locale and build configuration. */
@@ -296,13 +316,5 @@ public class DonationActivity extends AppCompatActivity {
     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(string, string);
     clipboard.setPrimaryClip(clip);
-  }
-
-  // This could be implemented as a fragment displaying the ListView and handling IAB functions.
-
-  /** Display an error message {@link Snackbar} when connection to the Play Store service fails */
-  protected void onError() {
-    Snackbar.make(findViewById(R.id.root), R.string.donation_error_connectingToPlayStoreService,
-        Snackbar.LENGTH_LONG).show();
   }
 }

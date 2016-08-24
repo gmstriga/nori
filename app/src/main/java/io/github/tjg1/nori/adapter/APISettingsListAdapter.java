@@ -4,9 +4,10 @@
  * License: GNU GPLv2
  */
 
-package io.github.tjg1.nori;
+package io.github.tjg1.nori.adapter;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -22,21 +23,34 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.database.APISettingsDatabase;
-import io.github.tjg1.nori.fragment.EditAPISettingDialogFragment;
 
 /** Populates the {@link android.widget.ListView} with data from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-public class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemClickListener {
+public class APISettingsListAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemClickListener {
     /** {@link io.github.tjg1.nori.database.APISettingsDatabase} loader ID. */
     private static final int LOADER_ID_DATABASE_LOADER = 0x00;
-    private final APISettingsActivity activity;
+    /** Android {@link Context} the adapter is used in. */
+    private final Context context;
+    /** Interface handling user inputs. */
+    private final APISettingsListAdapter.Listener listener;
     /** List of {@link android.util.Pair}s mapping database row IDs to {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} objects. */
     private List<Pair<Integer, SearchClient.Settings>> settingsList;
 
-    public ListAdapter(APISettingsActivity activity) {
-        this.activity=activity;
+  /**
+   * Create a new adapter to populate a ListView with a list of services from the
+   * {@link APISettingsDatabase}.
+   *
+   * @param context Android context the ListView is used in.
+   * @param loaderManager Android support library asynchronous loader manager.
+   * @param listener Listener handling user events.
+   */
+    public APISettingsListAdapter(Context context, LoaderManager loaderManager, Listener listener) {
+        this.context = context;
+        this.listener = listener;
+
         // Initialize the asynchronous database loader.
-        activity.getSupportLoaderManager().initLoader(LOADER_ID_DATABASE_LOADER, null, this);
+        loaderManager.initLoader(LOADER_ID_DATABASE_LOADER, null, this);
     }
 
     @Override
@@ -64,7 +78,7 @@ public class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCall
 
         if (view == null) {
             // Create a new instance of the view.
-            view = LayoutInflater.from(activity)
+            view = LayoutInflater.from(context)
                     .inflate(R.layout.listitem_service_setting, container, false);
         }
 
@@ -82,7 +96,7 @@ public class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCall
         actionRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.removeSetting(id);
+                listener.onServiceRemoved(id);
             }
         });
 
@@ -93,7 +107,7 @@ public class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCall
     public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_ID_DATABASE_LOADER) {
             // Initialize the database loader.
-            return new APISettingsDatabase.Loader(activity);
+            return new APISettingsDatabase.Loader(context);
         }
         return null;
     }
@@ -112,8 +126,30 @@ public class ListAdapter extends BaseAdapter implements LoaderManager.LoaderCall
 
     @Override
     public void onItemClick(AdapterView<?> listView, View view, int position, long itemId) {
-        // Show dialog to edit the service settings object.
-        EditAPISettingDialogFragment.newInstance(itemId, getItem(position))
-                .show(activity.getSupportFragmentManager(), "EditAPISettingDialogFragment");
+        listener.onServiceSelected(itemId, getItem(position));
+    }
+
+  /**
+   * Interface used to handle events when a service is selected from the ListView or removed
+   * using the remove icon by the user.
+   */
+  public interface Listener {
+
+    /**
+     * Called when a service is selected from the ListView.
+     *
+     * @param serviceId Database ID of the service.
+     * @param serviceSettings {@link SearchClient.Settings} with settings for the selected service.
+     */
+    public void onServiceSelected(long serviceId, SearchClient.Settings serviceSettings);
+
+    /**
+     * Called when the user clicks on the "Remove service" button on an item in the
+     * {@link android.widget.ListView}.
+     *
+     * @param serviceId Database ID of the service to be removed.
+     */
+    public void onServiceRemoved(long serviceId);
+
     }
 }

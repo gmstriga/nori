@@ -4,11 +4,13 @@
  * License: GNU GPLv2
  */
 
-package io.github.tjg1.nori;
+package io.github.tjg1.nori.adapter;
 
 
-import android.content.Context;
-import android.support.design.widget.Snackbar;
+import android.app.Activity;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,31 +19,50 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.List;
 
 import io.github.tjg1.nori.util.iab.IabHelper;
 import io.github.tjg1.nori.util.iab.IabResult;
 import io.github.tjg1.nori.util.iab.Inventory;
 import io.github.tjg1.nori.util.iab.Purchase;
 
-/** Listener handling interactions with the Google Play IAB helper. */
+// This could be implemented as a fragment displaying the ListView and handling IAB functions.
+/**
+ * An adapter populating the ListView with available Google donation amounts and handling
+ * interactions with the Google Play in-app purchase service.
+ */
 public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
         implements IabHelper.OnIabSetupFinishedListener, IabHelper.QueryInventoryFinishedListener,
         IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener,
         AdapterView.OnItemClickListener {
 
-    private final DonationActivity activity;
+    /** Activity context the adapter is used in. */
+    private final Activity activity;
+    /** Google in-app purchase helper class. */
+    private final IabHelper iabHelper;
+    /** List of item SKUs available for purchase. */
+    protected final List<String> itemSkus;
+    /** Listener handling user events and interactions with the Google IAP service. */
+    protected final GoogleIAPHandler.Listener listener;
 
     /**
      * Create a new object acting as a listener for {@link IabHelper} events and as an Adapter
      * for the donation amount {@link android.widget.ListView}.
      *
-     * @param context  Activity context.
+     * @param activity  Activity context.
+     * @param iabHelper Google in-app purchase helper class.
+     * @param itemSkus List of item SKUs available for purchase.
      * @param resource Layout resource used to display donation amounts.
      */
-    public GoogleIAPHandler(Context context, int resource,DonationActivity activity) {
-        super(context, resource);
+    public GoogleIAPHandler(@NonNull Activity activity, @NonNull IabHelper iabHelper,
+                            @LayoutRes int resource, @NonNull List<String> itemSkus,
+                            @NonNull Listener listener) {
+        super(activity, resource);
+
         this.activity = activity;
+        this.iabHelper = iabHelper;
+        this.itemSkus = itemSkus;
+        this.listener = listener;
     }
 
     @Override
@@ -50,7 +71,7 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(activity)
+            view = LayoutInflater.from(getContext())
                     .inflate(android.R.layout.simple_list_item_1, parent, false);
         }
 
@@ -72,16 +93,18 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     @Override
     public void onIabSetupFinished(IabResult result) {
         if (result.isSuccess()) {
-            if (activity.getIabHelper() == null) return;
+            if (iabHelper == null) return;
 
             try {
                 // Query the prices of IAP items and display them in the ListView.
-                activity.getIabHelper().queryInventoryAsync(true, Arrays.asList(activity.GOOGLE_IAP_ITEMS), null, this);
+                iabHelper.queryInventoryAsync(true, itemSkus, null, this);
                 return;
-            } catch (IabHelper.IabAsyncInProgressException ignored) {
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                listener.onPurchaseError(e);
+                return;
             }
         }
-        activity.onError();
+        listener.onPurchaseError(null);
     }
 
     /**
@@ -93,9 +116,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     @Override
     public void onQueryInventoryFinished(IabResult result, Inventory inv) {
         if (result.isSuccess()) {
-            if (activity.getIabHelper() == null) return;
+            if (iabHelper == null) return;
             // Populate adapter with SKU details.
-            for (String sku : activity.GOOGLE_IAP_ITEMS) {
+            for (String sku : itemSkus) {
                 if (inv.hasDetails(sku)) {
                     add(new Pair<>(sku, inv.getSkuDetails(sku).getPrice()));
                 }
@@ -103,7 +126,7 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
             notifyDataSetChanged();
             return;
         }
-        activity.onError();
+        listener.onPurchaseError(null);
     }
 
     @Override
@@ -112,9 +135,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
 
         try {
             // Launch Google Play purchase flow.
-            activity.getIabHelper().launchPurchaseFlow(activity, sku, 0, this);
+            iabHelper.launchPurchaseFlow(activity, sku, 0, this);
         } catch (IabHelper.IabAsyncInProgressException e) {
-            activity.onError();
+            listener.onPurchaseError(e);
         }
     }
 
@@ -129,19 +152,17 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
      */
     @Override
     public void onIabPurchaseFinished(IabResult result, Purchase info) {
-        if (activity.getIabHelper() == null) return;
+        if (iabHelper == null) return;
 
         if (result.isSuccess()) {
             // Consume the purchase, so that the user can donate multiple times.
             try {
-                activity.getIabHelper().consumeAsync(info, this);
+                iabHelper.consumeAsync(info, this);
             } catch (IabHelper.IabAsyncInProgressException e) {
                 e.printStackTrace();
             }
 
-            // Display thank you toast.
-            Snackbar.make(activity.findViewById(R.id.root),
-                    R.string.donation_toast_completed, Snackbar.LENGTH_LONG).show();
+            listener.onPurchaseComplete(info);
         }
     }
 
@@ -154,5 +175,23 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     @Override
     public void onConsumeFinished(Purchase purchase, IabResult result) {
         // Do nothing.
+    }
+
+    /** Interface used to handle user interaction with the ListView and purchase events. */
+    public interface Listener {
+
+      /**
+       * Called when an error occurs while interacting with the Google in-app purchase service.
+       *
+       * @param error Error that occurred, can be null if not known.
+       */
+      public void onPurchaseError(@Nullable Exception error);
+
+        /**
+         * Called when the Google in-app purchase is completed.
+         *
+         * @param info Information about the purchase.
+         */
+       public void onPurchaseComplete(Purchase info);
     }
 }

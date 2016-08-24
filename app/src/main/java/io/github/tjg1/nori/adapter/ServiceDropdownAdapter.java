@@ -4,11 +4,14 @@
  * License: GNU GPLv2
  */
 
-package io.github.tjg1.nori;
+package io.github.tjg1.nori.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Pair;
@@ -17,11 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.nori.APISettingsActivity;
+import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.database.APISettingsDatabase;
 
 /** Adapter populating the Search API picker in the ActionBar. */
@@ -30,18 +36,44 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     private static final int LOADER_ID_API_SETTINGS = 0x00;
     /** Shared preference key used to store the last active {@link io.github.tjg1.library.norilib.clients.SearchClient}. */
     private static final String SHARED_PREFERENCE_LAST_SELECTED_INDEX = "io.github.tjg1.nori.SearchActivity.lastSelectedServiceIndex";
-    private final SearchActivity activity;
+
+    /** Context this adapter is used in. */
+    private final Context context;
+    /** Shared preferences of the application. */
+    private final SharedPreferences sharedPreferences;
+    /** Adapter view populated by this adapter. */
+    private final AdapterView<?> adapterView;
+    /** Listener used to interact with the {@link android.app.Activity} using this adapter. */
+    private final ServiceDropdownAdapter.Listener listener;
+
     /** List of service settings loaded from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
     private List<Pair<Integer, SearchClient.Settings>> settingsList;
     /** ID of the last selected item. */
     private long lastSelectedItem;
 
-    public ServiceDropdownAdapter(SearchActivity activity) {
-        this.activity = activity;
+  /**
+   * Create a new adapter that populates a {@link Spinner} with a service selection dropdown.
+   *
+   * @param context Android context.
+   * @param sharedPreferences Shared preferences (used to restore last selection of the spinner).
+   * @param loaderManager Android support library loader manager.
+   * @param adapterView View populated by this adapter (used to restore last selection of the spinner)
+   * @param listener Listener used to interact with the {@link android.app.Activity} using this
+   *                 adapter.
+   */
+    public ServiceDropdownAdapter(@NonNull Context context,
+                                  @NonNull SharedPreferences sharedPreferences,
+                                  @NonNull LoaderManager loaderManager,
+                                  @NonNull AdapterView<?> adapterView, @NonNull Listener listener) {
+        this.context = context;
+        this.sharedPreferences = sharedPreferences;
+        this.adapterView = adapterView;
+        this.listener = listener;
+
         // Restore last active item from SharedPreferences.
-        lastSelectedItem = activity.getSharedPreferences().getLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, 1L);
+        lastSelectedItem = this.sharedPreferences.getLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, 1L);
         // Initialize the search client settings database loader.
-        activity.getSupportLoaderManager().initLoader(LOADER_ID_API_SETTINGS, null, this);
+        loaderManager.initLoader(LOADER_ID_API_SETTINGS, null, this);
     }
 
     @Override
@@ -86,7 +118,7 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     @Override
     public View getView(int position, View recycledView, ViewGroup container) {
         // Reuse recycled view, if possible.
-        @SuppressLint("ViewHolder") View view = LayoutInflater.from(activity)
+        @SuppressLint("ViewHolder") View view = LayoutInflater.from(context)
                 .inflate(R.layout.simple_dropdown_item, container, false);
 
         // Populate views with content.
@@ -99,7 +131,7 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activity.startActivity(new Intent(activity, APISettingsActivity.class));
+                    context.startActivity(new Intent(context, APISettingsActivity.class));
                 }
             });
         }
@@ -110,7 +142,7 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     @Override
     public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_ID_API_SETTINGS) {
-            return new APISettingsDatabase.Loader(activity);
+            return new APISettingsDatabase.Loader(context);
         }
         return null;
     }
@@ -123,12 +155,12 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
             notifyDataSetChanged();
             // Reselect last active item.
             if (!data.isEmpty()) {
-                activity.getServiceSpinner().setSelection(getPositionByItemId(lastSelectedItem));
+                adapterView.setSelection(getPositionByItemId(lastSelectedItem));
             } else {
                 // Start APISettingActivity.
-                Intent intent = new Intent(activity, APISettingsActivity.class);
+                Intent intent = new Intent(context, APISettingsActivity.class);
                 intent.setAction(APISettingsActivity.ACTION_CREATE_SERVICE);
-                activity.startActivity(intent);
+                context.startActivity(intent);
             }
         }
     }
@@ -145,15 +177,27 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
         // Save last active item to SharedPreferences.
         if (id != -1) {
             // Notify parent activity.
-            activity.onSearchAPISelected(getItem(position), id != lastSelectedItem);
+            listener.onSearchAPISelected(getItem(position), id != lastSelectedItem);
             // Update last selected item id.
             lastSelectedItem = id;
-            activity.getSharedPreferences().edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
+            sharedPreferences.edit().putLong(SHARED_PREFERENCE_LAST_SELECTED_INDEX, id).apply();
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         // Do nothing.
+    }
+
+    /** Listener used to interact with the {@link android.app.Activity} using this adapter. */
+    public interface Listener {
+
+        /**
+         * Called when a new Search API is selected by the user from the action bar dropdown.
+         *
+         * @param settings         Selected {@link SearchClient.Settings} object.
+         * @param expandActionView Should the SearchView action view be expanded?
+         */
+         public void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView);
     }
 }

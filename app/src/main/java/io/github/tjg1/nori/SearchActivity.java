@@ -6,7 +6,6 @@
 
 package io.github.tjg1.nori;
 
-import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,8 +15,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -26,32 +23,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.List;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
 import io.github.tjg1.library.norilib.Tag;
 import io.github.tjg1.library.norilib.clients.SearchClient;
-import io.github.tjg1.nori.database.APISettingsDatabase;
+import io.github.tjg1.nori.adapter.ServiceDropdownAdapter;
 import io.github.tjg1.nori.database.SearchSuggestionDatabase;
 import io.github.tjg1.nori.fragment.SearchResultGridFragment;
 
 /** Searches for images and displays the results in a scrollable grid of thumbnails. */
-public class SearchActivity extends AppCompatActivity implements SearchResultGridFragment.OnSearchResultGridFragmentInteractionListener {
+public class SearchActivity extends AppCompatActivity
+    implements SearchResultGridFragment.OnSearchResultGridFragmentInteractionListener,
+    ServiceDropdownAdapter.Listener {
   /** Identifier used to send the active {@link io.github.tjg1.library.norilib.SearchResult} to {@link io.github.tjg1.nori.ImageViewerActivity}. */
   public static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
   /** Identifier used to send the position of the selected {@link io.github.tjg1.library.norilib.Image} to {@link io.github.tjg1.nori.ImageViewerActivity}. */
@@ -76,8 +69,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   private SearchClient searchClient;
   /** Search API activity indicator. */
   private ProgressBar searchProgressBar;
-  /** Search API service dropdown. */
-  private Spinner serviceSpinner;
   /** Search view menu item. */
   private MenuItem searchMenuItem;
   /** Action bar search view. */
@@ -88,14 +79,161 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   private SearchResultGridFragment searchResultGridFragment;
   /** Bundle used when restoring saved instance state (after screen rotation, app restored from background, etc.) */
   private Bundle savedInstanceState;
-  /** Getter method for private instance serviceSpinner */
-  public Spinner getServiceSpinner() {
-    return serviceSpinner;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    // Restore state from savedInstanceState.
+    super.onCreate(savedInstanceState);
+
+    // Get shared preferences.
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+    // Inflate views.
+    setContentView(R.layout.activity_search);
+    searchProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+    // Get search result grid fragment from fragment manager.
+    searchResultGridFragment = (SearchResultGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_searchResultGrid);
+
+    SearchClient.Settings searchClientSettings;
+    // Try restoring the SearchClient from savedInstanceState
+    if (savedInstanceState != null) {
+      if (this.searchClient == null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_CLIENT_SETTINGS)) {
+        searchClientSettings = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
+        if (searchClientSettings != null) {
+          searchClient = searchClientSettings.createSearchClient(this);
+        }
+      }
+    } else {
+      Intent intent = getIntent();
+      // If the activity was started from a Search intent, create the SearchClient object and submit search.
+      if (intent != null && intent.getAction().equals(Intent.ACTION_SEARCH) && searchResultGridFragment.getSearchResult() == null) {
+        searchClientSettings = intent.getParcelableExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
+        searchClient = searchClientSettings.createSearchClient(this);
+        doSearch(intent.getStringExtra(BUNDLE_ID_SEARCH_QUERY));
+      }
+      showDonationDialog();
+    }
+
+    // Set up the dropdown API server picker.
+    setUpActionBar();
   }
-  /** Getter method for private instance sharedPreferences*/
-  public SharedPreferences getSharedPreferences() {
-    return sharedPreferences;
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    // Cancel pending API callbacks.
+    if (searchCallback != null) {
+      searchCallback.cancel();
+    }
   }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    // Make saved instance state available to other methods.
+    this.savedInstanceState = savedInstanceState;
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    // Preserve SearchView state.
+    if (searchView != null) {
+      outState.putCharSequence(BUNDLE_ID_SEARCH_QUERY, searchView.getQuery());
+      outState.putBoolean(BUNDLE_ID_SEARCH_VIEW_IS_EXPANDED, MenuItemCompat.isActionViewExpanded(searchMenuItem));
+      outState.putBoolean(BUNDLE_ID_SEARCH_VIEW_IS_FOCUSED, searchView.isFocused());
+      if (searchClient != null) {
+        outState.putParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClient.getSettings());
+      }
+    }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.search, menu);
+    // Set up action bar search view.
+    setUpSearchView(menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    switch (item.getItemId()) {
+      case R.id.action_settings:
+        startActivity(new Intent(SearchActivity.this, SettingsActivity.class));
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  /**
+   * Called when a new Search API is selected by the user from the action bar dropdown.
+   *
+   * @param settings         Selected {@link SearchClient.Settings} object.
+   * @param expandActionView Should the SearchView action view be expanded?
+   */
+  @Override
+  public void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView) {
+    if (settings == null) {
+      // The SearchClient setting database is empty.
+      return;
+    }
+
+    // Show search action bar icon (if not already visible).
+    if (searchMenuItem != null) {
+      searchMenuItem.setVisible(true);
+    }
+    // Expand the SearchView when an API is selected manually by the user.
+    // (and not automatically restored from previous state when the app is first launched)
+    if (searchClientSettings != null && searchMenuItem != null && expandActionView) {
+      MenuItemCompat.expandActionView(searchMenuItem);
+    }
+
+    searchClientSettings = settings;
+
+    // If a SearchClient wasn't included in the Intent that started this activity, create one now and search for the default query.
+    // Only do this if SearchSearch filter is enabled.
+    if (searchClient == null && searchResultGridFragment.getSearchResult() == null) {
+      searchClient = settings.createSearchClient(this);
+      if (shouldLoadDefaultQuery()) {
+        doSearch(searchClient.getDefaultQuery());
+      } else if (searchMenuItem != null) {
+        MenuItemCompat.expandActionView(searchMenuItem);
+      }
+    }
+  }
+
+  @Override
+  public void onImageSelected(Image image, int position) {
+    // Open ImageViewerActivity.
+    final Intent intent = new Intent(SearchActivity.this, ImageViewerActivity.class);
+    intent.putExtra(BUNDLE_ID_SEARCH_RESULT,
+        searchResultGridFragment.getSearchResult().getSearchResultForPage(image.searchPage));
+    intent.putExtra(BUNDLE_ID_IMAGE_INDEX, image.searchPagePosition);
+    intent.putExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClient.getSettings());
+    startActivity(intent);
+  }
+
+  @Override
+  public void fetchMoreImages(SearchResult searchResult) {
+    // Ignore request if there is another API request pending.
+    if (searchCallback != null) {
+      return;
+    }
+    // Show progress bar in ActionBar.
+    searchProgressBar.setVisibility(View.VISIBLE);
+    // Request search result from API client.
+    searchCallback = new SearchResultCallback(searchResult);
+    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
+  }
+
   /**
    * Set up the action bar SearchView and its event handlers.
    *
@@ -205,8 +343,13 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     }
 
     // Set up service list spinner.
-    serviceSpinner = (Spinner) toolBar.findViewById(R.id.spinner_service);
-    ServiceDropdownAdapter serviceDropdownAdapter = new ServiceDropdownAdapter(this);
+    Spinner serviceSpinner = (Spinner) toolBar.findViewById(R.id.spinner_service);
+    ServiceDropdownAdapter serviceDropdownAdapter = new ServiceDropdownAdapter(
+        this,
+        sharedPreferences,
+        getSupportLoaderManager(),
+        serviceSpinner,
+        this);
     serviceSpinner.setAdapter(serviceDropdownAdapter);
     serviceSpinner.setOnItemSelectedListener(serviceDropdownAdapter);
   }
@@ -273,42 +416,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
   }
 
   /**
-   * Called when a new Search API is selected by the user from the action bar dropdown.
-   *
-   * @param settings         Selected {@link SearchClient.Settings} object.
-   * @param expandActionView Should the SearchView action view be expanded?
-   */
-  protected void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView) {
-    if (settings == null) {
-      // The SearchClient setting database is empty.
-      return;
-    }
-
-    // Show search action bar icon (if not already visible).
-    if (searchMenuItem != null) {
-      searchMenuItem.setVisible(true);
-    }
-    // Expand the SearchView when an API is selected manually by the user.
-    // (and not automatically restored from previous state when the app is first launched)
-    if (searchClientSettings != null && searchMenuItem != null && expandActionView) {
-      MenuItemCompat.expandActionView(searchMenuItem);
-    }
-
-    searchClientSettings = settings;
-
-    // If a SearchClient wasn't included in the Intent that started this activity, create one now and search for the default query.
-    // Only do this if SearchSearch filter is enabled.
-    if (searchClient == null && searchResultGridFragment.getSearchResult() == null) {
-      searchClient = settings.createSearchClient(this);
-      if (shouldLoadDefaultQuery()) {
-        doSearch(searchClient.getDefaultQuery());
-      } else if (searchMenuItem != null) {
-        MenuItemCompat.expandActionView(searchMenuItem);
-      }
-    }
-  }
-
-  /**
    * Only load the default query on app launch if the SafeSearch filter is enabled.
    *
    * @return True if default query search results should be shown on first launch.
@@ -317,123 +424,6 @@ public class SearchActivity extends AppCompatActivity implements SearchResultGri
     String filters = sharedPreferences.getString(getString(R.string.preference_safeSearch_key), "");
 
     return !(filters.contains("q") || filters.contains("x"));
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    // Restore state from savedInstanceState.
-    super.onCreate(savedInstanceState);
-
-    // Get shared preferences.
-    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-    // Inflate views.
-    setContentView(R.layout.activity_search);
-    searchProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-    // Get search result grid fragment from fragment manager.
-    searchResultGridFragment = (SearchResultGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_searchResultGrid);
-
-    SearchClient.Settings searchClientSettings;
-    // Try restoring the SearchClient from savedInstanceState
-    if (savedInstanceState != null) {
-      if (this.searchClient == null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_CLIENT_SETTINGS)) {
-        searchClientSettings = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
-        if (searchClientSettings != null) {
-          searchClient = searchClientSettings.createSearchClient(this);
-        }
-      }
-    } else {
-      Intent intent = getIntent();
-      // If the activity was started from a Search intent, create the SearchClient object and submit search.
-      if (intent != null && intent.getAction().equals(Intent.ACTION_SEARCH) && searchResultGridFragment.getSearchResult() == null) {
-        searchClientSettings = intent.getParcelableExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS);
-        searchClient = searchClientSettings.createSearchClient(this);
-        doSearch(intent.getStringExtra(BUNDLE_ID_SEARCH_QUERY));
-      }
-      showDonationDialog();
-    }
-
-    // Set up the dropdown API server picker.
-    setUpActionBar();
-  }
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-
-    // Cancel pending API callbacks.
-    if (searchCallback != null) {
-      searchCallback.cancel();
-    }
-  }
-
-  @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    super.onRestoreInstanceState(savedInstanceState);
-    // Make saved instance state available to other methods.
-    this.savedInstanceState = savedInstanceState;
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    // Preserve SearchView state.
-    if (searchView != null) {
-      outState.putCharSequence(BUNDLE_ID_SEARCH_QUERY, searchView.getQuery());
-      outState.putBoolean(BUNDLE_ID_SEARCH_VIEW_IS_EXPANDED, MenuItemCompat.isActionViewExpanded(searchMenuItem));
-      outState.putBoolean(BUNDLE_ID_SEARCH_VIEW_IS_FOCUSED, searchView.isFocused());
-      if (searchClient != null) {
-        outState.putParcelable(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClient.getSettings());
-      }
-    }
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.search, menu);
-    // Set up action bar search view.
-    setUpSearchView(menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    switch (item.getItemId()) {
-      case R.id.action_settings:
-        startActivity(new Intent(SearchActivity.this, SettingsActivity.class));
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
-  }
-
-  @Override
-  public void onImageSelected(Image image, int position) {
-    // Open ImageViewerActivity.
-    final Intent intent = new Intent(SearchActivity.this, ImageViewerActivity.class);
-    intent.putExtra(BUNDLE_ID_SEARCH_RESULT,
-        searchResultGridFragment.getSearchResult().getSearchResultForPage(image.searchPage));
-    intent.putExtra(BUNDLE_ID_IMAGE_INDEX, image.searchPagePosition);
-    intent.putExtra(BUNDLE_ID_SEARCH_CLIENT_SETTINGS, searchClient.getSettings());
-    startActivity(intent);
-  }
-
-  @Override
-  public void fetchMoreImages(SearchResult searchResult) {
-    // Ignore request if there is another API request pending.
-    if (searchCallback != null) {
-      return;
-    }
-    // Show progress bar in ActionBar.
-    searchProgressBar.setVisibility(View.VISIBLE);
-    // Request search result from API client.
-    searchCallback = new SearchResultCallback(searchResult);
-    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
   }
 
   /** Callback waiting for a SearchResult received on a background thread from the Search API. */

@@ -19,35 +19,29 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
 import io.github.tjg1.library.norilib.Tag;
 import io.github.tjg1.library.norilib.clients.SearchClient;
+import io.github.tjg1.nori.adapter.ImagePagerAdapter;
 import io.github.tjg1.nori.fragment.ImageFragment;
-import io.github.tjg1.nori.fragment.RemoteImageFragment;
-import io.github.tjg1.nori.fragment.VideoPlayerFragment;
 import io.github.tjg1.nori.view.ImageViewerPager;
 
 /** Activity used to display full-screen images. */
 public class ImageViewerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
-    ImageFragment.ImageFragmentListener {
+    ImageFragment.ImageFragmentListener, ImagePagerAdapter.Listener {
   /** Identifier used to keep the displayed {@link io.github.tjg1.library.norilib.SearchResult} in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
   /** Identifier used to keep the position of the selected {@link io.github.tjg1.library.norilib.Image} in {@link #onSaveInstanceState(android.os.Bundle)}. */
@@ -80,10 +74,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   private String queuedDownloadRequestUrl;
   /** True if the {@link AppBarLayout} is currently collapsed. */
   private boolean appBarCollapsed = false;
-
-  public SearchResult getSearchResult() {
-    return searchResult;
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +129,7 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     }
 
     // Create and set the image viewer Fragment pager adapter.
-    imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(),this);
+    imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), this);
     viewPager = (ImageViewerPager) findViewById(R.id.image_pager);
     viewPager.setAdapter(imagePagerAdapter);
     viewPager.addOnPageChangeListener(this);
@@ -182,41 +172,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     }
   }
 
-  /**
-   * Set the activity title to contain the currently displayed image's metadata.
-   *
-   * @param image Image to get the metadata from.
-   */
-  private void setTitle(Image image) {
-    String title = String.format(getString(R.string.activity_image_viewer_titleFormat),
-        image.id, Tag.stringFromArray(image.tags));
-
-    // Truncate string with ellipsis at the end, if needed.
-    if (title.length() > getResources().getInteger(R.integer.activity_image_viewer_titleMaxLength)) {
-      title = title.substring(0, getResources().getInteger(R.integer.activity_image_viewer_titleMaxLength)) + "…";
-    }
-
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      getSupportActionBar().setTitle(title);
-    }
-  }
-
-  /**
-   * Fetch images from the next page of the {@link io.github.tjg1.library.norilib.SearchResult}, if available.
-   */
-  private void fetchMoreImages() {
-    // Ignore request if there is another API request pending.
-    if (searchCallback != null) {
-      return;
-    }
-    // Show the indeterminate progress bar in the action bar.
-    searchProgressBar.setVisibility(View.VISIBLE);
-    // Request search result from API client.
-    searchCallback = new InfiniteScrollingSearchCallback(searchResult);
-    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
-  }
-
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
@@ -252,14 +207,27 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     // Do nothing.
   }
 
-  public void toggleActionBar() {
-    // Toggle the action bar and UI dim.
-    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
-    if (appBarCollapsed) {
-      appBarLayout.setExpanded(true, true);
-    } else {
-      appBarLayout.setExpanded(false, true);
+  @Override
+  public void onViewTap(View view, float x, float y) {
+    toggleActionBar();
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE && grantResults.length != 0) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED && queuedDownloadRequestUrl != null) {
+        getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
+        queuedDownloadRequestUrl = null;
+      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+        Snackbar.make(findViewById(R.id.root), R.string.toast_imageDownloadPermissionDenied,
+            Snackbar.LENGTH_LONG).show();
+      }
     }
+  }
+
+  @Override
+  public SearchResult getSearchResult() {
+    return searchResult;
   }
 
   @Override
@@ -278,21 +246,48 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     }
   }
 
-  @Override
-  public void onViewTap(View view, float x, float y) {
-    toggleActionBar();
+  /**
+   * Set the activity title to contain the currently displayed image's metadata.
+   *
+   * @param image Image to get the metadata from.
+   */
+  private void setTitle(Image image) {
+    String title = String.format(getString(R.string.activity_image_viewer_titleFormat),
+        image.id, Tag.stringFromArray(image.tags));
+
+    // Truncate string with ellipsis at the end, if needed.
+    if (title.length() > getResources().getInteger(R.integer.activity_image_viewer_titleMaxLength)) {
+      title = title.substring(0, getResources().getInteger(R.integer.activity_image_viewer_titleMaxLength)) + "…";
+    }
+
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      getSupportActionBar().setTitle(title);
+    }
   }
 
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE && grantResults.length != 0) {
-      if (grantResults[0] == PackageManager.PERMISSION_GRANTED && queuedDownloadRequestUrl != null) {
-        getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
-        queuedDownloadRequestUrl = null;
-      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-        Snackbar.make(findViewById(R.id.root), R.string.toast_imageDownloadPermissionDenied,
-            Snackbar.LENGTH_LONG).show();
-      }
+  /**
+   * Fetch images from the next page of the {@link io.github.tjg1.library.norilib.SearchResult}, if available.
+   */
+  private void fetchMoreImages() {
+    // Ignore request if there is another API request pending.
+    if (searchCallback != null) {
+      return;
+    }
+    // Show the indeterminate progress bar in the action bar.
+    searchProgressBar.setVisibility(View.VISIBLE);
+    // Request search result from API client.
+    searchCallback = new InfiniteScrollingSearchCallback(searchResult);
+    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
+  }
+
+  private void toggleActionBar() {
+    // Toggle the action bar and UI dim.
+    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+    if (appBarCollapsed) {
+      appBarLayout.setExpanded(true, true);
+    } else {
+      appBarLayout.setExpanded(false, true);
     }
   }
 
@@ -393,6 +388,5 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       }
     }
   }
-
 
 }

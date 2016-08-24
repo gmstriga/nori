@@ -13,32 +13,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.List;
 
 import io.github.tjg1.library.norilib.clients.SearchClient;
 import io.github.tjg1.library.norilib.service.ServiceTypeDetectionService;
+import io.github.tjg1.nori.adapter.APISettingsListAdapter;
 import io.github.tjg1.nori.database.APISettingsDatabase;
 import io.github.tjg1.nori.fragment.EditAPISettingDialogFragment;
 
 /** Adds, edits or removes API settings from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener {
+public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener, APISettingsListAdapter.Listener {
   /** Intent action used to indicate that the add service dialog should be displayed, when the Activity is created. */
   public static final String ACTION_CREATE_SERVICE = "CREATE_SERVICE";
   /** A new row will be inserted into the database when this row ID value is passed to {@link #editService(long, String, String, String, String)}. */
@@ -63,7 +52,7 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
 
     // Set up the ListView adapter and OnItemClickListener.
     ListView listView = (ListView) findViewById(android.R.id.list);
-    ListAdapter listAdapter = new ListAdapter(this);
+    APISettingsListAdapter listAdapter = new APISettingsListAdapter(this, getSupportLoaderManager(), this);
     listView.setOnItemClickListener(listAdapter);
     listView.setAdapter(listAdapter);
 
@@ -79,22 +68,6 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
     // Inflate menu XML.
     getMenuInflater().inflate(R.menu.api_settings, menu);
     return true;
-  }
-
-  /**
-   * Remove setting from the {@link io.github.tjg1.nori.database.APISettingsDatabase}.
-   *
-   * @param id Database row ID.
-   */
-  protected void removeSetting(final long id) {
-    // Remove setting from database on a background thread.
-    // This is so database I/O doesn't block the UI thread.
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        new APISettingsDatabase(APISettingsActivity.this).delete(id);
-      }
-    }).start();
   }
 
   @Override
@@ -113,6 +86,25 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
         // Perform default action.
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  @Override
+  public void onServiceSelected(long serviceId, SearchClient.Settings serviceSettings) {
+    // Show dialog to edit the service settings object.
+    EditAPISettingDialogFragment.newInstance(serviceId, serviceSettings)
+        .show(getSupportFragmentManager(), "EditAPISettingsDialogFragment");
+  }
+
+  @Override
+  public void onServiceRemoved(final long serviceId) {
+    // Remove setting from database on a background thread.
+    // This is so database I/O doesn't block the UI thread.
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        new APISettingsDatabase(APISettingsActivity.this).delete(serviceId);
+      }
+    }).start();
   }
 
   @Override

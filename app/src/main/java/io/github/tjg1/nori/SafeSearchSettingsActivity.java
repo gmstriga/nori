@@ -16,26 +16,24 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.tjg1.nori.adapter.SafeSearchListAdapter;
 import io.github.tjg1.nori.util.StringUtils;
 
-public class SafeSearchSettingsActivity extends AppCompatActivity {
+public class SafeSearchSettingsActivity extends AppCompatActivity
+    implements SafeSearchListAdapter.Listener {
 
   /** Default {@link android.content.SharedPreferences} object. */
   private SharedPreferences sharedPreferences;
@@ -47,62 +45,6 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
   private String[] safeSearchValues;
   /** Current values of the preference_safeSearch preference. */
   private List<String> safeSearchCurrentSetting;
-
-  /** Get the default {@link android.content.SharedPreferences} object. */
-  @NonNull
-  private SharedPreferences getSharedPreferences() {
-    if (sharedPreferences == null) {
-      sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-    }
-    return sharedPreferences;
-  }
-
-  /** Get the human-readable labels for each SafeSearch setting. */
-  @NonNull
-  protected String[] getSafeSearchEntries() {
-    if (safeSearchEntries == null) {
-      safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
-    }
-    return safeSearchEntries;
-  }
-
-  /** Get the human-readable summaries for each SafeSearch setting. */
-  @NonNull
-  protected String[] getSafeSearchSummaries() {
-    if (safeSearchSummaries == null) {
-      safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
-    }
-    return safeSearchSummaries;
-  }
-
-  /** Get values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
-  @NonNull
-  protected String[] getSafeSearchValues() {
-    if (safeSearchValues == null) {
-      safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
-    }
-    return safeSearchValues;
-  }
-
-  /** Get current values of the preference_safeSearch preference. */
-  @NonNull
-  protected List<String> getSafeSearchCurrentSetting() {
-    if (safeSearchCurrentSetting == null) {
-      safeSearchCurrentSetting = new ArrayList<>(4);
-
-      String safeSearchPreference = getSharedPreferences()
-          .getString(getString(R.string.preference_safeSearch_key), null);
-
-      if (safeSearchPreference != null && !TextUtils.isEmpty(safeSearchPreference.trim())) {
-        safeSearchCurrentSetting
-            .addAll(Arrays.asList(safeSearchPreference.trim().split(" ")));
-      } else {
-        safeSearchCurrentSetting.addAll(Arrays.asList(getResources()
-            .getStringArray(R.array.preference_safeSearch_defaultValues)));
-      }
-    }
-    return safeSearchCurrentSetting;
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +72,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
     } else {
       // Set up ListView.
       final ListView listView = (ListView) findViewById(android.R.id.list);
-      listView.setAdapter(new SafeSearchListAdapter(this));
+      listView.setAdapter(new SafeSearchListAdapter(this, this));
       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -165,12 +107,73 @@ public class SafeSearchSettingsActivity extends AppCompatActivity {
     }
   }
 
+  /** Get the human-readable labels for each SafeSearch setting. */
+  @NonNull
+  @Override
+  public String[] getSafeSearchEntries() {
+    if (safeSearchEntries == null) {
+      safeSearchEntries = getResources().getStringArray(R.array.preference_safeSearch_entries);
+    }
+    return safeSearchEntries;
+  }
+
+  /** Get the human-readable summaries for each SafeSearch setting. */
+  @NonNull
+  @Override
+  public String[] getSafeSearchSummaries() {
+    if (safeSearchSummaries == null) {
+      safeSearchSummaries = getResources().getStringArray(R.array.preference_safeSearch_summaries);
+    }
+    return safeSearchSummaries;
+  }
+
+  /** Get values for each SafeSearch setting stored in {@link android.content.SharedPreferences} */
+  @NonNull
+  @Override
+  public String[] getSafeSearchValues() {
+    if (safeSearchValues == null) {
+      safeSearchValues = getResources().getStringArray(R.array.preference_safeSearch_values);
+    }
+    return safeSearchValues;
+  }
+
+  /** Get current values of the preference_safeSearch preference. */
+  @NonNull
+  @Override
+  public List<String> getSafeSearchCurrentSetting() {
+    if (safeSearchCurrentSetting == null) {
+      safeSearchCurrentSetting = new ArrayList<>(4);
+
+      String safeSearchPreference = getSharedPreferences()
+          .getString(getString(R.string.preference_safeSearch_key), null);
+
+      if (safeSearchPreference != null && !TextUtils.isEmpty(safeSearchPreference.trim())) {
+        safeSearchCurrentSetting
+            .addAll(Arrays.asList(safeSearchPreference.trim().split(" ")));
+      } else {
+        safeSearchCurrentSetting.addAll(Arrays.asList(getResources()
+            .getStringArray(R.array.preference_safeSearch_defaultValues)));
+      }
+    }
+    return safeSearchCurrentSetting;
+  }
+
   /** Update the value of the preference_safeSearch shared preference. */
-  protected void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting) {
+  @Override
+  public void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting) {
     getSharedPreferences().edit()
         .putString(getString(R.string.preference_safeSearch_key),
             StringUtils.mergeStringArray(safeSearchCurrentSetting, " ").trim())
         .apply();
+  }
+
+  /** Get the default {@link android.content.SharedPreferences} object. */
+  @NonNull
+  private SharedPreferences getSharedPreferences() {
+    if (sharedPreferences == null) {
+      sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+    return sharedPreferences;
   }
 
   /** {@link android.widget.CompoundButton.OnCheckedChangeListener} for the Google version. */
