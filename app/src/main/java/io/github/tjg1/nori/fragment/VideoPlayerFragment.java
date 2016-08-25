@@ -30,8 +30,6 @@ public class VideoPlayerFragment extends ImageFragment {
 
   /** VideoView used to play the video. */
   private VideoView videoView;
-  /** True if this fragment is the currently active fragment (viewed by the user). */
-  private boolean isActive = false;
   /** True if the video player already has a video loaded. */
   private boolean isPrepared = false;
 
@@ -90,6 +88,27 @@ public class VideoPlayerFragment extends ImageFragment {
     return view;
   }
 
+  /**
+   * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
+   * (shown to the user).
+   */
+  @Override
+  public void onShown() {
+    super.onShown();
+    if (videoView != null) {
+      preparePlayerAndStartPlayback();
+    }
+  }
+
+  /** Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden). */
+  @Override
+  public void onHidden() {
+    super.onHidden();
+    if (videoView != null) {
+      videoView.pause();
+    }
+  }
+
   /** Used to pass the media URL to the {@link VideoView} to start downloading. */
   private void preparePlayerAndStartPlayback() {
     if (VideoPlayerFragment.this.isPrepared) {
@@ -127,27 +146,6 @@ public class VideoPlayerFragment extends ImageFragment {
           mediaPlayer.start();
         }
       });
-    }
-  }
-
-  /**
-   * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
-   * (shown to the user).
-   */
-  @Override
-  public void onShown() {
-    this.isActive = true;
-    if (videoView != null) {
-      preparePlayerAndStartPlayback();
-    }
-  }
-
-  /** Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden). */
-  @Override
-  public void onHidden() {
-    this.isActive = false;
-    if (videoView != null) {
-      videoView.pause();
     }
   }
 }

@@ -48,6 +48,8 @@ public abstract class ImageFragment extends Fragment {
   protected Image image;
   /** Class used for communication with the class that contains this fragment. */
   protected ImageFragmentListener listener;
+  /** True if this fragment is the currently active fragment (viewed by the user). */
+  protected boolean isActive = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -123,12 +125,16 @@ public abstract class ImageFragment extends Fragment {
    * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
    * (shown to the user).
    */
-  public abstract void onShown();
+  public void onShown() {
+    this.isActive = true;
+  }
 
   /**
    * Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden).
    */
-  public abstract void onHidden();
+  public void onHidden() {
+    this.isActive = false;
+  }
 
   /**
    * Evaluate the current network conditions using the {@link io.github.tjg1.nori.util.NetworkUtils} class to decide

@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.AnimateGifMode;
 
@@ -26,6 +28,9 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * and the Picasso HTTP image loading library to display images.
  */
 public class RemoteImageFragment extends ImageFragment {
+  /** Progress bar used to display image fetch progress. */
+  private ProgressBar progressBar;
+  /** True, when the image is done loading. */
 
   /** Required public empty constructor. */
   public RemoteImageFragment() {
@@ -64,29 +69,48 @@ public class RemoteImageFragment extends ImageFragment {
       }
     });
 
+    // Initialize the ProgressBar.
+    progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+    if (isActive) {
+      progressBar.setVisibility(View.VISIBLE);
+    }
+
     // Load image into the view.
     String imageUrl = shouldLoadImageSamples() ? image.sampleUrl : image.fileUrl;
     Ion.with(this)
         .load(imageUrl)
+        .progressBar(progressBar)
         .userAgent("nori/" + BuildConfig.VERSION_NAME)
         .withBitmap()
         .animateGif(AnimateGifMode.ANIMATE)
         .deepZoom()
-        .intoImageView(photoView);
-
-    // TODO: Progress bar.
+        .intoImageView(photoView)
+        .setCallback(new FutureCallback<ImageView>() {
+          @Override
+          public void onCompleted(Exception e, ImageView result) {
+            progressBar.setProgress(100); // for cached images.
+            progressBar.setVisibility(View.GONE);
+          }
+        });
 
     return view;
   }
 
   @Override
   public void onShown() {
-    // Do nothing.
+    super.onShown();
+
+    if (progressBar != null && progressBar.getProgress() < 100) {
+      progressBar.setVisibility(View.VISIBLE);
+    }
   }
 
-  /** Called by the FragmentStatePagerAdapter when this fragment is scrolled away (hidden). */
   @Override
   public void onHidden() {
-    // Do nothing.
+    super.onHidden();
+
+    if (progressBar != null) {
+      progressBar.setVisibility(View.GONE);
+    }
   }
 }

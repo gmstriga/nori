@@ -5,15 +5,23 @@
   ~ License: GNU GPLv2
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:orientation="vertical">
+              android:layout_height="match_parent">
 
   <uk.co.senab.photoview.PhotoView
     android:id="@+id/imageView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
 
-</LinearLayout>
+  <ProgressBar
+    android:id="@+id/progressBar"
+    style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_marginBottom="-8dp"
+    android:indeterminate="false"
+    android:visibility="gone"/>
+
+</FrameLayout>
