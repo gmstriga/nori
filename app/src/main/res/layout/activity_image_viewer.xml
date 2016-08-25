@@ -46,8 +46,8 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="@color/image_viewer_actionbarBackground"
-      app:layout_scrollFlags="scroll"
-      app:theme="@style/ImageViewerActionBar">
+      android:theme="@style/ImageViewerActionBar"
+      app:layout_scrollFlags="scroll">
 
     </android.support.v7.widget.Toolbar>
 
