@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.AnimateGifMode;
@@ -31,7 +32,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 public class RemoteImageFragment extends ImageFragment {
   /** Progress bar used to display image fetch progress. */
   private ProgressBar progressBar;
-  /** True, when the image is done loading. */
+  /** PhotoView used to show images. */
+  private PhotoView photoView;
+  /** TextView used to show image loading errors. */
+  private TextView errorTextView;
+  /** Image loading Future. */
+  private Future<?> imageLoadingFuture;
 
   /** Required public empty constructor. */
   public RemoteImageFragment() {
@@ -58,49 +64,26 @@ public class RemoteImageFragment extends ImageFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_remote_image, container, false);
-    final TextView textView = (TextView) view.findViewById(R.id.errorText);
+    errorTextView = (TextView) view.findViewById(R.id.errorText);
 
     // Initialize the ProgressBar.
-    progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-    if (isActive) {
-      progressBar.setVisibility(View.VISIBLE);
-    }
+    this.progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
     // Initialize the ImageView widget.
-    PhotoView photoView = (PhotoView) view.findViewById(R.id.imageView);
-    photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-    photoView.setMaximumScale(4);
-    photoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+    this.photoView = (PhotoView) view.findViewById(R.id.imageView);
+    this.photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    this.photoView.setMaximumScale(4);
+    this.photoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
       @Override
       public void onViewTap(View view, float x, float y) {
         listener.onViewTap(view, x, y);
       }
     });
 
-
-
-    // Load image into the view.
-    String imageUrl = shouldLoadImageSamples() ? image.sampleUrl : image.fileUrl;
-    Ion.with(this)
-        .load(imageUrl)
-        .progressBar(progressBar)
-        .userAgent("nori/" + BuildConfig.VERSION_NAME)
-        .withBitmap()
-        .animateGif(AnimateGifMode.ANIMATE)
-        .deepZoom()
-        .intoImageView(photoView)
-        .setCallback(new FutureCallback<ImageView>() {
-          @Override
-          public void onCompleted(Exception e, ImageView result) {
-            if (e != null) {
-              textView.setVisibility(View.VISIBLE);
-              textView.setText(e.getLocalizedMessage());
-            }
-
-            progressBar.setProgress(100); // for cached images.
-            progressBar.setVisibility(View.GONE);
-          }
-        });
+    // Defer loading GIF images until the fragment is active.
+    if (!"gif".equals(image.getFileExtension()) || this.isActive) {
+      loadImage();
+    }
 
     return view;
   }
@@ -109,7 +92,10 @@ public class RemoteImageFragment extends ImageFragment {
   public void onShown() {
     super.onShown();
 
-    if (progressBar != null && progressBar.getProgress() < 100) {
+    // Start loading the image, if it's not already loading.
+    if (photoView != null && imageLoadingFuture == null) {
+      loadImage();
+    } else if (progressBar != null && progressBar.getProgress() < 100) {
       progressBar.setVisibility(View.VISIBLE);
     }
   }
@@ -121,5 +107,35 @@ public class RemoteImageFragment extends ImageFragment {
     if (progressBar != null) {
       progressBar.setVisibility(View.GONE);
     }
+  }
+
+  /** Load remote image into the ImageView. */
+  private void loadImage() {
+    // Show the progress bar.
+    if (this.isActive) {
+      progressBar.setVisibility(View.VISIBLE);
+    }
+
+    // Load image into the view.
+    String imageUrl = shouldLoadImageSamples() ? image.sampleUrl : image.fileUrl;
+    imageLoadingFuture = Ion.with(this)
+        .load(imageUrl)
+        .progressBar(progressBar)
+        .userAgent("nori/" + BuildConfig.VERSION_NAME)
+        .withBitmap()
+        .animateGif(AnimateGifMode.ANIMATE)
+        .deepZoom()
+        .intoImageView(photoView)
+        .setCallback(new FutureCallback<ImageView>() {
+          @Override
+          public void onCompleted(Exception e, ImageView result) {
+            if (e != null) {
+              errorTextView.setVisibility(View.VISIBLE);
+              errorTextView.setText(e.getLocalizedMessage());
+            }
+            progressBar.setProgress(100); // for cached images.
+            progressBar.setVisibility(View.GONE);
+          }
+        });
   }
 }
