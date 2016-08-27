@@ -31,12 +31,21 @@ import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.database.APISettingsDatabase;
 
 /** Adapter populating the Search API picker in the ActionBar. */
-public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemSelectedListener {
+public class ServiceDropdownAdapter extends BaseAdapter
+    implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>,
+    AdapterView.OnItemSelectedListener {
+
+  //region Loader IDs
   /** Search client settings loader ID. */
   private static final int LOADER_ID_API_SETTINGS = 0x00;
+  //endregion
+
+  //region SharedPreferences keys
   /** Shared preference key used to store the last active {@link io.github.tjg1.library.norilib.clients.SearchClient}. */
   private static final String SHARED_PREFERENCE_LAST_SELECTED_INDEX = "io.github.tjg1.nori.SearchActivity.lastSelectedServiceIndex";
+  //endregion
 
+  //region Instance fields
   /** Context this adapter is used in. */
   private final Context context;
   /** Shared preferences of the application. */
@@ -50,7 +59,9 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
   private List<Pair<Integer, SearchClient.Settings>> settingsList;
   /** ID of the last selected item. */
   private long lastSelectedItem;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new adapter that populates a {@link Spinner} with a service selection dropdown.
    *
@@ -75,7 +86,9 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     // Initialize the search client settings database loader.
     loaderManager.initLoader(LOADER_ID_API_SETTINGS, null, this);
   }
+  //endregion
 
+  //region BaseAdapter methods
   @Override
   public int getCount() {
     if (settingsList == null) {
@@ -123,7 +136,9 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
 
     return view;
   }
+  //endregion
 
+  //region LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>> methods
   @Override
   public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
     if (id == LOADER_ID_API_SETTINGS) {
@@ -156,7 +171,9 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     settingsList = null;
     notifyDataSetInvalidated();
   }
+  //endregion
 
+  //region AdapterView.OnItemSelectedListener
   @Override
   public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
     // Save last active item to SharedPreferences.
@@ -169,6 +186,13 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     }
   }
 
+  @Override
+  public void onNothingSelected(AdapterView<?> adapterView) {
+    // Do nothing.
+  }
+  //endregion
+
+  //region Get adapter item position by SQLite database row ID
   /**
    * Get position of the item with given database row ID.
    *
@@ -183,12 +207,9 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
     }
     return 0;
   }
+  //endregion
 
-  @Override
-  public void onNothingSelected(AdapterView<?> adapterView) {
-    // Do nothing.
-  }
-
+  //region Listener interface
   /** Listener used to interact with the {@link android.app.Activity} using this adapter. */
   public interface Listener {
 
@@ -200,4 +221,5 @@ public class ServiceDropdownAdapter extends BaseAdapter implements LoaderManager
      */
     public void onSearchAPISelected(SearchClient.Settings settings, boolean expandActionView);
   }
+  //endregion
 }

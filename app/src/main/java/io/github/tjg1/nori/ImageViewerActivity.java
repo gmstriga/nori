@@ -42,6 +42,8 @@ import io.github.tjg1.nori.view.ImageViewerPager;
 /** Activity used to display full-screen images. */
 public class ImageViewerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
     ImageFragment.ImageFragmentListener, ImagePagerAdapter.Listener {
+
+  //region Bundle IDs
   /** Identifier used to keep the displayed {@link io.github.tjg1.library.norilib.SearchResult} in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
   /** Identifier used to keep the position of the selected {@link io.github.tjg1.library.norilib.Image} in {@link #onSaveInstanceState(android.os.Bundle)}. */
@@ -50,10 +52,16 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   private static final String BUNDLE_ID_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
   /** Identifier used to keep a queued {@link android.app.DownloadManager.Request} while we wait for user to grant permissions. */
   private static final String BUNDLE_ID_QUEUED_DOWNLOAD_REQUEST = "io.github.tjg1.nori.QueuedDownloadImageRequest";
+  //endregion
+
+  //region Constants
   /** Identifier used to ask permission to download an image to the SD card. */
   private static final int PERMISSION_REQUEST_DOWNLOAD_IMAGE = 0x00;
   /** Fetch more images when the displayed image is this far from the last {@link io.github.tjg1.library.norilib.Image} in the current {@link io.github.tjg1.library.norilib.SearchResult}. */
   private static final int INFINITE_SCROLLING_THRESHOLD = 3;
+  //endregion
+
+  //region Instance fields
   /** Default shared preferences. */
   private SharedPreferences sharedPreferences;
   /** View pager used to display the images. */
@@ -74,7 +82,9 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   private String queuedDownloadRequestUrl;
   /** True if the {@link AppBarLayout} is currently collapsed. */
   private boolean appBarCollapsed = false;
+  //endregion
 
+  //region Activity lifecycle
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // Restore state from savedInstanceState.
@@ -184,7 +194,24 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       outState.putString(BUNDLE_ID_QUEUED_DOWNLOAD_REQUEST, queuedDownloadRequestUrl);
     }
   }
+  //endregion
 
+  //region Marshmallow permissions
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE && grantResults.length != 0) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED && queuedDownloadRequestUrl != null) {
+        getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
+        queuedDownloadRequestUrl = null;
+      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+        Snackbar.make(findViewById(R.id.root), R.string.toast_imageDownloadPermissionDenied,
+            Snackbar.LENGTH_LONG).show();
+      }
+    }
+  }
+  //endregion
+
+  //region ViewPager.OnPageChangeListener methods
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     // Do nothing.
@@ -206,23 +233,12 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   public void onPageScrollStateChanged(int state) {
     // Do nothing.
   }
+  //endregion
 
+  //region ImageFragment.ImageFragmentListener methods
   @Override
   public void onViewTap(View view, float x, float y) {
     toggleActionBar();
-  }
-
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == PERMISSION_REQUEST_DOWNLOAD_IMAGE && grantResults.length != 0) {
-      if (grantResults[0] == PackageManager.PERMISSION_GRANTED && queuedDownloadRequestUrl != null) {
-        getDownloadManager().enqueue(getImageDownloadRequest(queuedDownloadRequestUrl));
-        queuedDownloadRequestUrl = null;
-      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-        Snackbar.make(findViewById(R.id.root), R.string.toast_imageDownloadPermissionDenied,
-            Snackbar.LENGTH_LONG).show();
-      }
-    }
   }
 
   @Override
@@ -245,7 +261,9 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_DOWNLOAD_IMAGE);
     }
   }
+  //endregion
 
+  //region Instance methods (UI)
   /**
    * Set the activity title to contain the currently displayed image's metadata.
    *
@@ -266,21 +284,6 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
     }
   }
 
-  /**
-   * Fetch images from the next page of the {@link io.github.tjg1.library.norilib.SearchResult}, if available.
-   */
-  private void fetchMoreImages() {
-    // Ignore request if there is another API request pending.
-    if (searchCallback != null) {
-      return;
-    }
-    // Show the indeterminate progress bar in the action bar.
-    searchProgressBar.setVisibility(View.VISIBLE);
-    // Request search result from API client.
-    searchCallback = new InfiniteScrollingSearchCallback(searchResult);
-    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
-  }
-
   private void toggleActionBar() {
     // Toggle the action bar and UI dim.
     AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -290,7 +293,9 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       appBarLayout.setExpanded(false, true);
     }
   }
+  //endregion
 
+  //region Downloading images
   /**
    * Create a new {@link DownloadManager} or re-use the existing one.
    *
@@ -325,7 +330,23 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
 
     return request;
   }
+  //endregion
 
+  //region Infinite scrolling
+  /**
+   * Fetch images from the next page of the {@link io.github.tjg1.library.norilib.SearchResult}, if available.
+   */
+  private void fetchMoreImages() {
+    // Ignore request if there is another API request pending.
+    if (searchCallback != null) {
+      return;
+    }
+    // Show the indeterminate progress bar in the action bar.
+    searchProgressBar.setVisibility(View.VISIBLE);
+    // Request search result from API client.
+    searchCallback = new InfiniteScrollingSearchCallback(searchResult);
+    searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
+  }
 
   /** Callback waiting to receive more images for infinite scrolling. */
   private class InfiniteScrollingSearchCallback implements SearchClient.SearchCallback {
@@ -388,5 +409,5 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
       }
     }
   }
-
+  //endregion
 }

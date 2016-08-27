@@ -25,6 +25,8 @@ import io.github.tjg1.nori.R;
  * It also stores and suggests queries searched  previously by the user that are not part of the Safebooru data set.
  */
 public class SearchSuggestionDatabase extends SQLiteOpenHelper {
+
+  //region SQLite Constants
   /** Search suggestion table name. */
   public static final String TABLE_NAME = "search_suggestions";
   /** Unique ID (primary key) column. */
@@ -41,14 +43,54 @@ public class SearchSuggestionDatabase extends SQLiteOpenHelper {
   private static final String RESOURCE_ICON_BUILT_IN = Integer.toString(R.drawable.ic_search_suggestion_builtin);
   /** Database schema version. */
   private static final int SCHEMA_VERSION = 1;
+  //endregion
+
+  //region Instance fields (Context)
   /** Android activity context. */
   private final Context context;
+  //endregion
 
+  //region Constructors
   public SearchSuggestionDatabase(Context context) {
     super(context, DATABASE_NAME, null, SCHEMA_VERSION);
     this.context = context;
   }
+  //endregion
 
+  //region SQLiteOpenHelper methods
+  @Override
+  public void onCreate(SQLiteDatabase db) {
+    // Execute query to create the table schema.
+    db.execSQL(String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL UNIQUE ON CONFLICT IGNORE, %s TEXT);",
+        TABLE_NAME, COLUMN_ID, COLUMN_NAME, COLUMN_ICON));
+
+    try {
+      // Pre-populate the database with the Safebooru.org Top 1000 tags data set.
+      // Open the file containing the tag data set from app assets.
+      BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open("tags.txt")));
+      String line;
+
+      // Insert each line into the database.
+      while ((line = in.readLine()) != null) {
+        db.execSQL(String.format(Locale.US, "INSERT INTO %s (%s, %s) VALUES (?, ?);",
+            TABLE_NAME, COLUMN_NAME, COLUMN_ICON),
+            new String[]{line, RESOURCE_ICON_BUILT_IN});
+      }
+
+      // Close the file.
+      in.close();
+    } catch (IOException ignored) {
+      // Too bad :(
+    }
+  }
+
+  @Override
+  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    // Do nothing.
+  }
+  //endregion
+
+  //region CRUD methods
   /**
    * Insert a new search history item into the search suggestion database.
    *
@@ -94,36 +136,5 @@ public class SearchSuggestionDatabase extends SQLiteOpenHelper {
     db.close();
     return rows;
   }
-
-
-  @Override
-  public void onCreate(SQLiteDatabase db) {
-    // Execute query to create the table schema.
-    db.execSQL(String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL UNIQUE ON CONFLICT IGNORE, %s TEXT);",
-        TABLE_NAME, COLUMN_ID, COLUMN_NAME, COLUMN_ICON));
-
-    try {
-      // Pre-populate the database with the Safebooru.org Top 1000 tags data set.
-      // Open the file containing the tag data set from app assets.
-      BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open("tags.txt")));
-      String line;
-
-      // Insert each line into the database.
-      while ((line = in.readLine()) != null) {
-        db.execSQL(String.format(Locale.US, "INSERT INTO %s (%s, %s) VALUES (?, ?);",
-            TABLE_NAME, COLUMN_NAME, COLUMN_ICON),
-            new String[]{line, RESOURCE_ICON_BUILT_IN});
-      }
-
-      // Close the file.
-      in.close();
-    } catch (IOException ignored) {
-      // Too bad :(
-    }
-  }
-
-  @Override
-  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    // Do nothing.
-  }
+  //endregion
 }

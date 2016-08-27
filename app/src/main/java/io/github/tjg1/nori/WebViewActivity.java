@@ -29,10 +29,20 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 public class WebViewActivity extends AppCompatActivity {
+
+  //region Intent extra keys
   /** Intent extra used to pass the URL to display in the {@link WebView}. */
-  private static final String INTENT_EXTRA_URL = "WebViewActivity.URL";
+  protected static final String INTENT_EXTRA_URL = "WebViewActivity.URL";
   /** Intent extra used to set the title of this {@link android.app.Activity}. */
-  private static final String INTENT_EXTRA_TITLE = "WebViewActivity.TITLE";
+  protected static final String INTENT_EXTRA_TITLE = "WebViewActivity.TITLE";
+  //endregion
+
+  //region Instance fields (Views)
+  /** Progress bar used to display fetch progress. */
+  private ProgressBar mProgressBar;
+  //endregion
+
+  //region Instance fields (WebView clients)
   /** WebView client used to intercept webview events. */
   private final WebViewClient mWebViewClient = new WebViewClient() {
     @Override
@@ -67,8 +77,6 @@ public class WebViewActivity extends AppCompatActivity {
       return shouldOverrideUrlLoading(view, request.getUrl().toString());
     }
   };
-  /** Progress bar used to display fetch progress. */
-  private ProgressBar mProgressBar;
   /** WebView Chrome client used to intercept progress events. */
   private final WebChromeClient mWebChromeClient = new WebChromeClient() {
     @Override
@@ -82,7 +90,9 @@ public class WebViewActivity extends AppCompatActivity {
       }
     }
   };
+  //endregion
 
+  //region Activity lifecycle
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -111,6 +121,19 @@ public class WebViewActivity extends AppCompatActivity {
   }
 
   @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        onBackPressed();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+  //endregion
+
+  //region Activity methods
+  @Override
   public void setSupportActionBar(@Nullable Toolbar toolbar) {
     super.setSupportActionBar(toolbar);
 
@@ -121,18 +144,9 @@ public class WebViewActivity extends AppCompatActivity {
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
+  //endregion
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        onBackPressed();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
-  }
-
+  //region WebView Setup
   /**
    * Sets the default preferences of the {@link WebView} used to display content of this activity.
    *
@@ -148,4 +162,5 @@ public class WebViewActivity extends AppCompatActivity {
 
     return webView;
   }
+  //endregion
 }

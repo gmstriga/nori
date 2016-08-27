@@ -45,41 +45,54 @@ import io.github.tjg1.nori.fragment.SearchResultGridFragment;
 public class SearchActivity extends AppCompatActivity
     implements SearchResultGridFragment.OnSearchResultGridFragmentInteractionListener,
     ServiceDropdownAdapter.Listener {
+
+  //region Bundle IDs
   /** Identifier used to send the active {@link io.github.tjg1.library.norilib.SearchResult} to {@link io.github.tjg1.nori.ImageViewerActivity}. */
   public static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
   /** Identifier used to send the position of the selected {@link io.github.tjg1.library.norilib.Image} to {@link io.github.tjg1.nori.ImageViewerActivity}. */
   public static final String BUNDLE_ID_IMAGE_INDEX = "io.github.tjg1.nori.ImageIndex";
   /** Identifier used to send {@link io.github.tjg1.library.norilib.clients.SearchClient} settings to {@link io.github.tjg1.nori.ImageViewerActivity}. */
   public static final String BUNDLE_ID_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
-  /** Identifier used for the query string to search when starting this activity with an {@link android.content.Intent} */
-  public static final String INTENT_EXTRA_SEARCH_QUERY = "io.github.tjg1.nori.SearchQuery";
-  /** Identifier used to include {@link SearchClient.Settings} objects in search intents. */
-  public static final String INTENT_EXTRA_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
   /** Identifier used to preserve current search query in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_QUERY = "io.github.tjg1.nori.SearchQuery";
   /** Identifier used to preserve iconified/expanded state of the SearchView in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_VIEW_IS_EXPANDED = "io.github.tjg1.nori.SearchView.isExpanded";
   /** Identifier used to preserve search view focused state. */
   private static final String BUNDLE_ID_SEARCH_VIEW_IS_FOCUSED = "io.github.tjg1.nori.SearchView.isFocused";
-  /** Default {@link android.content.SharedPreferences} object. */
-  private SharedPreferences sharedPreferences;
-  /* {@link SearchClient.Settings} object selected from the service dropdown menu. */
-  private SearchClient.Settings searchClientSettings;
-  /** Search API client. */
-  private SearchClient searchClient;
+  //endregion
+
+  //region Intent extra IDs
+  /** Identifier used for the query string to search when starting this activity with an {@link android.content.Intent} */
+  public static final String INTENT_EXTRA_SEARCH_QUERY = "io.github.tjg1.nori.SearchQuery";
+  /** Identifier used to include {@link SearchClient.Settings} objects in search intents. */
+  public static final String INTENT_EXTRA_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
+  //endregion
+
+  //region Instance fields (Views)
   /** Search API activity indicator. */
   private ProgressBar searchProgressBar;
   /** Search view menu item. */
   private MenuItem searchMenuItem;
   /** Action bar search view. */
   private SearchView searchView;
-  /** Search callback currently awaiting a response from the Search API. */
-  private SearchResultCallback searchCallback;
   /** Search result grid fragment shown in this activity. */
   private SearchResultGridFragment searchResultGridFragment;
+  //endregion
+
+  //region Instance fields
+  /** Default {@link android.content.SharedPreferences} object. */
+  private SharedPreferences sharedPreferences;
+  /* {@link SearchClient.Settings} object selected from the service dropdown menu. */
+  private SearchClient.Settings searchClientSettings;
+  /** Search API client. */
+  private SearchClient searchClient;
+  /** Search callback currently awaiting a response from the Search API. */
+  private SearchResultCallback searchCallback;
   /** Bundle used when restoring saved instance state (after screen rotation, app restored from background, etc.) */
   private Bundle savedInstanceState;
+  //endregion
 
+  //region Activity lifecycle
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // Restore state from savedInstanceState.
@@ -172,7 +185,9 @@ public class SearchActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
   }
+  //endregion
 
+  //region ServiceDropdownAdapter.Listener methods (service dropdown)
   /**
    * Called when a new Search API is selected by the user from the action bar dropdown.
    *
@@ -209,7 +224,9 @@ public class SearchActivity extends AppCompatActivity
       }
     }
   }
+  //endregion
 
+  //region SearchResultGridFragment.OnSearchResultGridFragmentInteractionListener methods (ImageViewerActivity, infinite scrolling)
   @Override
   public void onImageSelected(Image image, int position) {
     // Open ImageViewerActivity.
@@ -233,7 +250,9 @@ public class SearchActivity extends AppCompatActivity
     searchCallback = new SearchResultCallback(searchResult);
     searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
   }
+  //endregion
 
+  //region UI Setup
   /**
    * Set up the action bar SearchView and its event handlers.
    *
@@ -353,22 +372,9 @@ public class SearchActivity extends AppCompatActivity
     serviceSpinner.setAdapter(serviceDropdownAdapter);
     serviceSpinner.setOnItemSelectedListener(serviceDropdownAdapter);
   }
+  //endregion
 
-  /**
-   * Request a {@link SearchResult} object to be fetched from the background.
-   *
-   * @param query Query string (a space-separated list of tags).
-   */
-  private void doSearch(String query) {
-    // Show progress bar in ActionBar.
-    if (searchProgressBar != null) {
-      searchProgressBar.setVisibility(View.VISIBLE);
-    }
-    // Request a search result from the API client.
-    searchCallback = new SearchResultCallback();
-    searchClient.search(query, searchCallback);
-  }
-
+  //region Donation Dialog
   /** Show the donation dialog at defined app launch count thresholds. */
   private void showDonationDialog() {
     // Get the number of times the dialog was already shown and current time.
@@ -414,7 +420,26 @@ public class SearchActivity extends AppCompatActivity
           ++donationDialogShownTimes).apply();
     }
   }
+  //endregion
 
+  //region Search
+  /**
+   * Request a {@link SearchResult} object to be fetched from the background.
+   *
+   * @param query Query string (a space-separated list of tags).
+   */
+  private void doSearch(String query) {
+    // Show progress bar in ActionBar.
+    if (searchProgressBar != null) {
+      searchProgressBar.setVisibility(View.VISIBLE);
+    }
+    // Request a search result from the API client.
+    searchCallback = new SearchResultCallback();
+    searchClient.search(query, searchCallback);
+  }
+  //endregion
+
+  //region Default search query
   /**
    * Only load the default query on app launch if the SafeSearch filter is enabled.
    *
@@ -425,14 +450,20 @@ public class SearchActivity extends AppCompatActivity
 
     return !(filters.contains("q") || filters.contains("x"));
   }
+  //endregion
 
+  //region Inner class: Search callback
   /** Callback waiting for a SearchResult received on a background thread from the Search API. */
   private class SearchResultCallback implements SearchClient.SearchCallback {
+
+    //region Instance methods
     /** Search result to extend when fetching more images for endless scrolling. */
     private final SearchResult searchResult;
     /** Callback cancelled and should no longer respond to received SearchResult. */
     private boolean isCancelled = false;
+    //endregion
 
+    //region Constructors
     /** Default constructor. */
     public SearchResultCallback() {
       this.searchResult = null;
@@ -442,7 +473,9 @@ public class SearchActivity extends AppCompatActivity
     public SearchResultCallback(SearchResult searchResult) {
       this.searchResult = searchResult;
     }
+    //endregion
 
+    //region SearchClient.SearchCallback methods
     @Override
     public void onFailure(IOException e) {
       if (!isCancelled) {
@@ -498,7 +531,9 @@ public class SearchActivity extends AppCompatActivity
         }
       }
     }
+    //endregion
 
+    //region Search history
     /**
      * Adds a new entry to the {@link SearchSuggestionDatabase} on a background thread
      * (to prevent blocking the UI thread with database I/O).
@@ -516,10 +551,14 @@ public class SearchActivity extends AppCompatActivity
         }
       }).start();
     }
+    //endregion
 
+    //region Cancel method
     /** Cancels this callback. */
     public void cancel() {
       this.isCancelled = true;
     }
+    //endregion
   }
+  //endregion
 }

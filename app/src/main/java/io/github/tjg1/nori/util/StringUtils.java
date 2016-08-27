@@ -9,6 +9,7 @@ package io.github.tjg1.nori.util;
 /** Class of utility methods related to Java {@link String}s. */
 public abstract class StringUtils {
 
+  //region Merge array into string
   /**
    * Merge a string array into a single string. Does the opposite of {@link String#split(String)}.
    *
@@ -35,4 +36,5 @@ public abstract class StringUtils {
     // Return merged string.
     return sb.toString();
   }
+  //endregion
 }

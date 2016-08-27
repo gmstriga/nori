@@ -17,6 +17,7 @@ import android.view.MotionEvent;
  */
 public class ImageViewerPager extends ViewPager {
 
+  //region Constructors
   public ImageViewerPager(Context context) {
     super(context);
   }
@@ -24,13 +25,17 @@ public class ImageViewerPager extends ViewPager {
   public ImageViewerPager(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
+  //endregion
 
+  //region View methods (Touch Events)
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {
+    // PhotoView in ViewPager fix.
     try {
       return super.onInterceptTouchEvent(ev);
     } catch (IllegalArgumentException e) {
       return false;
     }
   }
+  //endregion
 }

@@ -23,20 +23,31 @@ import io.github.tjg1.nori.R;
 
 /** {@link android.support.v4.app.DialogFragment} to let the users add new tags in {@link io.github.tjg1.nori.TagFilterSettingsActivity}. */
 public class AddTagFilterDialogFragment extends DialogFragment implements View.OnClickListener {
+
+  //region Bundle IDs
   /** Bundle ID used to preserve the entered text and send results to the parent activity. */
   protected static final String BUNDLE_ID_TAG_FILTER = "io.github.tjg1.nori.TagFilter";
+  //endregion
+
+  //region Regular expression patterns
   /** Regular expression pattern used to validate tags before they are added to the database. */
   private static final String TAG_VALIDATION_PATTERN = "^\\S+$";
+  //endregion
+
+  //region Instance fields
   /** Text box with tag to add to the tag filter list. */
   private EditText tagEditText;
   /** Context listening for the result from this dialog. */
   private AddTagListener listener;
+  //endregion
 
-
+  //region Constructors
   /** Required empty constructor. */
   public AddTagFilterDialogFragment() {
   }
+  //endregion
 
+  //region DialogFragment lifecycle methods
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -62,7 +73,9 @@ public class AddTagFilterDialogFragment extends DialogFragment implements View.O
       outState.putString(BUNDLE_ID_TAG_FILTER, tagEditText.getText().toString());
     }
   }
+  //endregion
 
+  //region DialogFragment inflating view
   @NonNull
   @SuppressLint("InflateParams")
   @Override
@@ -101,7 +114,9 @@ public class AddTagFilterDialogFragment extends DialogFragment implements View.O
 
     return alertDialog;
   }
+  //endregion
 
+  //region View.OnClickListener methods
   @Override
   // Called when the dialog's OK button is clicked.
   public void onClick(View view) {
@@ -114,7 +129,9 @@ public class AddTagFilterDialogFragment extends DialogFragment implements View.O
       }
     }
   }
+  //endregion
 
+  //region Activity listener interface
   /** Listener interface to be implemented by the Context that receives the tag entered in this Dialog. */
   public interface AddTagListener {
     /**
@@ -124,4 +141,5 @@ public class AddTagFilterDialogFragment extends DialogFragment implements View.O
      */
     public void addTag(String tag);
   }
+  //endregion
 }

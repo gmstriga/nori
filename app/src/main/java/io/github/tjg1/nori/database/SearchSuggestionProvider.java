@@ -23,6 +23,8 @@ import static io.github.tjg1.nori.database.SearchSuggestionDatabase.COLUMN_NAME;
 import static io.github.tjg1.nori.database.SearchSuggestionDatabase.TABLE_NAME;
 
 public class SearchSuggestionProvider extends ContentProvider {
+
+  //region ContentProvider constants
   /**
    * Uri path ID for queried suggestions data.
    * This is the path that the search manager will use when querying your content provider for suggestions data based on user input (e.g. looking for partial matches).
@@ -54,10 +56,14 @@ public class SearchSuggestionProvider extends ContentProvider {
     sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, SHORTCUT_REFRESH);
     sURIMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SHORTCUT_REFRESH);
   }
+  //endregion
 
+  //region Instance fields (Database)
   /** Read-only instance of the SQLite database. */
   private SQLiteDatabase db;
+  //endregion
 
+  //region ContentProvider methods
   @Override
   public boolean onCreate() {
     // Open the search suggestion SQLite database in read-only mode.
@@ -65,21 +71,6 @@ public class SearchSuggestionProvider extends ContentProvider {
     db = dbHelper.getReadableDatabase();
 
     return true;
-  }
-
-  /**
-   * Get tag suggestions from the underlying SQLite database.
-   *
-   * @param query Query the database for tags starting with this substring.
-   * @return Database cursor with returned suggestion.
-   */
-  private Cursor getSuggestions(String query) {
-    // Query the database for search suggestions.
-    if (query == null) {
-      return db.query(TABLE_NAME, COLUMNS, null, null, null, null, COLUMN_ID + " DESC");
-    } else {
-      return db.query(TABLE_NAME, COLUMNS, COLUMN_NAME + " LIKE ?", new String[]{query + "%"}, null, null, COLUMN_ID + " DESC");
-    }
   }
 
   @Override
@@ -131,4 +122,22 @@ public class SearchSuggestionProvider extends ContentProvider {
     // Use SearchSuggestionDatabase methods instead.
     throw new UnsupportedOperationException();
   }
+  //endregion
+
+  //region Get suggestions cursor from query
+  /**
+   * Get tag suggestions from the underlying SQLite database.
+   *
+   * @param query Query the database for tags starting with this substring.
+   * @return Database cursor with returned suggestion.
+   */
+  private Cursor getSuggestions(String query) {
+    // Query the database for search suggestions.
+    if (query == null) {
+      return db.query(TABLE_NAME, COLUMNS, null, null, null, null, COLUMN_ID + " DESC");
+    } else {
+      return db.query(TABLE_NAME, COLUMNS, COLUMN_NAME + " LIKE ?", new String[]{query + "%"}, null, null, COLUMN_ID + " DESC");
+    }
+  }
+  //endregion
 }

@@ -36,7 +36,10 @@ import io.github.tjg1.nori.util.StringUtils;
  * Manages the list of tags filtered out from {@link io.github.tjg1.library.norilib.SearchResult}s in {@link io.github.tjg1.nori.SearchActivity}
  * and {@link io.github.tjg1.nori.ImageViewerActivity}.
  */
-public class TagFilterSettingsActivity extends AppCompatActivity implements View.OnClickListener, AddTagFilterDialogFragment.AddTagListener {
+public class TagFilterSettingsActivity extends AppCompatActivity implements View.OnClickListener,
+    AddTagFilterDialogFragment.AddTagListener {
+
+  //region Instance fields
   /** Default {@link android.content.SharedPreferences} object. */
   private SharedPreferences sharedPreferences;
   /** List of filtered tags currently stored in {@link #sharedPreferences}. */
@@ -78,7 +81,9 @@ public class TagFilterSettingsActivity extends AppCompatActivity implements View
       return view;
     }
   };
+  //endregion
 
+  //region Activity lifecycle
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -133,15 +138,9 @@ public class TagFilterSettingsActivity extends AppCompatActivity implements View
         return super.onOptionsItemSelected(item);
     }
   }
+  //endregion
 
-  /**
-   * Show a dialog with an interface to add a new Tag to the filter list.
-   */
-  private void showAddTagDialog() {
-    DialogFragment addTagFragment = new AddTagFilterDialogFragment();
-    addTagFragment.show(getSupportFragmentManager(), "AddTagDialogFragment");
-  }
-
+  //region View.OnClickListener methods (removing tags)
   @Override
   public void onClick(View view) {
     // Handle remove button clicks.
@@ -149,7 +148,28 @@ public class TagFilterSettingsActivity extends AppCompatActivity implements View
     filteredTags.remove(position);
     updateSharedPreferences();
   }
+  //endregion
 
+  //region AddTagFilterDialogFragment.AddTagListener methods
+  @Override
+  public void addTag(String tag) {
+    filteredTags.add(tag);
+    updateSharedPreferences();
+
+  }
+  //endregion
+
+  //region Showing add dialog
+  /**
+   * Show a dialog with an interface to add a new Tag to the filter list.
+   */
+  private void showAddTagDialog() {
+    DialogFragment addTagFragment = new AddTagFilterDialogFragment();
+    addTagFragment.show(getSupportFragmentManager(), "AddTagDialogFragment");
+  }
+  //endregion
+
+  //region SharedPreferences
   /** Update the tag filter SharedPreference with data stored in {@link #filteredTags}. */
   private void updateSharedPreferences() {
     sharedPreferences.edit()
@@ -158,11 +178,5 @@ public class TagFilterSettingsActivity extends AppCompatActivity implements View
         .apply();
     tagListAdapter.notifyDataSetChanged();
   }
-
-  @Override
-  public void addTag(String tag) {
-    filteredTags.add(tag);
-    updateSharedPreferences();
-
-  }
+  //endregion
 }

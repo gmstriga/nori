@@ -29,19 +29,28 @@ import io.github.tjg1.nori.SearchActivity;
 
 /** Dialog showing a list of tags for given image in {@link io.github.tjg1.nori.ImageViewerActivity}. */
 public class TagListDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
+
+  //region Bundle IDs
   /** Identifier used for the parceled {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} object in this fragment's argument bundle. */
   private static final String BUNDLE_ID_SEARCH_CLIENT_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
   /** Identifier used for the parceled {@link io.github.tjg1.library.norilib.Image} object in this fragment's argument bundle. */
   private static final String BUNDLE_ID_IMAGE = "io.github.tjg1.nori.Image";
+  //endregion
+
+  //region Instance fields
   /** The image object containing the tags to show in this fragment. */
   private Image image;
   /** Search client settings object included in {@link android.content.Intent}s to launch {@link io.github.tjg1.nori.SearchActivity}. */
   private SearchClient.Settings settings;
+  //endregion
 
+  //region Constructors
   /** Required empty constructor. */
   public TagListDialogFragment() {
   }
+  //endregion
 
+  //region Static methods (newInstance)
   /**
    * Factory method to create a new TagListDialogFragment for given {@link io.github.tjg1.library.norilib.Image}.
    *
@@ -60,7 +69,9 @@ public class TagListDialogFragment extends DialogFragment implements DialogInter
 
     return fragment;
   }
+  //endregion
 
+  //region DialogFragment methods (Lifecycle)
   @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -78,7 +89,9 @@ public class TagListDialogFragment extends DialogFragment implements DialogInter
 
         }).create();
   }
+  //endregion
 
+  //region DialogInterface.OnClickListener methods
   @Override
   public void onClick(DialogInterface dialog, int position) {
     // Start SearchActivity with search for the given tag.
@@ -92,7 +105,9 @@ public class TagListDialogFragment extends DialogFragment implements DialogInter
     // Dismiss the dialog after the activity is started.
     dialog.dismiss();
   }
+  //endregion
 
+  //region List adapter
   /**
    * Adapter used to show the tag list inside a {@link android.widget.ListView}.
    */
@@ -137,5 +152,5 @@ public class TagListDialogFragment extends DialogFragment implements DialogInter
       return textView;
     }
   }
-
+  //endregion
 }

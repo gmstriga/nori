@@ -40,17 +40,24 @@ import io.github.tjg1.nori.util.NetworkUtils;
 
 /** Fragment used to display images in {@link io.github.tjg1.nori.ImageViewerActivity}. */
 public abstract class ImageFragment extends Fragment {
+
+  //region Constants (Bundle IDs and hardcoded URLs)
   /** Bundle identifier used to save the displayed image object in {@link #onSaveInstanceState(android.os.Bundle)}. */
   protected static final String BUNDLE_ID_IMAGE = "io.github.tjg1.nori.Image";
   /** String to prepend to Pixiv IDs to open them in the system web browser. */
   private static final String PIXIV_URL_PREFIX = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id=";
+  //endregion
+
+  //region Instance fields
   /** Image object displayed in this fragment. */
   protected Image image;
   /** Class used for communication with the class that contains this fragment. */
   protected ImageFragmentListener listener;
   /** True if this fragment is the currently active fragment (viewed by the user). */
   protected boolean isActive = false;
+  //endregion
 
+  //region Fragment methods (Lifecycle)
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -120,7 +127,9 @@ public abstract class ImageFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
   }
+  //endregion
 
+  //region ViewPager onShown/onHidden
   /**
    * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
    * (shown to the user).
@@ -135,20 +144,9 @@ public abstract class ImageFragment extends Fragment {
   public void onHidden() {
     this.isActive = false;
   }
+  //endregion
 
-  /**
-   * Evaluate the current network conditions using the {@link io.github.tjg1.nori.util.NetworkUtils} class to decide
-   * if lower resolution images should be loaded to conserve bandwidth.
-   *
-   * @return True if lower resolution images should be used.
-   */
-  protected boolean shouldLoadImageSamples() {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-    return preferences.getBoolean(getString(R.string.preference_image_viewer_conserveBandwidth_key), true)
-        || NetworkUtils.shouldFetchImageSamples(getContext());
-  }
-
+  //region Options menu item helper methods
   /**
    * Get {@link android.content.Intent} to be sent by the {@link android.support.v7.widget.ShareActionProvider}.
    *
@@ -231,7 +229,24 @@ public abstract class ImageFragment extends Fragment {
       }
     }.execute();
   }
+  //endregion
 
+  //region Should load full-res images?
+  /**
+   * Evaluate the current network conditions using the {@link io.github.tjg1.nori.util.NetworkUtils} class to decide
+   * if lower resolution images should be loaded to conserve bandwidth.
+   *
+   * @return True if lower resolution images should be used.
+   */
+  protected boolean shouldLoadImageSamples() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+    return preferences.getBoolean(getString(R.string.preference_image_viewer_conserveBandwidth_key), true)
+        || NetworkUtils.shouldFetchImageSamples(getContext());
+  }
+  //endregion
+
+  //region Activity listener interface
   public static interface ImageFragmentListener {
     /**
      * Should return the {@link SearchClient.Settings} object with the same settings used to fetch the image displayed by this fragment.
@@ -244,4 +259,5 @@ public abstract class ImageFragment extends Fragment {
     /** Called when the ImageView within the fragment is single-tapped. */
     public void onViewTap(View view, float x, float y);
   }
+  //endregion
 }

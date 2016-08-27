@@ -13,6 +13,7 @@ import android.widget.ImageView;
 /** A {@link android.widget.ImageView} widget forcefully maintaining a 1:1 aspect ratio. */
 public class SquareImageView extends ImageView {
 
+  //region Constructors
   public SquareImageView(Context context) {
     super(context);
   }
@@ -24,11 +25,14 @@ public class SquareImageView extends ImageView {
   public SquareImageView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
   }
+  //endregion
 
+  //region View methods (Force square layout)
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     // Force 1:1 aspect ratio.
     setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
   }
+  //endregion
 }

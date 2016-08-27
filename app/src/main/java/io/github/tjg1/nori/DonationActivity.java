@@ -42,9 +42,13 @@ import io.github.tjg1.nori.util.iab.Purchase;
  */
 public class DonationActivity extends AppCompatActivity implements GoogleIAPHandler.Listener {
 
+  //region Constants
   /** List of Play Store IAP items. */
   private static final String[] GOOGLE_IAP_ITEMS =
       new String[]{"donate_xs", "donate_s", "donate_m", "donate_l", "donate_xl"};
+  //endregion
+
+  //region Instance fields (Donation Settings)
   /** Currency used for donations. */
   private String mDonationCurrency;
   /** PayPal donations enabled. */
@@ -116,7 +120,9 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
       return true;
     }
   };
+  //endregion
 
+  //region Getters & Setters
   /** Get the Google IAP donation helper. If the helper doesn't exist, create it. */
   private IabHelper getIabHelper() {
     if (iabHelper == null) {
@@ -126,6 +132,17 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
     return iabHelper;
   }
 
+  /** Get the Google IAP listener/adapter. */
+  private GoogleIAPHandler getIapHandler() {
+    if (iapHandler == null) {
+      iapHandler = new GoogleIAPHandler(this, getIabHelper(), android.R.layout.simple_list_item_1,
+          Arrays.asList(GOOGLE_IAP_ITEMS), this);
+    }
+    return iapHandler;
+  }
+  //endregion
+
+  //region Activity methods (Lifecycle)
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -143,6 +160,19 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
     }
   }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home: // Handle back button in the action bar.
+        onBackPressed();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+  //endregion
+
+  //region Activity methods (Setters)
   @Override
   public void setContentView(@LayoutRes int layoutResID) {
     super.setContentView(layoutResID);
@@ -185,18 +215,9 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
+  //endregion
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home: // Handle back button in the action bar.
-        onBackPressed();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
-  }
-
+  //region GoogleIAPHandler.Listener methods
   /**
    * Called when an error occurs while interacting with the Google in-app purchase service.
    *
@@ -219,16 +240,9 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
     Snackbar.make(findViewById(R.id.root),
             R.string.donation_toast_completed, Snackbar.LENGTH_LONG).show();
   }
+  //endregion
 
-  /** Get the Google IAP listener/adapter. */
-  private GoogleIAPHandler getIapHandler() {
-    if (iapHandler == null) {
-      iapHandler = new GoogleIAPHandler(this, getIabHelper(), android.R.layout.simple_list_item_1,
-          Arrays.asList(GOOGLE_IAP_ITEMS), this);
-    }
-    return iapHandler;
-  }
-
+  //region Setup
   /** Set donation configuration based on locale and build configuration. */
   private void setDonationConfiguration() {
     Resources resources = getResources();
@@ -247,7 +261,9 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
     mGoogleIAPEnabled = BuildConfig.DONATIONS_GOOGLE;
     mGoogleIAPPublicKey = BuildConfig.DONATIONS_GOOGLE_PUB_KEY;
   }
+  //endregion
 
+  //region Donations
   /** Launch the system web browser pointed to the PayPal donation page. */
   private void donatePayPal() {
     Uri.Builder uriBuilder = new Uri.Builder();
@@ -310,11 +326,14 @@ public class DonationActivity extends AppCompatActivity implements GoogleIAPHand
       button.performLongClick();
     }
   }
+  //endregion
 
+  //region Clipboard
   /** Copy a string to clipboard. */
   private void copyToClipboard(String string) {
     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(string, string);
     clipboard.setPrimaryClip(clip);
   }
+  //endregion
 }

@@ -35,6 +35,7 @@ import io.github.tjg1.nori.util.StringUtils;
 public class SafeSearchSettingsActivity extends AppCompatActivity
     implements SafeSearchListAdapter.Listener {
 
+  //region Instance fields
   /** Default {@link android.content.SharedPreferences} object. */
   private SharedPreferences sharedPreferences;
   /** Human-readable labels for each SafeSearch setting. */
@@ -45,7 +46,9 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
   private String[] safeSearchValues;
   /** Current values of the preference_safeSearch preference. */
   private List<String> safeSearchCurrentSetting;
+  //endregion
 
+  //region Activity lifecycle
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -55,6 +58,19 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
     setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
   }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home: // Handle back button in the action bar.
+        onBackPressed();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+  //endregion
+
+  //region Activity methods (Setters)
   @Override
   public void setContentView(@LayoutRes int layoutResID) {
     super.setContentView(layoutResID);
@@ -95,18 +111,9 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
+  //endregion
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home: // Handle back button in the action bar.
-        onBackPressed();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
-  }
-
+  //region SafeSearchListAdapter.Listener methods (getting & updating preference values)
   /** Get the human-readable labels for each SafeSearch setting. */
   @NonNull
   @Override
@@ -166,7 +173,9 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
             StringUtils.mergeStringArray(safeSearchCurrentSetting, " ").trim())
         .apply();
   }
+  //endregion
 
+  //region Getters & Setters
   /** Get the default {@link android.content.SharedPreferences} object. */
   @NonNull
   private SharedPreferences getSharedPreferences() {
@@ -175,16 +184,21 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
     }
     return sharedPreferences;
   }
+  //endregion
 
+  //region Inner class: Radio group/button listener
   /** {@link android.widget.CompoundButton.OnCheckedChangeListener} for the Google version. */
   private class SafeSearchCheckedChangeListener implements
       CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener {
 
+    //region Instance fields
     /** SafeSearch filter setting {@link RadioGroup}. */
     private final RadioGroup safeSearchGroup;
     /** Display images with undefined SafeSearch rating, if checked. */
     private final CheckBox undefinedCheckBox;
+    //endregion
 
+    //region Constructors
     /**
      * Create a new listener for SafeSearch setting {@link RadioGroup} and {@link CheckBox}.
      *
@@ -196,17 +210,23 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
       this.safeSearchGroup = safeSearchGroup;
       this.undefinedCheckBox = undefinedCheckBox;
     }
+    //endregion
 
+    //region CompoundButton.OnCheckedChangeListener
     @Override
     public void onCheckedChanged(CompoundButton button, boolean checked) {
       updatePreferences(safeSearchGroup.getCheckedRadioButtonId(), checked);
     }
+    //endregion
 
+    //region RadioGroup.OnCheckedChangeListener
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int position) {
       updatePreferences(radioGroup.getCheckedRadioButtonId(), undefinedCheckBox.isChecked());
     }
+    //endregion
 
+    //region Instance fields (Public)
     /**
      * Update the SafeSearch {@link RadioGroup} and {@link CheckBox} with current preference values.
      */
@@ -225,7 +245,9 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
       // Check undefined check box based on current setting.
       this.undefinedCheckBox.setChecked(currentSetting.contains("u"));
     }
+    //endregion
 
+    //region Instance fields (Private)
     /**
      * Update {@link SharedPreferences} with the selected SafeSearch setting.
      *
@@ -255,5 +277,7 @@ public class SafeSearchSettingsActivity extends AppCompatActivity
       // Update SharedPreferences.
       updateSafeSearchSettings(safeSearchSettings);
     }
+    //endregion
   }
+  //endregion
 }

@@ -27,16 +27,25 @@ import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.database.APISettingsDatabase;
 
 /** Populates the {@link android.widget.ListView} with data from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-public class APISettingsListAdapter extends BaseAdapter implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>, AdapterView.OnItemClickListener {
+public class APISettingsListAdapter extends BaseAdapter
+    implements LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>>,
+    AdapterView.OnItemClickListener {
+
+  //region Loader IDs
   /** {@link io.github.tjg1.nori.database.APISettingsDatabase} loader ID. */
   private static final int LOADER_ID_DATABASE_LOADER = 0x00;
+  //endregion
+
+  //region Instance fields
   /** Android {@link Context} the adapter is used in. */
   private final Context context;
   /** Interface handling user inputs. */
   private final APISettingsListAdapter.Listener listener;
   /** List of {@link android.util.Pair}s mapping database row IDs to {@link io.github.tjg1.library.norilib.clients.SearchClient.Settings} objects. */
   private List<Pair<Integer, SearchClient.Settings>> settingsList;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new adapter to populate a ListView with a list of services from the
    * {@link APISettingsDatabase}.
@@ -52,7 +61,9 @@ public class APISettingsListAdapter extends BaseAdapter implements LoaderManager
     // Initialize the asynchronous database loader.
     loaderManager.initLoader(LOADER_ID_DATABASE_LOADER, null, this);
   }
+  //endregion
 
+  //region BaseAdapter methods
   @Override
   public int getCount() {
     if (settingsList != null) {
@@ -102,7 +113,9 @@ public class APISettingsListAdapter extends BaseAdapter implements LoaderManager
 
     return view;
   }
+  //endregion
 
+  //region LoaderManager.LoaderCallbacks<List<Pair<Integer, SearchClient.Settings>>> methods
   @Override
   public Loader<List<Pair<Integer, SearchClient.Settings>>> onCreateLoader(int id, Bundle args) {
     if (id == LOADER_ID_DATABASE_LOADER) {
@@ -123,12 +136,16 @@ public class APISettingsListAdapter extends BaseAdapter implements LoaderManager
     settingsList = null;
     notifyDataSetInvalidated();
   }
+  //endregion
 
+  //region AdapterView.OnItemClickListener methods
   @Override
   public void onItemClick(AdapterView<?> listView, View view, int position, long itemId) {
     listener.onServiceSelected(itemId, getItem(position));
   }
+  //endregion
 
+  //region Listener interface
   /**
    * Interface used to handle events when a service is selected from the ListView or removed
    * using the remove icon by the user.
@@ -152,4 +169,5 @@ public class APISettingsListAdapter extends BaseAdapter implements LoaderManager
     public void onServiceRemoved(long serviceId);
 
   }
+  //endregion
 }

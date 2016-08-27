@@ -31,9 +31,15 @@ import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.widget.SquareImageView;
 
 /** Shows images from a {@link SearchResult} as a scrollable grid of thumbnails. */
-public class SearchResultGridFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+public class SearchResultGridFragment extends Fragment implements AdapterView.OnItemClickListener,
+    AbsListView.OnScrollListener {
+
+  //region Bundle IDs
   /** Identifier used for saving currently displayed search result in {@link #onSaveInstanceState(android.os.Bundle)}. */
   private static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
+  //endregion
+
+  //region Instance fields
   /** Interface used for communication with parent class. */
   private OnSearchResultGridFragmentInteractionListener mListener;
   /** GridView used to display the thumbnails. */
@@ -98,11 +104,93 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
       return imageView;
     }
   };
+  //endregion
 
+  //region Constructor
   /** Required public empty constructor. */
   public SearchResultGridFragment() {
   }
+  //endregion
 
+  //region Fragment methods (Lifecycle)
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    // Preserve currently displayed SearchResult.
+    if (searchResult != null) {
+      outState.putParcelable(BUNDLE_ID_SEARCH_RESULT, searchResult);
+    }
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+
+    // Get a reference to parent Context, making sure that it implements the proper callback interface.
+    try {
+      mListener = (OnSearchResultGridFragmentInteractionListener) getContext();
+    } catch (ClassCastException e) {
+      throw new ClassCastException(getContext().toString()
+          + " must implement OnFragmentInteractionListener");
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    mListener = null;
+  }
+  //endregion
+
+  //region Fragment methods (inflating view)
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    // Inflate the layout for this fragment
+    View view = inflater.inflate(R.layout.fragment_search_result_grid, container, false);
+    // Restore SearchResult from saved instance state to preserve search results across screen rotations.
+    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_RESULT)) {
+      searchResult = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_RESULT);
+    }
+    // Set adapter for GridView.
+    gridView = (GridView) view.findViewById(R.id.image_grid);
+    gridView.setColumnWidth(getGridViewColumnWidth());
+    gridView.setAdapter(gridAdapter);
+    gridView.setOnScrollListener(this);
+    gridView.setOnItemClickListener(this);
+
+    // Return inflated view.
+    return view;
+  }
+  //endregion
+
+  //region AdapterView.OnItemClickListener methods (starting ImageViewerActivity)
+  @Override
+  public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+    if (mListener != null) {
+      // Notify parent Context that image has been clicked.
+      mListener.onImageSelected((Image) gridAdapter.getItem(position), position);
+    }
+  }
+  //endregion
+
+  //region AbsListView.OnScrollListener methods (infinite scrolling)
+  @Override
+  public void onScrollStateChanged(AbsListView view, int scrollState) {
+    // Do nothing.
+  }
+
+  @Override
+  public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    // Implement endless scrolling.
+    // Fetch more images if near the end of the list and more images are available for the SearchResult.
+    if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + 10) && searchResult != null
+        && searchResult.hasNextPage() && mListener != null) {
+      mListener.fetchMoreImages(searchResult);
+    }
+  }
+  //endregion
+
+  //region Getters & Setters (SearchResult)
   /**
    * Get search result displayed by this fragment.
    *
@@ -126,26 +214,9 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
       gridAdapter.notifyDataSetChanged();
     }
   }
+  //endregion
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    View view = inflater.inflate(R.layout.fragment_search_result_grid, container, false);
-    // Restore SearchResult from saved instance state to preserve search results across screen rotations.
-    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_RESULT)) {
-      searchResult = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_RESULT);
-    }
-    // Set adapter for GridView.
-    gridView = (GridView) view.findViewById(R.id.image_grid);
-    gridView.setColumnWidth(getGridViewColumnWidth());
-    gridView.setAdapter(gridAdapter);
-    gridView.setOnScrollListener(this);
-    gridView.setOnItemClickListener(this);
-
-    // Return inflated view.
-    return view;
-  }
-
+  //region Grid column width
   /**
    * Get the grid view column size from the thumbnail size shared preference.
    *
@@ -170,58 +241,9 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
     }
 
   }
+  //endregion
 
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-
-    // Get a reference to parent Context, making sure that it implements the proper callback interface.
-    try {
-      mListener = (OnSearchResultGridFragmentInteractionListener) getContext();
-    } catch (ClassCastException e) {
-      throw new ClassCastException(getContext().toString()
-          + " must implement OnFragmentInteractionListener");
-    }
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    mListener = null;
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    // Preserve currently displayed SearchResult.
-    if (searchResult != null) {
-      outState.putParcelable(BUNDLE_ID_SEARCH_RESULT, searchResult);
-    }
-  }
-
-  @Override
-  public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-    if (mListener != null) {
-      // Notify parent Context that image has been clicked.
-      mListener.onImageSelected((Image) gridAdapter.getItem(position), position);
-    }
-  }
-
-  @Override
-  public void onScrollStateChanged(AbsListView view, int scrollState) {
-    // Do nothing.
-  }
-
-  @Override
-  public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    // Implement endless scrolling.
-    // Fetch more images if near the end of the list and more images are available for the SearchResult.
-    if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + 10) && searchResult != null
-        && searchResult.hasNextPage() && mListener != null) {
-      mListener.fetchMoreImages(searchResult);
-    }
-  }
-
+  //region Activity listener interface
   public interface OnSearchResultGridFragmentInteractionListener {
     /**
      * Called when {@link io.github.tjg1.library.norilib.Image} in the search result grid is selected by the user.
@@ -239,5 +261,5 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
      */
     public void fetchMoreImages(SearchResult searchResult);
   }
-
+  //endregion
 }

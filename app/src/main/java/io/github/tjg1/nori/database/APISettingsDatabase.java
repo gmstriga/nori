@@ -27,8 +27,13 @@ import io.github.tjg1.library.norilib.clients.SearchClient;
 
 /** Utility class providing access to the SQLite API endpoint settings database. */
 public class APISettingsDatabase extends SQLiteOpenHelper {
+
+  //region Broadcast IDs
   /** ID of the Broadcast sent when data in the database changes. */
   public static final String BROADCAST_UPDATE = "io.github.tjg1.nori.database.APISettingsDatabase.update";
+  //endregion
+
+  //region SQLite Constants
   /** Filename of the underlying SQLite database. */
   private static final String DATABASE_NAME = "api_settings.db";
   /** API Settings table name. */
@@ -47,9 +52,14 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
   private static final String COLUMN_PASSPHRASE = "passphrase";
   /** Database schema version. */
   private static final int SCHEMA_VERSION = 1;
+  //endregion
+
+  //region Instance fields (Context)
   /** Android context. */
   private final Context context;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new API Settings Database access helper.
    *
@@ -59,7 +69,31 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
     super(context, DATABASE_NAME, null, SCHEMA_VERSION);
     this.context = context;
   }
+  //endregion
 
+  //region SQLiteOpenHelper methods
+  @Override
+  public void onCreate(SQLiteDatabase db) {
+    // SQL query used to create the database schema.
+    String createSQL = String.format(Locale.US,
+        "CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s TEXT NOT NULL, %s TEXT, %s TEXT);",
+        TABLE_NAME, COLUMN_ID, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, COLUMN_USERNAME, COLUMN_PASSPHRASE);
+    db.execSQL(createSQL);
+
+    // SQL query used to populate the database with initial data (when the app is first launched).
+    String populateSQL = String.format(Locale.US,
+        "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
+        TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Flickr", SearchClient.Settings.APIType.FLICKR.ordinal(), Flickr.FLICKR_API_ENDPOINT);
+    db.execSQL(populateSQL);
+  }
+
+  @Override
+  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    // Do nothing.
+  }
+  //endregion
+
+  //region Static methods: (De)-Serialization of SearchClient.Settings
   /**
    * Serialize a {@link SearchClient.Settings} object into a {@link ContentValues} object used by
    * Android's SQLite API.
@@ -91,7 +125,9 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
         c.getString(c.getColumnIndex(COLUMN_USERNAME)),
         c.getString(c.getColumnIndex(COLUMN_PASSPHRASE)));
   }
+  //endregion
 
+  //region CRUD methods
   /**
    * Get single instance of {@link SearchClient.Settings} from the database.
    *
@@ -185,34 +221,18 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
     sendUpdateNotification();
     return rows;
   }
+  //endregion
 
+  //region Update notification broadcasts
   /**
    * Notify observers that the data in the database has changed.
    */
   private void sendUpdateNotification() {
     LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(BROADCAST_UPDATE));
   }
+  //endregion
 
-  @Override
-  public void onCreate(SQLiteDatabase db) {
-    // SQL query used to create the database schema.
-    String createSQL = String.format(Locale.US,
-        "CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s TEXT NOT NULL, %s TEXT, %s TEXT);",
-        TABLE_NAME, COLUMN_ID, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, COLUMN_USERNAME, COLUMN_PASSPHRASE);
-    db.execSQL(createSQL);
-
-    // SQL query used to populate the database with initial data (when the app is first launched).
-    String populateSQL = String.format(Locale.US,
-        "INSERT INTO %s (%s, %s, %s) VALUES ('%s', %d, '%s');",
-        TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_ENDPOINT_URL, "Flickr", SearchClient.Settings.APIType.FLICKR.ordinal(), Flickr.FLICKR_API_ENDPOINT);
-    db.execSQL(populateSQL);
-  }
-
-  @Override
-  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    // Do nothing.
-  }
-
+  //region Inner classes
   /** Loader class used to asynchronously offload database access to a background thread. */
   public static class Loader extends AsyncTaskLoader<List<Pair<Integer, SearchClient.Settings>>> {
     /** {@link android.content.BroadcastReceiver} receiving database change notifications. */
@@ -276,4 +296,5 @@ public class APISettingsDatabase extends SQLiteOpenHelper {
       return settingsList;
     }
   }
+  //endregion
 }

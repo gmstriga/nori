@@ -30,6 +30,8 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * and the Picasso HTTP image loading library to display images.
  */
 public class RemoteImageFragment extends ImageFragment {
+
+  //region Instance fields
   /** Progress bar used to display image fetch progress. */
   private ProgressBar progressBar;
   /** PhotoView used to show images. */
@@ -38,11 +40,15 @@ public class RemoteImageFragment extends ImageFragment {
   private TextView errorTextView;
   /** Image loading Future. */
   private Future<?> imageLoadingFuture;
+  //endregion
 
+  //region Constructors
   /** Required public empty constructor. */
   public RemoteImageFragment() {
   }
+  //endregion
 
+  //region Static methods (newInstance)
   /**
    * Factory method used to construct new fragments
    *
@@ -60,7 +66,9 @@ public class RemoteImageFragment extends ImageFragment {
 
     return fragment;
   }
+  //endregion
 
+  //region Fragment methods (inflating view)
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_remote_image, container, false);
@@ -87,7 +95,9 @@ public class RemoteImageFragment extends ImageFragment {
 
     return view;
   }
+  //endregion
 
+  //region ViewPager onShown/onHidden triggers
   @Override
   public void onShown() {
     super.onShown();
@@ -108,7 +118,9 @@ public class RemoteImageFragment extends ImageFragment {
       progressBar.setVisibility(View.GONE);
     }
   }
+  //endregion
 
+  //region Loading images into image view
   /** Load remote image into the ImageView. */
   private void loadImage() {
     // Show the progress bar.
@@ -138,4 +150,5 @@ public class RemoteImageFragment extends ImageFragment {
           }
         });
   }
+  //endregion
 }

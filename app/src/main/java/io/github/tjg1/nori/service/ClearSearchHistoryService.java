@@ -17,11 +17,14 @@ import io.github.tjg1.nori.database.SearchSuggestionDatabase;
  */
 public class ClearSearchHistoryService extends IntentService {
 
+  //region Constructors
   public ClearSearchHistoryService() {
     // Set service name (useful for debugging).
     super("ClearSearchHistoryService");
   }
+  //endregion
 
+  //region IntentService methods (onHandleIntent)
   @Override
   protected void onHandleIntent(Intent intent) {
     // Open the search suggestion database
@@ -33,4 +36,5 @@ public class ClearSearchHistoryService extends IntentService {
     // Close the database resource.
     db.close();
   }
+  //endregion
 }

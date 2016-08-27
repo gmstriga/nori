@@ -27,12 +27,20 @@ import io.github.tjg1.nori.database.APISettingsDatabase;
 import io.github.tjg1.nori.fragment.EditAPISettingDialogFragment;
 
 /** Adds, edits or removes API settings from {@link io.github.tjg1.nori.database.APISettingsDatabase}. */
-public class APISettingsActivity extends AppCompatActivity implements EditAPISettingDialogFragment.Listener, APISettingsListAdapter.Listener {
+public class APISettingsActivity extends AppCompatActivity
+    implements EditAPISettingDialogFragment.Listener, APISettingsListAdapter.Listener {
+
+  //region Intent actions
   /** Intent action used to indicate that the add service dialog should be displayed, when the Activity is created. */
   public static final String ACTION_CREATE_SERVICE = "CREATE_SERVICE";
+  //endregion
+
+  //region Constants
   /** A new row will be inserted into the database when this row ID value is passed to {@link #editService(long, String, String, String, String)}. */
   private static final long ROW_ID_INSERT = -1L;
+  //endregion
 
+  //region Activity methods (Lifecycle)
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -87,7 +95,9 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
         return super.onOptionsItemSelected(item);
     }
   }
+  //endregion
 
+  //region APISettingsListAdapter.Listener methods
   @Override
   public void onServiceSelected(long serviceId, SearchClient.Settings serviceSettings) {
     // Show dialog to edit the service settings object.
@@ -106,7 +116,9 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
       }
     }).start();
   }
+  //endregion
 
+  //region EditAPISettingDialogFragment.Listener methods
   @Override
   public void addService(String name, String url, String username, String passphrase) {
     editService(ROW_ID_INSERT, name, url, username, passphrase);
@@ -166,9 +178,12 @@ public class APISettingsActivity extends AppCompatActivity implements EditAPISet
     serviceIntent.putExtra(ServiceTypeDetectionService.ENDPOINT_URL, url);
     startService(serviceIntent);
   }
+  //endregion
 
+  //region Service dialog
   /** Displays the service creation dialog. */
   private void showCreateServiceDialog() {
     new EditAPISettingDialogFragment().show(getSupportFragmentManager(), "EditAPISettingDialogFragment");
   }
+  //endregion
 }

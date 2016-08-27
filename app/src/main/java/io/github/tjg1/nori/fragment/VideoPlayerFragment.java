@@ -28,6 +28,7 @@ import io.github.tjg1.nori.util.NetworkUtils;
 /** A fragment for playing back MP4 and WebM videos in {@link io.github.tjg1.nori.ImageViewerActivity}. */
 public class VideoPlayerFragment extends ImageFragment {
 
+  //region Instance fields
   /** VideoView used to play the video. */
   private VideoView videoView;
   /** True if the video player already has a video loaded. */
@@ -43,11 +44,15 @@ public class VideoPlayerFragment extends ImageFragment {
       return true;
     }
   };
+  //endregion
 
+  //region Constructors
   /** Required public empty constructor. */
   public VideoPlayerFragment() {
   }
+  //endregion
 
+  //region Static methods (newInstance)
   /**
    * Factory method used to construct new fragments
    *
@@ -65,7 +70,9 @@ public class VideoPlayerFragment extends ImageFragment {
 
     return fragment;
   }
+  //endregion
 
+  //region Fragment methods (Lifecycle)
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_video_player, container, false);
@@ -87,7 +94,9 @@ public class VideoPlayerFragment extends ImageFragment {
 
     return view;
   }
+  //endregion
 
+  //region ViewPager onShown/onHidden triggers
   /**
    * Called by the FragmentStatePagerAdapter when this fragment is currently the primary item
    * (shown to the user).
@@ -108,7 +117,9 @@ public class VideoPlayerFragment extends ImageFragment {
       videoView.pause();
     }
   }
+  //endregion
 
+  //region Initializing video playback
   /** Used to pass the media URL to the {@link VideoView} to start downloading. */
   private void preparePlayerAndStartPlayback() {
     if (VideoPlayerFragment.this.isPrepared) {
@@ -148,4 +159,5 @@ public class VideoPlayerFragment extends ImageFragment {
       });
     }
   }
+  //endregion
 }

@@ -37,6 +37,7 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener,
     AdapterView.OnItemClickListener {
 
+  //region Instance fields
   /** List of item SKUs available for purchase. */
   protected final List<String> itemSkus;
   /** Listener handling user events and interactions with the Google IAP service. */
@@ -45,7 +46,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
   private final Activity activity;
   /** Google in-app purchase helper class. */
   private final IabHelper iabHelper;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new object acting as a listener for {@link IabHelper} events and as an Adapter
    * for the donation amount {@link android.widget.ListView}.
@@ -65,7 +68,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     this.itemSkus = itemSkus;
     this.listener = listener;
   }
+  //endregion
 
+  //region ArrayAdapter<Pair<String, String>> methods
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     // Create the list view item.
@@ -85,7 +90,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
 
     return view;
   }
+  //endregion
 
+  //region IabHelper.OnIabSetupFinishedListener methods
   /**
    * Called to notify that setup is complete.
    *
@@ -107,7 +114,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     }
     listener.onPurchaseError(null);
   }
+  //endregion
 
+  //region IabHelper.QueryInventoryFinishedListener methods
   /**
    * Called to notify that an inventory query operation completed.
    *
@@ -129,19 +138,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
     }
     listener.onPurchaseError(null);
   }
+  //endregion
 
-  @Override
-  public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-    final String sku = getItem(position).first;
-
-    try {
-      // Launch Google Play purchase flow.
-      iabHelper.launchPurchaseFlow(activity, sku, 0, this);
-    } catch (IabHelper.IabAsyncInProgressException e) {
-      listener.onPurchaseError(e);
-    }
-  }
-
+  //region IabHelper.OnIabPurchaseFinishedListener methods
   /**
    * Called to notify that an in-app purchase finished. If the purchase was successful,
    * then the sku parameter specifies which item was purchased. If the purchase failed,
@@ -166,7 +165,9 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
       listener.onPurchaseComplete(info);
     }
   }
+  //endregion
 
+  //region IabHelper.OnConsumeFinishedListener
   /**
    * Called to notify that a consumption has finished.
    *
@@ -177,7 +178,23 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
   public void onConsumeFinished(Purchase purchase, IabResult result) {
     // Do nothing.
   }
+  //endregion
 
+  //region AdapterView.OnItemClickListener methods
+  @Override
+  public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+    final String sku = getItem(position).first;
+
+    try {
+      // Launch Google Play purchase flow.
+      iabHelper.launchPurchaseFlow(activity, sku, 0, this);
+    } catch (IabHelper.IabAsyncInProgressException e) {
+      listener.onPurchaseError(e);
+    }
+  }
+  //endregion
+
+  //region Listener interface
   /** Interface used to handle user interaction with the ListView and purchase events. */
   public interface Listener {
 
@@ -195,4 +212,5 @@ public class GoogleIAPHandler extends ArrayAdapter<Pair<String, String>>
      */
     public void onPurchaseComplete(Purchase info);
   }
+  //endregion
 }

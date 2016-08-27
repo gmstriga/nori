@@ -18,6 +18,7 @@ import android.telephony.TelephonyManager;
  */
 public abstract class NetworkUtils {
 
+  //region Should download full-res images?
   /**
    * Decides if low-resolution ("sample") images should be fetched by default instead of full-size images, based on:
    * - Screen density
@@ -47,7 +48,9 @@ public abstract class NetworkUtils {
     // Check link quality.
     return !isConnectionFast(networkInfo.getType(), networkInfo.getSubtype());
   }
+  //endregion
 
+  //region Should videos be playable?
   /**
    * Decides if WebM/MP4 files should be downloaded. Returns false, if the device is:
    * - On a metered Internet connection.
@@ -70,7 +73,9 @@ public abstract class NetworkUtils {
     // Check link quality.
     return isConnectionFast(networkInfo.getType(), networkInfo.getSubtype());
   }
+  //endregion
 
+  //region Is connection metered/fast?
   /**
    * Check if active connection is metered. (API 16+)
    *
@@ -109,5 +114,5 @@ public abstract class NetworkUtils {
       return false;
     }
   }
-
+  //endregion
 }

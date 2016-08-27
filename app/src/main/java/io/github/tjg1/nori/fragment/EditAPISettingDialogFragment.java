@@ -29,13 +29,23 @@ import io.github.tjg1.library.norilib.util.HashUtils;
 import io.github.tjg1.nori.R;
 
 /** Dialog fragment used to add new and edit existing {@link io.github.tjg1.nori.database.APISettingsDatabase} entries in {@link io.github.tjg1.nori.APISettingsActivity}. */
-public class EditAPISettingDialogFragment extends DialogFragment implements AdapterView.OnItemClickListener, View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+public class EditAPISettingDialogFragment extends DialogFragment
+    implements AdapterView.OnItemClickListener, View.OnClickListener, TextWatcher,
+    View.OnFocusChangeListener {
+
+  //region Constants (Bundle IDs)
   /** Bundle ID of {@link SearchClient.Settings} object used to edit an existing {@link io.github.tjg1.nori.database.APISettingsDatabase} entry. */
   private static final String BUNDLE_ID_SETTINGS = "io.github.tjg1.nori.SearchClient.Settings";
   /** Bundle ID of the database row ID passed into the arguments bundle when editing an existing object. */
   private static final String BUNDLE_ID_ROW_ID = "io.github.tjg1.nori.SearchClient.Settings.rowId";
+  //endregion
+
+  //region Hard-coded URL hashes
   /** Danbooru API URL. Used to only show the optional authentication fields for the Danbooru API. */
   private static final String DANBOORU_API_URL = "b163eea7c4d359284718c64ed351b92ff2d2144c9cf85a6ef40253c87fb1c4e6df8c5b7e78f04c747d5e674c103320672bc769a68e28d202e092b49a5a13a768";
+  //endregion
+
+  //region Instance fields
   /** Interface in the parent Context waiting to receive data from the dialog. */
   private Listener listener;
   /** Database ID of the object being edited (if not creating a new settings object). */
@@ -48,7 +58,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   private EditText username;
   /** Service authentication password/API key field. */
   private EditText passphrase;
+  //endregion
 
+  //region newInstance static methods
   /**
    * Factory method used when editing an existing settings database entry.
    *
@@ -68,7 +80,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
 
     return fragment;
   }
+  //endregion
 
+  //region DialogFragment lifecycle methods
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -89,7 +103,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
     // Remove reference to the listener interface.
     listener = null;
   }
+  //endregion
 
+  //region DialogFragment methods (inflating view)
   @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -160,7 +176,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
 
     return alertDialog;
   }
+  //endregion
 
+  //region AdapterView.OnItemClickListener methods
   @Override
   public void onItemClick(AdapterView<?> listView, View view, int position, long itemId) {
     // This gets called when the user selects a service name autosuggestion.
@@ -175,7 +193,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
       }
     }
   }
+  //endregion
 
+  //region View.OnClickListener methods
   @Override
   // Called when the dialog's OK button is clicked.
   public void onClick(View view) {
@@ -198,7 +218,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
     // Dismiss dialog.
     dismiss();
   }
+  //endregion
 
+  //region TextWatcher methods
   @Override
   public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
     // Do nothing.
@@ -224,7 +246,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
   public void afterTextChanged(Editable editable) {
     // Do nothing.
   }
+  //endregion
 
+  //region View.OnFocusChangeListener
   @SuppressLint("SetTextI18n")
   @Override
   public void onFocusChange(View v, boolean hasFocus) {
@@ -234,7 +258,9 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
       uri.setText("http://");
     }
   }
+  //endregion
 
+  //region Activity listener interface
   /** Interface implemented by the parent Context to receive values from the dialog. */
   public static interface Listener {
     /**
@@ -258,4 +284,5 @@ public class EditAPISettingDialogFragment extends DialogFragment implements Adap
      */
     public void editService(long rowId, String name, String url, String username, String passphrase);
   }
+  //endregion
 }

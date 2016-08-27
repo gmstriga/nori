@@ -25,11 +25,14 @@ import io.github.tjg1.nori.R;
 public class SafeSearchListAdapter extends BaseAdapter implements
     CompoundButton.OnCheckedChangeListener {
 
+  //region Instance fields
   /** Android context the adapter is used in. */
   private final Context context;
   /** Listener used to interact with the {@link android.app.Activity} using this Adapter. */
   private final SafeSearchListAdapter.Listener listener;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new Adapter used to populate a ListView with safe search settings.
    *
@@ -41,7 +44,9 @@ public class SafeSearchListAdapter extends BaseAdapter implements
     this.context = context;
     this.listener = listener;
   }
+  //endregion
 
+  //region BaseAdapter methods
   @Override
   public int getCount() {
     return listener.getSafeSearchEntries().length;
@@ -79,7 +84,9 @@ public class SafeSearchListAdapter extends BaseAdapter implements
 
     return view;
   }
+  //endregion
 
+  //region CompoundButton.OnCheckedChangeListener
   @SuppressWarnings("SuspiciousMethodCalls")
   @Override
   public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
@@ -95,7 +102,9 @@ public class SafeSearchListAdapter extends BaseAdapter implements
     listener.updateSafeSearchSettings(safeSearchCurrentSetting
         .toArray(new String[safeSearchCurrentSetting.size()]));
   }
+  //endregion
 
+  //region Listener interface
   /** Listener used to interact with the {@link android.app.Activity} using this Adapter. */
   public interface Listener {
 
@@ -114,4 +123,5 @@ public class SafeSearchListAdapter extends BaseAdapter implements
     /** Update the value of the preference_safeSearch shared preference. */
     public void updateSafeSearchSettings(@NonNull String[] safeSearchCurrentSetting);
   }
+  //endregion
 }

@@ -19,11 +19,15 @@ import io.github.tjg1.nori.fragment.VideoPlayerFragment;
 
 /** Adapter used to populate {@link android.support.v4.view.ViewPager} with {@link io.github.tjg1.nori.fragment.ImageFragment}s. */
 public class ImagePagerAdapter extends FragmentStatePagerAdapter {
+
+  //region Instance fields
   /** Listener used to interact with the activity using this adapter. */
   private final ImagePagerAdapter.Listener listener;
   /** Fragment currently being displayed. */
   private ImageFragment activeFragment;
+  //endregion
 
+  //region Constructors
   /**
    * Create a new {@link android.support.v4.view.PagerAdapter} displaying {@link Image}s using
    * Fragments.
@@ -36,7 +40,9 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
 
     this.listener = listener;
   }
+  //endregion
 
+  //region FragmentStatePagerAdapter methods
   @Override
   public Fragment getItem(int position) {
     // Create a new instance of ImageFragment for the given image.
@@ -69,13 +75,17 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
     }
     return listener.getSearchResult().getImages().length;
   }
+  //endregion
 
+  //region Static method: choosing ImageFragment type based on image file type
   /** Returns true if the {@link Image} object is a WebM/MP4 animation. */
   private static boolean shouldUseVideoPlayerFragment(Image image) {
     String fileExt = image.getFileExtension();
     return "mp4".equals(fileExt) || "webm".equals(fileExt);
   }
+  //endregion
 
+  //region Listener interface
   /** Interface used to interact with the {@link android.app.Activity} using this adapter. */
   public interface Listener {
 
@@ -83,4 +93,5 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
     public SearchResult getSearchResult();
 
   }
+  //endregion
 }
