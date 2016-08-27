@@ -24,4 +24,20 @@
     android:indeterminate="false"
     android:visibility="gone"/>
 
+  <TextView
+    android:id="@+id/errorText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_horizontal"
+    android:ellipsize="marquee"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:maxLines="3"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:textColor="@color/image_viewer_errorTextColor"
+    android:textSize="12sp"
+    android:visibility="gone"/>
+
 </FrameLayout>

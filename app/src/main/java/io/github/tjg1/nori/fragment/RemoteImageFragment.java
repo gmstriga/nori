@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -57,6 +58,13 @@ public class RemoteImageFragment extends ImageFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_remote_image, container, false);
+    final TextView textView = (TextView) view.findViewById(R.id.errorText);
+
+    // Initialize the ProgressBar.
+    progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+    if (isActive) {
+      progressBar.setVisibility(View.VISIBLE);
+    }
 
     // Initialize the ImageView widget.
     PhotoView photoView = (PhotoView) view.findViewById(R.id.imageView);
@@ -69,11 +77,7 @@ public class RemoteImageFragment extends ImageFragment {
       }
     });
 
-    // Initialize the ProgressBar.
-    progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-    if (isActive) {
-      progressBar.setVisibility(View.VISIBLE);
-    }
+
 
     // Load image into the view.
     String imageUrl = shouldLoadImageSamples() ? image.sampleUrl : image.fileUrl;
@@ -88,6 +92,11 @@ public class RemoteImageFragment extends ImageFragment {
         .setCallback(new FutureCallback<ImageView>() {
           @Override
           public void onCompleted(Exception e, ImageView result) {
+            if (e != null) {
+              textView.setVisibility(View.VISIBLE);
+              textView.setText(e.getLocalizedMessage());
+            }
+
             progressBar.setProgress(100); // for cached images.
             progressBar.setVisibility(View.GONE);
           }
