@@ -6,13 +6,10 @@
 
 package io.github.tjg1.nori.adapter;
 
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
-
-import java.util.Locale;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
@@ -74,10 +71,8 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
   }
 
   /** Returns true if the {@link Image} object is a WebM/MP4 animation. */
-  private boolean shouldUseVideoPlayerFragment(Image image) {
-    String path = Uri.parse(image.fileUrl).getPath();
-    String fileExt = path.contains(".") ? path.toLowerCase(Locale.US)
-        .substring(path.lastIndexOf(".") + 1) : null;
+  private static boolean shouldUseVideoPlayerFragment(Image image) {
+    String fileExt = image.getFileExtension();
     return "mp4".equals(fileExt) || "webm".equals(fileExt);
   }
 
