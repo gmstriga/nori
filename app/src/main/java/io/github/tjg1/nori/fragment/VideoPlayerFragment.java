@@ -154,7 +154,9 @@ public class VideoPlayerFragment extends ImageFragment {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
           // Loop the video.
-          mediaPlayer.start();
+          if (VideoPlayerFragment.this.isPrepared) {
+            mediaPlayer.start();
+          }
         }
       });
     }
