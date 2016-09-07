@@ -136,7 +136,7 @@ public class RemoteImageFragment extends ImageFragment {
         .userAgent("nori/" + BuildConfig.VERSION_NAME)
         .withBitmap()
         .animateGif(AnimateGifMode.ANIMATE)
-        .deepZoom()
+        //.deepZoom() // (disabled due to poor scaling quality)
         .intoImageView(photoView)
         .setCallback(new FutureCallback<ImageView>() {
           @Override
