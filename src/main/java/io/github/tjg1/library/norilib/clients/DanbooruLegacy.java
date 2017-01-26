@@ -358,10 +358,17 @@ public class DanbooruLegacy implements SearchClient {
     if (url == null || url.isEmpty()) {
       return "";
     }
-    // Prepend API endpoint path if url is relative.
-    final Uri uri = Uri.parse(url);
-    if (uri.isRelative()) {
-      return apiEndpoint + url;
+    // If the url starts with "//", then the http(s) part was omitted.
+    // Assume the protocol scheme to be the same as the endpoint.
+    if (url.startsWith("//")) {
+      String protocol = Uri.parse(apiEndpoint).getScheme();
+      return protocol + ":" + url;
+    } else {
+      // Prepend API endpoint path if url is relative.
+      final Uri uri = Uri.parse(url);
+      if (uri.isRelative()) {
+        return apiEndpoint + url;
+      }
     }
     // URL already absolute.
     return url;
