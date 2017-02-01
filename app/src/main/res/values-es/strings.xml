@@ -6,7 +6,7 @@
 
     <!-- Activity titles -->
     <!-- (Image ID): (Image tags) -->
-    <string name="activity_image_viewer_titleFormat">%s: %s</string>
+    <string name="activity_image_viewer_titleFormat" formatted="false">%s: %s</string>
     <string name="activity_donations">Donar</string>
     <string name="activity_safeSearch_settings">Búsqueda Segura</string>
     <string name="activity_service_settings">Ajustes del Servicio</string>
@@ -44,15 +44,15 @@
     <string name="content_description_remove">Eliminar</string>
 
     <!-- Toast notifications -->
-    <string name="toast_couldNotSetWallpaper">No se pudo usar la imagen como fondo de pantalla: %s</string>
+    <string name="toast_couldNotSetWallpaper" formatted="false">No se pudo usar la imagen como fondo de pantalla: %s</string>
     <string name="toast_error_noApplicationFound">No se ha encontrado ninguna aplicación para resolver esta acción.</string>
     <string name="toast_error_noNetwork">No se pudo conectar a la red.</string>
     <string name="toast_error_noServiceAtGivenUri">No se pudo encontrar una API soportada para la URL dada.</string>
     <string name="toast_error_serviceUriInvalid">La URL dada es inválida.</string>
     <string name="toast_error_videoMeteredConnection">Los vídeos no se pueden descargar en conexiones medidas.</string>
     <string name="toast_imageDownloadPermissionDenied">Necesitas otorgar permisos de almacenaje para descargar imágenes.</string>
-    <string name="toast_infiniteScrollingFetchError">Un error ha ocurrido al intentar obtener más imágenes: %s</string>
-    <string name="toast_networkError">Error de red: %s</string>
+    <string name="toast_infiniteScrollingFetchError" formatted="false">Un error ha ocurrido al intentar obtener más imágenes: %s</string>
+    <string name="toast_networkError" formatted="false">Error de red: %s</string>
     <string name="toast_searchHistoryCleared">Se ha limpiado el historial de búsqueda.</string>
 
     <!-- Preferences -->
