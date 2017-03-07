@@ -5,7 +5,7 @@
 
 Norilib is a free and open source Android API client library for various online image hosting APIs. It is used by [Nori](https://github.com/tjg1/nori), the free and open source image search engine for Android.
 
-If you're interested in contributing to Nori/Norilib, use Norilib in your own app, have any questions or just want to hang out, join us in the `#nori` IRC channel on Freenode.
+If you're interested in contributing to Nori/Norilib, use Norilib in your own app, have any questions or just want to hang out, join us on the official [Discord server](https://discord.gg/3DTNcHu).
 
 ### Build ###
 
