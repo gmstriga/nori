@@ -5,7 +5,7 @@
 
 Nori is a free and open source Android image search client with support for various third-party APIs.
 
-If you're interested in contributing to Nori, have any questions or just want to hang out, join us in the `#nori` IRC channel on Freenode.
+If you're interested in contributing to Nori, have any questions or just want to hang out, join us on the official [Discord server](https://discord.gg/3DTNcHu).
 
 ### Download ###
 
