@@ -9,9 +9,10 @@ If you're interested in contributing to Nori, have any questions or just want to
 
 ### Download ###
 
-Nori is available from the Google Play Store, and can be downloaded [here](https://play.google.com/store/apps/details?id=io.github.tjg1.nori).
-
-It's also available from [F-Droid](https://f-droid.org/repository/browse/?fdid=io.github.tjg1.nori), the Free and Open Source Android App Repository.
+<a href="https://f-droid.org/repository/browse/?fdid=io.github.tjg1.nori" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
+<a href="https://play.google.com/store/apps/details?id=io.github.tjg1.nori" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80"/></a>
 
 If you wish to get it directly from us, we publish APKs for each release on [GitHub](https://github.com/tjg1/nori/releases).
 
