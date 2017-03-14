@@ -1,0 +1,18 @@
+<!--
+  ~ This file is part of nori.
+  ~ Copyright (c) 2014 Tomasz Jan Góralczyk <tomg@fastmail.uk>
+  ~ License: ISC
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="io.github.tjg1.library.norilib">
+
+  <uses-permission android:name="android.permission.INTERNET"/>
+
+  <application>
+    <service
+        android:name=".service.ServiceTypeDetectionService"
+        android:exported="false"/>
+  </application>
+
+</manifest>
