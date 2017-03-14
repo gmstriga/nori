@@ -1,6 +1,3 @@
-[submodule "SearchViewAllowEmpty"]
-	path = SearchViewAllowEmpty
-	url = https://github.com/tjg1/SearchViewAllowEmpty.git
 [submodule "norilib"]
 	path = norilib
 	url = https://github.com/tjg1/norilib.git
