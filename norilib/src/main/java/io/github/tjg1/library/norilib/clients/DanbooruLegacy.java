@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.net.URL;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
@@ -353,25 +354,12 @@ public class DanbooruLegacy implements SearchClient {
    * @param url URL to convert.
    * @return Absolute URL.
    */
-  protected String normalizeUrl(String url) {
+  protected String normalizeUrl(String url) throws java.net.MalformedURLException {
     // Return empty string for empty URLs.
     if (url == null || url.isEmpty()) {
       return "";
     }
-    // If the url starts with "//", then the http(s) part was omitted.
-    // Assume the protocol scheme to be the same as the endpoint.
-    if (url.startsWith("//")) {
-      String protocol = Uri.parse(apiEndpoint).getScheme();
-      return protocol + ":" + url;
-    } else {
-      // Prepend API endpoint path if url is relative.
-      final Uri uri = Uri.parse(url);
-      if (uri.isRelative()) {
-        return apiEndpoint + url;
-      }
-    }
-    // URL already absolute.
-    return url;
+    return new URL(new URL(apiEndpoint), url).toString();
   }
 
   /**
