@@ -359,8 +359,7 @@ public class DanbooruLegacy implements SearchClient {
     if (url == null || url.isEmpty()) {
       return "";
     }
-    final String absoluteURL = new URL(new URL(apiEndpoint), url).toString();
-    return absoluteURL;
+    return new URL(new URL(apiEndpoint), url).toString();
   }
 
   /**
