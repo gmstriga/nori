@@ -44,9 +44,9 @@ public class APISettingsDatabaseTest extends InstrumentationTestCase {
     // The database should contain Safebooru API settings by default.
     SearchClient.Settings settings = settingsList.get(0).second;
     assertThat(settings).isNotNull();
-    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.GELBOARD);
-    assertThat(settings.getName()).isEqualTo("Safebooru");
-    assertThat(settings.getEndpoint()).isEqualTo("http://safebooru.org");
+    assertThat(settings.getApiType()).isEqualTo(SearchClient.Settings.APIType.FLICKR);
+    assertThat(settings.getName()).isEqualTo("Flickr");
+    assertThat(settings.getEndpoint()).isEqualTo("https://api.flickr.com/services/rest");
     assertThat(settings.getUsername()).isNull();
     assertThat(settings.getPassword()).isNull();
   }

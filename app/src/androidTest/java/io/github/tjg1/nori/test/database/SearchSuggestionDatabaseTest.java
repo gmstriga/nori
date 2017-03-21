@@ -13,6 +13,7 @@ import android.test.InstrumentationTestCase;
 import android.test.RenamingDelegatingContext;
 
 import io.github.tjg1.nori.BuildConfig;
+import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.database.SearchSuggestionDatabase;
 
 import static io.github.tjg1.nori.database.SearchSuggestionDatabase.COLUMN_ICON;
@@ -38,11 +39,13 @@ public class SearchSuggestionDatabaseTest extends InstrumentationTestCase {
     SQLiteDatabase db = searchSuggestionDatabase.getReadableDatabase();
 
     // Get all suggestions added from the Safebooru Top 1000 data set from the database.
-    Cursor c = db.query(TABLE_NAME, null, COLUMN_ICON + " IS NULL", null, null, null, COLUMN_ID);
+    Cursor c = db.query(TABLE_NAME, null, COLUMN_ICON + " = " + Integer.toString(R.drawable.ic_search_suggestion_builtin), null, null, null, COLUMN_ID);
 
     // Number of returned rows should match the number of lines in the "tags.txt" asset file.
     if (!"google".equals(BuildConfig.FLAVOR)) {
       assertThat(c.getCount()).isEqualTo(962);
+    } else {
+      assertThat(c.getCount()).isEqualTo(0);
     }
 
     // Clean-up native resources.
