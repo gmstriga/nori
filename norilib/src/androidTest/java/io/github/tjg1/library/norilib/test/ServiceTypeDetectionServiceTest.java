@@ -64,10 +64,10 @@ public class ServiceTypeDetectionServiceTest extends InstrumentationTestCase {
   /** Test detection of the Shimmie API. */
   public void testShimmieDetection() throws Throwable {
     String url = Shimmie.detectService(getInstrumentation().getContext(),
-        Uri.parse("https://dollbooru.org"), RESPONSE_TIMEOUT);
+        Uri.parse("http://dollbooru.org"), RESPONSE_TIMEOUT);
 
     assertThat(url).isNotNull();
-    assertThat(url).isEqualTo("https://dollbooru.org");
+    assertThat(url).isEqualTo("http://dollbooru.org");
   }
 
   /** Test detection of Moebooru (Danbooru 1.x fork) boards. */
