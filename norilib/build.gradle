@@ -49,7 +49,7 @@ android {
 
 dependencies {
   // HTTP Client library from Koush. (https://github.com/koush/ion)
-  compile 'com.koushikdutta.ion:ion:2.1.8'
+  compile 'com.koushikdutta.ion:ion:2.1.7'
   // Apache utility library for dealing with Collections.
   compile 'org.apache.commons:commons-collections4:4.1'
   // Android support library.

@@ -67,7 +67,7 @@ dependencies {
 
     // Third-party libraries.
     // An HTTP+SPDY client and image loader for Android. https://github.com/koush/ion
-    compile 'com.koushikdutta.ion:ion:2.1.8'
+    compile 'com.koushikdutta.ion:ion:2.1.7'
     // Implementation of ImageView for Android that supports zooming, by various touch gestures.
     compile 'com.github.chrisbanes.photoview:library:1.2.4'
     // Utility library for easier unit testing.
