@@ -115,4 +115,13 @@
   <string name="donation_error_connectingToPlayStoreService">Nie można uzyskać połączenia ze sklepem Play.</string>
   <string name="donation_toast_completed">Dotacja została otrzymana. Dziękujemy za wsparcie.</string>
 
+  <!-- Crash reporting -->
+  <string name="crash_toast_text">Przepraszamy, Nori zostało niespodziewanie zakończone.</string>
+  <string name="crash_dialog_text">Jeśli wykonywana praca nie była poufna (wpisywanie haseł bądź innych prywatnych informacji), można pomóc w usprawnieniu programu zgłaszając problem.</string>
+  <string name="crash_dialog_title">Raport problemu (Nori)</string>
+  <string name="crash_dialog_comment_prompt">Opisz kroki niezbędne do powtórzenia tego problemu.</string>
+  <string name="crash_dialog_positive_button_text">Wyślij raport</string>
+  <string name="crash_dialog_negative_button_text">Nie wysyłaj</string>
+  <string name="crash_dialog_ok_toast">Twój raport został otrzymany.</string>
+
 </resources>

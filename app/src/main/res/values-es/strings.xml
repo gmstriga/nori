@@ -109,4 +109,13 @@
     <string name="donation_summary">Si disfrutas de Nori, por favor considere hacer una donación para apoyar un desarrollo continuado. Dependemos de su apoyo para mantener Nori gratis y libre de publicidad.</string>
     <string name="donation_toast_completed">Se ha recibido su donación. Gracias por su apoyo.</string>
     <string name="donation_url_copiedToClipboard">Se ha copiado la URL para donar al portapapeles.</string>
+
+    <!-- Crash reporting (fuzzy; need proof-reading) -->
+    <string name="crash_toast_text">"Nori se cerró inesperadamente.</string>
+    <string name="crash_dialog_text">Si no estaba haciendo nada confidencial (como introducir contraseñas u otra información privada), puede informar del problema para ayudar a mejorar la aplicación.</string>
+    <string name="crash_dialog_title">Informe de problemas de Nori</string>
+    <string name="crash_dialog_comment_prompt">Proporciona todos los pasos necesarios para reproducir el problema.</string>
+    <string name="crash_dialog_positive_button_text">Enviar informe</string>
+    <string name="crash_dialog_negative_button_text">No enviar</string>
+    <string name="crash_dialog_ok_toast">Los desarrolladores han recibido tu informe.</string>
 </resources>

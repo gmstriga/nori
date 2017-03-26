@@ -124,4 +124,13 @@
   <string name="donation_error_connectingToPlayStoreService">Error: Couldn\'t connect to the Play Store service.</string>
   <string name="donation_toast_completed">Your donation has been received. Thank you for your support.</string>
 
+  <!-- Crash reporting -->
+  <string name="crash_toast_text">Nori quit unexpectedly.</string>
+  <string name="crash_dialog_text">If you were not doing anything confidential (entering passwords or other private information), you can help to improve the application by reporting the problem.</string>
+  <string name="crash_dialog_title">Problem Report for Nori</string>
+  <string name="crash_dialog_comment_prompt">Provide any steps necessary to reproduce the problem.</string>
+  <string name="crash_dialog_positive_button_text">Send Report</string>
+  <string name="crash_dialog_negative_button_text">Don\'t Send</string>
+  <string name="crash_dialog_ok_toast">Your report was received by the developer.</string>
+
 </resources>
