@@ -24,4 +24,9 @@
 
   <style name="ImageViewerActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+  <style name="CrashDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <item name="android:paddingLeft">4dp</item>
+    <item name="android:paddingRight">4dp</item>
+  </style>
+
 </resources>

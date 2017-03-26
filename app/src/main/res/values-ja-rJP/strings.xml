@@ -115,5 +115,14 @@
   <string name="donation_error_connectingToPlayStoreService">Play Store への接続エラーです - サービスへ届きません。</string>
   <string name="donation_toast_completed">ご寄付をいただきました。 ご厚意、誠にありがとうございました。</string>
 
+  <!-- Crash reporting (fuzzy; need proof-reading) -->
+  <string name="crash_toast_text">残念ながら、Noriは予期せず終了しました。</string>
+  <string name="crash_dialog_text">秘密にしておくべき作業(パスワードや個人情報の入力など)を行っていたのでなければ、不具合を報告してアプリケーションの改善に協力することができます。</string>
+  <string name="crash_dialog_title">Nori の問題レポート</string>
+  <string name="crash_dialog_comment_prompt">問題の再現に必要なすべての手順を入力してください。</string>
+  <string name="crash_dialog_positive_button_text">レポートの送信</string>
+  <string name="crash_dialog_negative_button_text">送信しない</string>
+  <string name="crash_dialog_ok_toast">問題は開発者にレポートされています。ありがとうございます!</string>
+
 
 </resources>
