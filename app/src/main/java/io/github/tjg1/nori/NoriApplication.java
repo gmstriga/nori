@@ -17,6 +17,8 @@ import org.acra.config.ACRAConfiguration;
 import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
 
+import io.github.tjg1.nori.util.HockeyIonSender;
+
 import static org.acra.ReportField.*;
 
 /**
@@ -31,8 +33,7 @@ public class NoriApplication extends Application {
 
     try {
       final ACRAConfiguration acraConfig = new ConfigurationBuilder(this)
-          //.setFormUri("") // TODO: Replace email with backend server.
-          .setMailTo("tomg@fastmail.uk")
+          .setReportSenderFactoryClasses(HockeyIonSender.SenderFactory.class)
           .setReportingInteractionMode(ReportingInteractionMode.DIALOG)
           .setResDialogIcon(0)
           .setResToastText(R.string.crash_toast_text)
@@ -41,16 +42,15 @@ public class NoriApplication extends Application {
           .setResDialogCommentPrompt(R.string.crash_dialog_comment_prompt)
           .setResDialogPositiveButtonText(R.string.crash_dialog_positive_button_text)
           .setResDialogNegativeButtonText(R.string.crash_dialog_negative_button_text)
-          // TODO: Uncomment when backend is set.
-          //.setResDialogOkToast(R.string.crash_dialog_ok_toast)
+          .setResDialogOkToast(R.string.crash_dialog_ok_toast)
           .setResDialogTheme(R.style.CrashDialogTheme)
+          .setSendReportsInDevMode(true)
           .setCustomReportContent(new ReportField[]{
               REPORT_ID, APP_VERSION_CODE, APP_VERSION_NAME, PACKAGE_NAME, PHONE_MODEL,
               BRAND, PRODUCT, ANDROID_VERSION, BUILD, TOTAL_MEM_SIZE, AVAILABLE_MEM_SIZE,
               CUSTOM_DATA, STACK_TRACE, INITIAL_CONFIGURATION, CRASH_CONFIGURATION, DISPLAY,
-              USER_COMMENT, USER_APP_START_DATE, USER_CRASH_DATE, DUMPSYS_MEMINFO, IS_SILENT,
-              INSTALLATION_ID, DEVICE_FEATURES, ENVIRONMENT, MEDIA_CODEC_LIST, THREAD_DETAILS,
-              BUILD_CONFIG
+              USER_COMMENT, USER_APP_START_DATE, USER_CRASH_DATE, IS_SILENT, INSTALLATION_ID,
+              DEVICE_FEATURES, ENVIRONMENT, MEDIA_CODEC_LIST, THREAD_DETAILS, BUILD_CONFIG
           })
           .build();
 

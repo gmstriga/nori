@@ -23,6 +23,7 @@ android {
         buildConfigField "String", "DONATIONS_PATREON_ACCOUNT", "null"
         buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "null"
         buildConfigField "String", "DONATIONS_GOOGLE_PUB_KEY", "null"
+        buildConfigField "String", "HOCKEYAPP_APP_ID", "\"73abce41065f421f993f9309d969aaa9\""
     }
     buildTypes {
         release {
