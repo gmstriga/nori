@@ -1,3 +1,20 @@
+### Version 3.2.0 (01/04/2016) ###
+particularCircumstances (1):
+    - Fix parsing relative URLs for boards hosted outside root path
+
+Tomasz Jan Góralczyk (5):
+    - Replace Norilib submodule with Git subtree
+    - Travis CI integration
+    - Increase Gradle's heap size to speed up build times
+    - Downgrade ion to fix TLS issues on older versions of Android
+    - Implement ACRA crash reporting
+
+Lonami (1):
+    - Handle more "relative url" cases on normalizeUrl()
+
+Poussinou (1):
+    - Add download image buttons to README.md
+
 ### Version 3.0.0 (19/08/2016) ###
 Tomasz Jan Góralczyk (46 commits):
       Create Google Play build flavor
