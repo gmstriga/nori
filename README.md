@@ -21,7 +21,7 @@ If you wish to get it directly from us, we publish APKs for each release on [Git
 To build Nori, first make sure you have cloned the repository recursively to also get a copy of [norilib](https://github.com/tjg1/norilib), our API client library:
 
 ```bash
-$ git clone --recursive https://github.com/tjg1/nori
+$ git clone https://github.com/tjg1/nori
 ```
 
 Providing you have the Java JDK and Android SDK installed on your computer, you should now be able to use the Gradle wrapper to build Nori:
