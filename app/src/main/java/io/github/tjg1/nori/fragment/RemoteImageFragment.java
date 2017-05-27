@@ -134,6 +134,7 @@ public class RemoteImageFragment extends ImageFragment {
         .load(imageUrl)
         .progressBar(progressBar)
         .userAgent("nori/" + BuildConfig.VERSION_NAME)
+        .addHeader("Referer",image.previewUrl)
         .withBitmap()
         .animateGif(AnimateGifMode.ANIMATE)
         //.deepZoom() // (disabled due to poor scaling quality)
