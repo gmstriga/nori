@@ -255,7 +255,10 @@ public class ImageViewerActivity extends AppCompatActivity implements ViewPager.
   public void downloadImage(@NonNull String fileUrl) {
     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
       queuedDownloadRequestUrl = null;
-      getDownloadManager().enqueue(getImageDownloadRequest(fileUrl));
+      DownloadManager.Request request = getImageDownloadRequest(fileUrl);
+      request.addRequestHeader("User-Agent", "nori/" + BuildConfig.VERSION_NAME);
+      request.addRequestHeader("Referer", fileUrl);
+      getDownloadManager().enqueue(request);
     } else {
       queuedDownloadRequestUrl = fileUrl;
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_DOWNLOAD_IMAGE);
