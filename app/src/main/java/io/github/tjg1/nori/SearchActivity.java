@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
@@ -249,6 +250,21 @@ public class SearchActivity extends AppCompatActivity
     // Request search result from API client.
     searchCallback = new SearchResultCallback(searchResult);
     searchClient.search(Tag.stringFromArray(searchResult.getQuery()), searchResult.getCurrentOffset() + 1, searchCallback);
+  }
+
+  @Override
+  public void onRestoreSearchGridState(@NonNull String savedQuery, int firstVisiblePageOffset) {
+    // Ignore request if there is another API request pending.
+    if (searchCallback != null) {
+      return;
+    }
+
+    // Show progress bar in ActionBar.
+    searchProgressBar.setVisibility(View.VISIBLE);
+
+    // Request previous SearchResult from API client.
+    searchCallback = new SearchResultCallback();
+    searchClient.search(savedQuery, firstVisiblePageOffset, searchCallback);
   }
   //endregion
 

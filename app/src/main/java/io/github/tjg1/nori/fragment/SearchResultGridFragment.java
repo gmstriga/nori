@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.koushikdutta.ion.builder.AnimateGifMode;
 
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.library.norilib.SearchResult;
+import io.github.tjg1.library.norilib.Tag;
 import io.github.tjg1.nori.BuildConfig;
 import io.github.tjg1.nori.R;
 import io.github.tjg1.nori.widget.SquareImageView;
@@ -36,7 +39,9 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
 
   //region Bundle IDs
   /** Identifier used for saving currently displayed search result in {@link #onSaveInstanceState(android.os.Bundle)}. */
-  private static final String BUNDLE_ID_SEARCH_RESULT = "io.github.tjg1.nori.SearchResult";
+  private static final String BUNDLE_ID_SEARCH_QUERY = "io.github.tjg1.nori.SearchQuery";
+  private static final String BUNDLE_ID_VISIBLE_PAGE = "io.github.tjg1.nori.FirstVisibleSearchPage";
+  private static final String BUNDLE_ID_VISIBLE_ITEM = "io.github.tjg1.nori.FirstVisibleSearchPagePosition";
   //endregion
 
   //region Instance fields
@@ -46,6 +51,12 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
   private GridView gridView;
   /** Search result displayed by the SearchResultGridFragment. */
   private SearchResult searchResult;
+  /** Previous first visible item's search page offset, restored from saved instance state. */
+  private int firstVisibleSearchPage = 0;
+  /** Previous first visible item's position, restored from saved instance state. */
+  private int firstVisibleSearchPagePosition = 0;
+  /** Previous search query, restored from saved instance state. */
+  private String previousSearchQuery = null;
   /** Adapter used by the GridView in this fragment. */
   private BaseAdapter gridAdapter = new BaseAdapter() {
     @Override
@@ -118,7 +129,23 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
     super.onSaveInstanceState(outState);
     // Preserve currently displayed SearchResult.
     if (searchResult != null) {
-      outState.putParcelable(BUNDLE_ID_SEARCH_RESULT, searchResult);
+      if (gridView.getCount() > 0) {
+        final Image firstVisibleImage =
+                (Image) gridView.getItemAtPosition(gridView.getFirstVisiblePosition());
+
+        final int firstVisibleSearchPage = firstVisibleImage.searchPage;
+        final int firstVisibleSearchPagePosition = firstVisibleImage.searchPagePosition;
+
+        outState.putInt(BUNDLE_ID_VISIBLE_PAGE, firstVisibleSearchPage);
+        outState.putInt(BUNDLE_ID_VISIBLE_ITEM, firstVisibleSearchPagePosition);
+      }
+
+      outState.putString(BUNDLE_ID_SEARCH_QUERY, Tag.stringFromArray(searchResult.getQuery()));
+    } else if (previousSearchQuery != null) {
+      // Save the previous search query, in case the SearchResult hasn't loaded yet.
+      outState.putString(BUNDLE_ID_SEARCH_QUERY, this.previousSearchQuery);
+      outState.putInt(BUNDLE_ID_VISIBLE_PAGE, firstVisibleSearchPage);
+      outState.putInt(BUNDLE_ID_VISIBLE_ITEM, firstVisibleSearchPagePosition);
     }
   }
 
@@ -136,6 +163,23 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
   }
 
   @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+
+    // Restore search query from saved instance state to preserve search results across screen rotations.
+    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_QUERY)) {
+      this.previousSearchQuery = savedInstanceState.getString(BUNDLE_ID_SEARCH_QUERY);
+      this.firstVisibleSearchPage = savedInstanceState.getInt(BUNDLE_ID_VISIBLE_PAGE, 0);
+      this.firstVisibleSearchPagePosition = savedInstanceState.getInt(BUNDLE_ID_VISIBLE_ITEM, 0);
+
+      if (this.previousSearchQuery != null) {
+        mListener.onRestoreSearchGridState(this.previousSearchQuery,
+            this.firstVisibleSearchPagePosition);
+      }
+    }
+  }
+
+  @Override
   public void onDetach() {
     super.onDetach();
     mListener = null;
@@ -147,10 +191,7 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_search_result_grid, container, false);
-    // Restore SearchResult from saved instance state to preserve search results across screen rotations.
-    if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_ID_SEARCH_RESULT)) {
-      searchResult = savedInstanceState.getParcelable(BUNDLE_ID_SEARCH_RESULT);
-    }
+
     // Set adapter for GridView.
     gridView = (GridView) view.findViewById(R.id.image_grid);
     gridView.setColumnWidth(getGridViewColumnWidth());
@@ -212,6 +253,11 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
     } else {
       this.searchResult = searchResult;
       gridAdapter.notifyDataSetChanged();
+      if (this.firstVisibleSearchPagePosition != 0) {
+        // Restore last visible search page position from saved instance state.
+        gridView.smoothScrollToPositionFromTop(firstVisibleSearchPagePosition, 0);
+        this.firstVisibleSearchPagePosition = 0;
+      }
     }
   }
   //endregion
@@ -260,6 +306,13 @@ public class SearchResultGridFragment extends Fragment implements AdapterView.On
      * @param searchResult Search result for which more images should be fetched.
      */
     public void fetchMoreImages(SearchResult searchResult);
+
+    /**
+     * Called when the {@link SearchResult} has to fetched to restore this SearchResultGridFragment's saved instance state.
+     * @param savedQuery Saved search query.
+     * @param firstVisiblePageOffset Last visible page offset to retrieve for infinite scrolling.
+     */
+    public void onRestoreSearchGridState(@NonNull String savedQuery, int firstVisiblePageOffset);
   }
   //endregion
 }
