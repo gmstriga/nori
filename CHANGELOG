@@ -1,3 +1,8 @@
+### Version 2017.04.1 ###
+Tomasz Jan Góralczyk (2):
+    - Update buildtools
+    - Don't save SearchResults to SearchResultGridFragment's instance state
+
 ### Version 3.2.0 (01/04/2016) ###
 particularCircumstances (1):
     - Fix parsing relative URLs for boards hosted outside root path
