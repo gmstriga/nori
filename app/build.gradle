@@ -37,20 +37,24 @@ android {
     }
     compileOptions {
         // Enable Java 1.7 features.
-        sourceCompatibility JavaVersion.VERSION_1_7;
-        targetCompatibility JavaVersion.VERSION_1_7;
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
     lintOptions {
         abortOnError false
     }
+
+    flavorDimensions "distribution"
     productFlavors {
         fdroid {
+            dimension "distribution"
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "String", "DONATIONS_PAYPAL_EMAIL", "\"tomg@fastmail.uk\""
             buildConfigField "String", "DONATIONS_PATREON_ACCOUNT", "\"3696048\""
             buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "\"1NHUsSzj3N7TE8rykUYk8rqqLWWSmTVzdp\""
         }
         google {
+            dimension "distribution"
             buildConfigField "boolean", "GOOGLE_BUILD", "true"
             buildConfigField "boolean", "DONATIONS_PAYPAL", "false"
             buildConfigField "boolean", "DONATIONS_PATREON", "false"
@@ -90,7 +94,7 @@ dependencies {
  */
 
 // Used to append Git commit hash to version names.
-def gitRevision() {
+static def gitRevision() {
     def cmd = "git rev-parse --short HEAD"
     return cmd.execute().text.trim()
 }
