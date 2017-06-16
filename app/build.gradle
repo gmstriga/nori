@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 11
-        versionName "2017.04.1"
+        versionName "2017.06"
         testApplicationId "io.github.tjg1.nori.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
