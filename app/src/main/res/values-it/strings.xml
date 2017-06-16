@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of nori.
+  ~ Copyright (c) 2014-2016 Tomasz Jan Góralczyk <tomg@fastmail.uk>
+  ~ License: GNU GPLv2
+  -->
+
+<resources>
+
+    <string name="app_name">Nori</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancella</string>
+
+    <!-- Activity titles -->
+    <!-- (Image ID): (Image tags) -->
+    <string name="activity_image_viewer_titleFormat" formatted="false">%s: %s</string>
+    <string name="activity_settings">Impostazioni</string>
+    <string name="activity_tag_filter_settings">Filtro Tag</string>
+    <string name="activity_safeSearch_settings">Navigazione Sicura</string>
+    <string name="activity_service_settings">Impostazioni Servizio</string>
+    <string name="activity_donations">Dona</string>
+
+    <!-- EditText hints -->
+    <string name="hint_tag">Tag</string>
+    <string name="hint_search_images">Cerca immagini</string>
+    <string name="hint_service_name">Nome Servizio</string>
+    <string name="hint_service_uri">Indirizzo Servizio</string>
+    <string name="hint_service_username">Nome utente (opzionale)</string>
+    <string name="hint_service_passphrase">Password/API key (opzionale)</string>
+
+    <!-- Action bar items -->
+    <string name="action_add">Aggiungi</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="action_search">Cerca</string>
+    <string name="action_share">Condividi</string>
+    <string name="action_tags">Tags</string>
+    <string name="action_downloadImage">Scarica</string>
+    <string name="action_viewOnWeb">Apri sul Web</string>
+    <string name="action_viewOnPixiv">Apri su Pixiv</string>
+    <string name="action_setAsWallpaper">Imposta come Sfondo</string>
+    <string name="service_dropdown_settings">Impostazioni servizio…</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_title_editService">Modifica servizio</string>
+    <string name="dialog_title_addService">Aggiungi servizo</string>
+    <string name="dialog_tags_closeButton">Chiudi</string>
+    <string name="dialog_message_detectingApiType">Rilevazione impostazioni API…</string>
+
+    <!-- Accessibility image content descriptions -->
+    <string name="content_description_remove">Rimuovi</string>
+
+    <!-- Toast notifications -->
+    <string name="toast_networkError" formatted="false">Errore di rete: %s</string>
+    <string name="toast_couldNotSetWallpaper" formatted="false">Impossibile impostare l\'immagine come sfondo: %s</string>
+    <string name="toast_infiniteScrollingFetchError" formatted="false">Si è verificato un errore durante il tentativo di recuperare altre immagini: %s</string>
+    <string name="toast_error_serviceUriInvalid">L\'URL del servizio specificato non è valido.</string>
+    <string name="toast_error_noNetwork">Impossibile connettersi alla rete.</string>
+    <string name="toast_error_noServiceAtGivenUri">Impossibile trovare un API supportato per questo indirizzo.</string>
+    <string name="toast_error_noApplicationFound">Nessuna applicazione trovata per gestire questa richiesta.</string>
+    <string name="toast_error_videoMeteredConnection">I video non verranno scaricati su connessioni a consumo.</string>
+    <string name="toast_searchHistoryCleared">Cronologia cancellata.</string>
+    <string name="toast_imageDownloadPermissionDenied">È necessario concedere autorizzazioni di archiviazione per scaricare le immagini.</string>
+
+    <!-- Preferences -->
+    <string name="preference_category_search">Cerca</string>
+    <string name="preference_previewSize_title">Grandezza anteprima</string>
+    <string name="preference_safeSearch_title">Ricerca Sicura</string>
+    <string name="preference_safeSearch_summary">Gestisci le impostazioni del filtro Ricerca Sicura</string>
+    <string name="preference_tagFilter_summary">Gestisci i tag da rimuovere dai risultati di ricerca</string>
+    <string name="preference_tagFilter_title">Filtro Tag</string>
+    <string name="preference_clearSearchHistory_summary">Cancella la cronologia di ricerca</string>
+    <string name="preference_clearSearchHistory_title">Cancella Cronologia</string>
+    <string name="preference_imageViewer">Visualizzatore Immagini</string>
+    <string name="preference_image_viewer_keepScreenOn_summary">Mantieni lo schermo attivo nel visualizzatore di immagini</string>
+    <string name="preference_image_viewer_keepScreenOn_title">Mantieni Schermo Attivo</string>
+    <string name="preference_image_viewer_conserveBandwidth_summary">Carica sempre immagini scalate, anche su connesioni veloci</string>
+    <string name="preference_image_viewer_conserveBandwidth_title">Risparmia Connessione</string>
+    <string name="preference_category_services">Servizi</string>
+    <string name="preference_service_settings_summary">Aggiungi, modifica o rimuovi imageboard service settings</string>
+    <string name="preference_service_settings_title">Impostazioni Servizio</string>
+    <string name="preference_donate_summary">Supporta lo sviluppo di Nori</string>
+    <string name="preference_donate">Dona</string>
+    <string name="preference_about">Riguardo Nori</string>
+    <string name="preference_about_summary">Mostra informazioni su questa versione di Nori</string>
+    <!-- Untranslatable -->
+    <string name="preference_previewSize_key" translatable="false">preference_previewSize</string>
+    <string name="preference_previewSize_default" translatable="false">medium</string>
+    <string name="preference_safeSearch_key" translatable="false">preference_safeSearch</string>
+    <string name="preference_tagFilter_key" translatable="false">preference_tagFilter</string>
+    <string name="preference_image_viewer_keepScreenOn_key" translatable="false">preference_image_viewer_keepScreenOn</string>
+    <string name="preference_image_viewer_conserveBandwidth_key" translatable="false">preference_image_viewer_conserveBandwidth</string>
+    <string name="preference_donation_dialog_count" translatable="false">preference_donation_dialog_count</string>
+
+    <!-- Thumbnail sizes -->
+    <string name="preference_previewSize_small">Piccolo</string>
+    <string name="preference_previewSize_medium">Medio</string>
+    <string name="preference_previewSize_large">Grande</string>
+
+    <!-- SafeSearch settings -->
+    <string name="safe_search_on">Sicuro</string>
+    <string name="safe_search_moderate">Discutibile</string>
+    <string name="safe_search_off">Esplicito</string>
+    <string name="safe_search_undefined">Indeterminato</string>
+    <string name="safe_search_on_summary">Sicuro per il posto di lavoro</string>
+    <string name="safe_search_moderate_summary">Nudità parziale e contenuto sessualmente alludente</string>
+    <string name="safe_search_off_summary">Nudità totale e contenuto sessualmente esplicito</string>
+    <string name="safe_search_undefined_summary">Mostra il contenuto per cui non è stata stabilita una valutazione dell\' oscenità</string>
+
+    <!-- Donations -->
+    <string name="donation_summary">Se ti piace Nori, ti preghiamo di considerare di supportarci con una donazione per sostenere uno sviluppo continuativo.\nCi affidiamo al tuo aiuto per mantenere Nori gratis e libera da pubblicità.</string>
+    <string name="donation_method_patreon">Patreon</string>
+    <string name="donation_method_patreonSummary">Fai una donazione periodica su Patreon</string>
+    <string name="donation_method_paypal">PayPal</string>
+    <string name="donation_method_paypalSummary">Dona tramite PayPal</string>
+    <string name="donation_method_google">Google</string>
+    <string name="donation_method_googleSummary">Dona tramite Google Play</string>
+    <string name="donation_method_bitcoin">Bitcoin</string>
+    <string name="donation_method_bitcoinSummary">Dona con Bitcoin</string>
+    <string name="donation_paypal_item" translatable="false">Nori Donation</string>
+    <string name="donation_url_copiedToClipboard">L\'URL di donazione è stato copiato negli appunti.</string>
+    <string name="donation_method_bitcoin_copiedToClipboard">L\'indirizzo Bitcoin è stato copiato negli appunti.</string>
+    <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR Code</string>
+    <string name="donation_dialog_donate">Dona</string>
+    <string name="donation_error_connectingToPlayStoreService">Errore: Impossibile connettersi al Play Store.</string>
+    <string name="donation_toast_completed">La tua donazione è stata ricevuta. Grazie per il tuo supporto.</string>
+
+    <!-- Crash reporting -->
+    <string name="crash_toast_text">Nori si è chiuso inaspettatamente.</string>
+    <string name="crash_dialog_text">Se non stavi facendo nulla di riservato (immettendo password o altre informazioni private), puoi aiutarci a migliorare l\'applicazione segnalando il problema.</string>
+    <string name="crash_dialog_title">Segnalazione del problema per Nori</string>
+    <string name="crash_dialog_comment_prompt">Fornisci tutti i passaggi necessari a ricreare il problema.</string>
+    <string name="crash_dialog_positive_button_text">Manda Segnalazione</string>
+    <string name="crash_dialog_negative_button_text">Non Mandare</string>
+    <string name="crash_dialog_ok_toast">La tua segnalazione è stata ricevuta dallo sviluppatore.</string>
+
+</resources>
