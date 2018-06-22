@@ -270,15 +270,15 @@ public class Danbooru implements SearchClient {
           }
           // Extract image metadata from XML tags.
           else if ("large-file-url".equals(name)) {
-            image.fileUrl = apiEndpoint + xpp.nextText();
+            image.fileUrl = xpp.nextText();
           } else if ("image-width".equals(name)) {
             image.width = Integer.parseInt(xpp.nextText());
           } else if ("image-height".equals(name)) {
             image.height = Integer.parseInt(xpp.nextText());
           } else if ("preview-file-url".equals(name)) {
-            image.previewUrl = apiEndpoint + xpp.nextText();
+            image.previewUrl = xpp.nextText();
           } else if ("file-url".equals(name)) {
-            image.sampleUrl = apiEndpoint + xpp.nextText();
+            image.sampleUrl = xpp.nextText();
           } else if ("tag-string-general".equals(name)) {
             imageTags.addAll(Arrays.asList(Tag.arrayFromString(xpp.nextText(), Tag.Type.GENERAL)));
           } else if ("tag-string-artist".equals(name)) {
