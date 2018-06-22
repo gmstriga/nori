@@ -9,19 +9,20 @@ apply plugin: 'com.android.library'
 buildscript {
   repositories {
     jcenter()
+    google()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.3'
+    classpath 'com.android.tools.build:gradle:3.1.3'
   }
 }
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.3"
+  compileSdkVersion 27
+  buildToolsVersion '27.0.3'
 
   defaultConfig {
-    minSdkVersion 10
-    targetSdkVersion 25
+    minSdkVersion 14
+    targetSdkVersion 27
     versionCode 7
     versionName "3.4.0"
     testApplicationId "io.github.tjg1.library.norilib.test"
@@ -49,19 +50,20 @@ android {
 
 dependencies {
   // HTTP Client library from Koush. (https://github.com/koush/ion)
-  compile 'com.koushikdutta.ion:ion:2.1.7'
+  api 'com.koushikdutta.ion:ion:2.2.1'
   // Apache utility library for dealing with Collections.
-  compile 'org.apache.commons:commons-collections4:4.1'
+  implementation 'org.apache.commons:commons-collections4:4.1'
   // Android support library.
-  compile 'com.android.support:support-v4:25.3.1'
+  implementation 'com.android.support:support-v4:27.1.1'
   // FEST for easier unit testing.
-  androidTestCompile 'org.easytesting:fest-assert-core:2.0M10'
+  androidTestImplementation 'org.easytesting:fest-assert-core:2.0M10'
 
-  compile fileTree(dir: 'libs', include: ['*.jar'])
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 repositories {
   jcenter()
+  google()
 }
 
 // Used to append Git commit hash to version names.

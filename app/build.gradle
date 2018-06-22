@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "io.github.tjg1.nori"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 13
         versionName "2017.06.1"
         testApplicationId "io.github.tjg1.nori.test"
@@ -43,12 +43,14 @@ android {
     lintOptions {
         abortOnError false
     }
+    flavorDimensions "storefront"
     productFlavors {
         fdroid {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "String", "DONATIONS_PAYPAL_EMAIL", "\"tomg@fastmail.uk\""
             buildConfigField "String", "DONATIONS_PATREON_ACCOUNT", "\"3696048\""
             buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "\"1NHUsSzj3N7TE8rykUYk8rqqLWWSmTVzdp\""
+            dimension "storefront"
         }
         google {
             buildConfigField "boolean", "GOOGLE_BUILD", "true"
@@ -56,31 +58,32 @@ android {
             buildConfigField "boolean", "DONATIONS_PATREON", "false"
             buildConfigField "boolean", "DONATIONS_BITCOIN", "false"
             buildConfigField "String", "DONATIONS_GOOGLE_PUB_KEY", "\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArXl8mF/3pfc+wk6DPaZV8jQoWmw2+/1f5Hc8Rb66Ykv5muiTDEnDtGdaQjfTOHPJrlYGzK3V/KP5zT1X7+kxHzuoATgr0aeOUpu6SQjOKsYlG92yb6ga1+Gj/7zak/gxRcu2ivSxM7TEYeCsxlqfqvdN6EZKRrSy6m5jVqPDwClcQfgWkN+fzb19Jooetb3IrJv73LoB93D82SvndrhuTzMSX4j5ecBMuXVCACGDNYBBZO/B7j+J3/I+p5XmB6bHBH2EqG2BJVXRfvDz424MIW9UpEYvITWZ5XaqOwRKdiBEEkeT/RF/Pe4DnlVArG0TIjKYhPKg3IINQLQ0ZG30dQIDAQAB\""
+            dimension "storefront"
         }
     }
 }
 
 dependencies {
     // Support libraries.
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
 
     // Third-party libraries.
     // An HTTP+SPDY client and image loader for Android. https://github.com/koush/ion
-    compile 'com.koushikdutta.ion:ion:2.1.7'
+    implementation 'com.koushikdutta.ion:ion:2.2.1'
     // Implementation of ImageView for Android that supports zooming, by various touch gestures.
-    compile 'com.github.chrisbanes.photoview:library:1.2.4'
+    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
     // Crash reporting library.
-    compile 'ch.acra:acra:4.9.2'
+    implementation 'ch.acra:acra:4.9.2'
     // Utility library for easier unit testing.
-    androidTestCompile 'org.easytesting:fest-assert-core:2.0M10'
+    androidTestImplementation 'org.easytesting:fest-assert-core:2.0M10'
 
     // Project dependencies.
-    compile project(':norilib') // https://github.com/tjg1/norilib
+    implementation project(':norilib') // https://github.com/tjg1/norilib
 
     // *.jar files.
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 /*
@@ -90,7 +93,7 @@ dependencies {
  */
 
 // Used to append Git commit hash to version names.
-def gitRevision() {
+static def gitRevision() {
     def cmd = "git rev-parse --short HEAD"
     return cmd.execute().text.trim()
 }
