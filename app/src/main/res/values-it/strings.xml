@@ -82,14 +82,6 @@
     <string name="preference_donate">Dona</string>
     <string name="preference_about">Riguardo Nori</string>
     <string name="preference_about_summary">Mostra informazioni su questa versione di Nori</string>
-    <!-- Untranslatable -->
-    <string name="preference_previewSize_key" translatable="false">preference_previewSize</string>
-    <string name="preference_previewSize_default" translatable="false">medium</string>
-    <string name="preference_safeSearch_key" translatable="false">preference_safeSearch</string>
-    <string name="preference_tagFilter_key" translatable="false">preference_tagFilter</string>
-    <string name="preference_image_viewer_keepScreenOn_key" translatable="false">preference_image_viewer_keepScreenOn</string>
-    <string name="preference_image_viewer_conserveBandwidth_key" translatable="false">preference_image_viewer_conserveBandwidth</string>
-    <string name="preference_donation_dialog_count" translatable="false">preference_donation_dialog_count</string>
 
     <!-- Thumbnail sizes -->
     <string name="preference_previewSize_small">Piccolo</string>
@@ -116,7 +108,6 @@
     <string name="donation_method_googleSummary">Dona tramite Google Play</string>
     <string name="donation_method_bitcoin">Bitcoin</string>
     <string name="donation_method_bitcoinSummary">Dona con Bitcoin</string>
-    <string name="donation_paypal_item" translatable="false">Nori Donation</string>
     <string name="donation_url_copiedToClipboard">L\'URL di donazione è stato copiato negli appunti.</string>
     <string name="donation_method_bitcoin_copiedToClipboard">L\'indirizzo Bitcoin è stato copiato negli appunti.</string>
     <string name="donation_method_bitcoin_qrCodeContentDescription">Bitcoin QR Code</string>
