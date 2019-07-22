@@ -38,13 +38,13 @@
   <string name="action_viewOnWeb">Voir dans le navigateur</string>
   <string name="action_viewOnPixiv">Voir sur Pixiv</string>
   <string name="action_setAsWallpaper">Choisir comme papier peint</string>
-  <string name="service_dropdown_settings">Options des services...</string>
+  <string name="service_dropdown_settings">Options des services…</string>
 
   <!-- Dialogs -->
   <string name="dialog_title_editService">Modifier le service</string>
   <string name="dialog_title_addService">Ajouter un service</string>
   <string name="dialog_tags_closeButton">Fermer</string>
-  <string name="dialog_message_detectingApiType">Détection de l\'API...</string>
+  <string name="dialog_message_detectingApiType">Détection de l\'API…</string>
 
   <!-- Accessibility image content descriptions -->
   <string name="content_description_remove">Supprimer</string>
