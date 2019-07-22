@@ -51,7 +51,8 @@ dependencies {
   // HTTP Client library from Koush. (https://github.com/koush/ion)
   api 'com.koushikdutta.ion:ion:2.2.1'
   // Apache utility library for dealing with Collections.
-  implementation 'org.apache.commons:commons-collections4:4.1'
+  // >4.2 requires higher min-sdk version.
+  implementation 'org.apache.commons:commons-collections4:4.2'
   // Android support library.
   implementation 'com.android.support:support-v4:28.0.0'
   // FEST for easier unit testing.
