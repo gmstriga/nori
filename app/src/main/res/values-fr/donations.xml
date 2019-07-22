@@ -8,6 +8,6 @@
 <resources>
 
   <!-- Pay what you want currency. -->
-  <string name="donation_currency">Euros</string>
+  <string name="donation_currency">EUR</string>
 
 </resources>
