@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "io.github.tjg1.nori"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 14
         versionName "2018.06"
         testApplicationId "io.github.tjg1.nori.test"
@@ -64,9 +64,9 @@ android {
 
 dependencies {
     // Support libraries.
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
 
     // Third-party libraries.
     // An HTTP+SPDY client and image loader for Android. https://github.com/koush/ion
