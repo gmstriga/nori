@@ -48,7 +48,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "String", "DONATIONS_PAYPAL_EMAIL", "\"tomg@fastmail.uk\""
             buildConfigField "String", "DONATIONS_PATREON_ACCOUNT", "\"3696048\""
-            buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "\"1NHUsSzj3N7TE8rykUYk8rqqLWWSmTVzdp\""
+            buildConfigField "String", "DONATIONS_BITCOIN_ADDRESS", "\"3PKxcCKcccHNizeZJNG1dcBaAN4eWEqqG5\""
             dimension "storefront"
         }
         google {
