@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.OnViewTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -22,8 +24,6 @@ import com.koushikdutta.ion.builder.AnimateGifMode;
 import io.github.tjg1.library.norilib.Image;
 import io.github.tjg1.nori.BuildConfig;
 import io.github.tjg1.nori.R;
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Fragment using the {@link PhotoView} widget
@@ -81,7 +81,7 @@ public class RemoteImageFragment extends ImageFragment {
     this.photoView = (PhotoView) view.findViewById(R.id.imageView);
     this.photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     this.photoView.setMaximumScale(4);
-    this.photoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+    this.photoView.setOnViewTapListener(new OnViewTapListener() {
       @Override
       public void onViewTap(View view, float x, float y) {
         listener.onViewTap(view, x, y);

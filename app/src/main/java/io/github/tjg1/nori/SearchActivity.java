@@ -126,7 +126,8 @@ public class SearchActivity extends AppCompatActivity
         searchClient = searchClientSettings.createSearchClient(this);
         doSearch(intent.getStringExtra(BUNDLE_ID_SEARCH_QUERY));
       }
-      showDonationDialog();
+      // disabled
+      //showDonationDialog();
     }
 
     // Set up the dropdown API server picker.

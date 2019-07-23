@@ -17,7 +17,7 @@
 -keep public class android.support.v7.widget.ShareActionProvider {
   public <init>(...);
 }
--dontwarn com.squareup.okhttp.**
+-dontwarn com.koushikdutta.ion.**
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 

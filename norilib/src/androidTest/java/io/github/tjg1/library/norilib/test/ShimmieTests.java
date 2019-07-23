@@ -12,8 +12,8 @@ import io.github.tjg1.library.norilib.clients.Shimmie;
 /**
  * Tests for the Shimmie2 API client.
  */
-public class ShimmieTests extends SearchClientTestCase {
-
+public class ShimmieTests /*extends SearchClientTestCase*/ {
+  /** DISABLE DOLLBOORU TESTS TEMPORARILY
   @Override
   protected SearchClient createSearchClient() {
     return new Shimmie(getInstrumentation().getContext(), "Dollbooru", "http://dollbooru.org");
@@ -23,4 +23,5 @@ public class ShimmieTests extends SearchClientTestCase {
   protected String getDefaultTag() {
     return "blonde_hair";
   }
+  */
 }

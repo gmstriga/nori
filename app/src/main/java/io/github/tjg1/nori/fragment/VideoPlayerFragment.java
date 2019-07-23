@@ -143,9 +143,9 @@ public class VideoPlayerFragment extends ImageFragment {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
           // Start video, if the fragment is active.
+          VideoPlayerFragment.this.isPrepared = true;
           if (VideoPlayerFragment.this.isActive) {
             // TODO: Progress bar.
-            VideoPlayerFragment.this.isPrepared = true;
             mediaPlayer.start();
           }
         }

@@ -5,6 +5,8 @@
 
 Nori is a free and open source Android image search client with support for various third-party APIs.
 
+Note: This project is no longer in active development, and has been put into maintenance mode. No new features will be added. If you would like to fork it and continue development, feel free to, and I'm happy to help out in any way that I can. -- tjg
+
 If you're interested in contributing to Nori, have any questions or just want to hang out, join us on the official [Discord server](https://discord.gg/3DTNcHu).
 
 ### Download ###
@@ -35,8 +37,6 @@ You can also use [Android Studio](https://developer.android.com/studio/index.htm
 
 ### Donations ###
 
-If you would like to help keep Nori free (and free of ads) by supporting its continued development, you can do so by making a monthly pledge to [my Patreon account](https://www.patreon.com/user?u=3696048).
-
-Alternatively, you can make a one-off donation to [my PayPal account](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J).
+You can make a one-off donation to [my PayPal account](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J).
 
 Thanks to JetBrains for providing a free [IntelliJ IDEA Ultimate Edition](https://www.jetbrains.com/idea/) license for improving Nori and Norilib.
