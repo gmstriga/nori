@@ -35,8 +35,6 @@ You can also use [Android Studio](https://developer.android.com/studio/index.htm
 
 ### Donations ###
 
-If you would like to help keep Nori free (and free of ads) by supporting its continued development, you can do so by making a monthly pledge to [my Patreon account](https://www.patreon.com/user?u=3696048).
-
-Alternatively, you can make a one-off donation to [my PayPal account](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J).
+You can make a one-off donation to [my PayPal account](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FSVJZBNKMVZ9J).
 
 Thanks to JetBrains for providing a free [IntelliJ IDEA Ultimate Edition](https://www.jetbrains.com/idea/) license for improving Nori and Norilib.

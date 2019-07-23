@@ -14,7 +14,7 @@ android {
 
         buildConfigField "boolean", "GOOGLE_BUILD", "false"
         buildConfigField "boolean", "DONATIONS_PAYPAL", "true"
-        buildConfigField "boolean", "DONATIONS_PATREON", "true"
+        buildConfigField "boolean", "DONATIONS_PATREON", "false"
         buildConfigField "boolean", "DONATIONS_BITCOIN", "true"
         buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
 
