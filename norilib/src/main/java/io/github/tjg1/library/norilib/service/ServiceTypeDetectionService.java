@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import io.github.tjg1.library.norilib.clients.Danbooru;
 import io.github.tjg1.library.norilib.clients.DanbooruLegacy;
+import io.github.tjg1.library.norilib.clients.Derpibooru;
 import io.github.tjg1.library.norilib.clients.E621;
 import io.github.tjg1.library.norilib.clients.Flickr;
 import io.github.tjg1.library.norilib.clients.FlickrUser;
@@ -123,6 +124,12 @@ public class ServiceTypeDetectionService extends IntentService {
       apiEndpoint = Shimmie.detectService(this, baseUri, timeout);
       if (apiEndpoint != null) {
         sendBroadcast(RESULT_OK, apiEndpoint, SearchClient.Settings.APIType.SHIMMIE);
+        return;
+      }
+
+      apiEndpoint = Derpibooru.detectService(this, baseUri, timeout);
+      if (apiEndpoint != null) {
+        sendBroadcast(RESULT_OK, apiEndpoint, SearchClient.Settings.APIType.DERPIBOORU);
         return;
       }
     }
