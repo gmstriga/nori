@@ -30,9 +30,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import io.github.tjg1.library.norilib.Image;
@@ -54,6 +57,261 @@ public class Derpibooru implements SearchClient {
   private static final int THUMBNAIL_SIZE = 250;
   /** Sample size set if not returned by the API. */
   private static final int SAMPLE_SIZE = 800;
+  //endregion
+
+  //region Derpibooru Popular Characters
+  // This is a set of the current top 250 most popular character tags.
+  private static final Set<String> POPULAR_CHARACTERS = new HashSet<String>(Arrays.asList(
+          "adagio dazzle",
+          "ahuizotl",
+          "aloe",
+          "amethyst star",
+          "angel bunny",
+          "apple bloom",
+          "apple fritter",
+          "applejack",
+          "aria blaze",
+          "arizona cow",
+          "autumn blaze",
+          "babs seed",
+          "berry punch",
+          "berryshine",
+          "big macintosh",
+          "blossomforth",
+          "blueberry cake",
+          "blues",
+          "bon bon",
+          "boulder (pet)",
+          "bow hothoof",
+          "braeburn",
+          "bright mac",
+          "bulk biceps",
+          "button mash",
+          "capper dapperpaws",
+          "captain celaeno",
+          "captain planet",
+          "caramel",
+          "carrot cake",
+          "carrot top",
+          "cheerilee",
+          "cheese sandwich",
+          "cherry berry",
+          "cherry jubilee",
+          "chickadee",
+          "cloud kicker",
+          "cloudchaser",
+          "cloudy quartz",
+          "coco pommel",
+          "coloratura",
+          "comet tail",
+          "cookie crumbles",
+          "cozy glow",
+          "cranky doodle donkey",
+          "cup cake",
+          "daisy",
+          "daring do",
+          "daybreaker",
+          "derpy hooves",
+          "diamond tiara",
+          "dinky hooves",
+          "discord",
+          "dizzy twister",
+          "dj pon-3",
+          "doctor whooves",
+          "donut joe",
+          "double diamond",
+          "drama letter",
+          "fancypants",
+          "featherweight",
+          "fili-second",
+          "filthy rich",
+          "firefly",
+          "fizzlepop berrytwist",
+          "flam",
+          "flash sentry",
+          "fleetfoot",
+          "fleur-de-lis",
+          "flim",
+          "flitter",
+          "flower wishes",
+          "fluttershy",
+          "fuchsia blush",
+          "gabby",
+          "gallus",
+          "garble",
+          "gilda",
+          "glitter drops",
+          "gloriosa daisy",
+          "golden harvest",
+          "granny smith",
+          "grogar",
+          "gummy",
+          "hoity toity",
+          "igneous rock pie",
+          "indigo zap",
+          "iron will",
+          "juniper montage",
+          "king sombra",
+          "lavender lace",
+          "lemon hearts",
+          "lemon zest",
+          "lightning bolt",
+          "lightning dust",
+          "lily",
+          "lily valley",
+          "limestone pie",
+          "linky",
+          "lord tirek",
+          "lotus blossom",
+          "lyra heartstrings",
+          "mane-iac",
+          "marble pie",
+          "mare do well",
+          "masked matter-horn",
+          "maud pie",
+          "mayor mare",
+          "meadowbrook",
+          "megan williams",
+          "microchips",
+          "minty",
+          "minuette",
+          "mistress marevelous",
+          "moondancer",
+          "ms. harshwhinny",
+          "ms. peachbottom",
+          "mudbriar",
+          "mystery mint",
+          "neon lights",
+          "night glider",
+          "night light",
+          "nightmare moon",
+          "nightmare rarity",
+          "nightmare star",
+          "normal norman",
+          "noteworthy",
+          "nurse redheart",
+          "ocellus",
+          "octavia melody",
+          "oleander",
+          "opalescence",
+          "orange swirl",
+          "owlowiscious",
+          "paisley",
+          "party favor",
+          "pear butter",
+          "pharynx",
+          "philomena",
+          "photo finish",
+          "pinkie pie",
+          "pipsqueak",
+          "pokey pierce",
+          "posey",
+          "posey shy",
+          "pound cake",
+          "prince blueblood",
+          "prince rutherford",
+          "princess cadance",
+          "princess celestia",
+          "princess ember",
+          "princess flurry heart",
+          "princess luna",
+          "princess skystar",
+          "principal abacus cinch",
+          "pumpkin cake",
+          "queen chrysalis",
+          "queen novo",
+          "quibble pants",
+          "radiance",
+          "rainbow dash",
+          "rainbow dash (g3)",
+          "rainbowshine",
+          "rarity",
+          "rising star",
+          "rockhoof",
+          "roseluck",
+          "rover",
+          "ruby pinch",
+          "rumble",
+          "saddle rager",
+          "saffron masala",
+          "sandalwood",
+          "sandbar",
+          "sapphire shores",
+          "sassaflash",
+          "sassy saddles",
+          "sci-twi",
+          "scootaloo",
+          "screwball",
+          "sea swirl",
+          "seafoam",
+          "shining armor",
+          "shoeshine",
+          "silver spoon",
+          "silverstream",
+          "smarty pants",
+          "smolder",
+          "smooze",
+          "snails",
+          "snips",
+          "snowfall frost",
+          "soarin'",
+          "somnambula",
+          "sonata dusk",
+          "songbird serenade",
+          "sour sweet",
+          "sparkler",
+          "sphinx (character)",
+          "spike",
+          "spike the regular dog",
+          "spitfire",
+          "spoiled rich",
+          "spring melody",
+          "spring rain",
+          "sprinkle medley",
+          "star swirl the bearded",
+          "starlight glimmer",
+          "stellar flare",
+          "storm king",
+          "sugar belle",
+          "sugarcoat",
+          "sunburst",
+          "sunny flare",
+          "sunset shimmer",
+          "sunshower raindrops",
+          "suri polomare",
+          "surprise",
+          "sweetie belle",
+          "sweetie drops",
+          "tank",
+          "tempest shadow",
+          "thorax",
+          "thunderbass",
+          "thunderlane",
+          "timber spruce",
+          "time turner",
+          "tom",
+          "toola roola",
+          "tree hugger",
+          "trenderhoof",
+          "trixie",
+          "trouble shoes",
+          "twilight sparkle",
+          "twilight velvet",
+          "twinkleshine",
+          "twist",
+          "vapor trail",
+          "velvet reindeer",
+          "vinyl scratch",
+          "wallflower blush",
+          "watermelody",
+          "white lightning",
+          "wild fire",
+          "windy whistles",
+          "winona",
+          "yona",
+          "zapp",
+          "zecora",
+          "zephyr breeze"));
   //endregion
 
   //region Service configuration instance fields
@@ -313,7 +571,6 @@ public class Derpibooru implements SearchClient {
     return String.format(Locale.US, "%s/%d", apiEndpoint, id);
   }
 
-/* TODO Try and assign my tags types as a value-add feature */
   /**
    * Parse out the tags from a comma separated list.
    *
@@ -325,10 +582,33 @@ public class Derpibooru implements SearchClient {
     ArrayList<Tag> outputList = new ArrayList<Tag>(tags.length);
 
     for (String tag : tags) {
-      outputList.add(new Tag(tag));
+      Tag.Type type = getTagType(tag);
+      outputList.add(new Tag(tag, type));
     }
 
     return outputList.toArray(new Tag[outputList.size()]);
+  }
+
+  /**
+   * Get the type for a particular tag.
+   *
+   * @param tag Tag to determine type for
+   * @return {@link Tag.Type} of tag.
+   */
+  protected Tag.Type getTagType(String tag) {
+    if (POPULAR_CHARACTERS.contains(tag)) {
+      return Tag.Type.CHARACTER;
+    }
+
+    if (tag.startsWith("artist:") || tag.startsWith("editor:")) {
+      return Tag.Type.ARTIST;
+    }
+
+    if (tag.startsWith("oc:")) {
+      return Tag.Type.CHARACTER;
+    }
+
+    return Tag.Type.GENERAL;
   }
 
   /**
