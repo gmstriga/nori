@@ -25,13 +25,11 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -204,10 +202,6 @@ public class Derpibooru implements SearchClient {
   //endregion
 
   //region Creating search URLs
-/* TODO Parse out the tag string here into a list before moving further, so it can be checked for
-        special values that require the API key (once API keys are implemented) and special values
-        that change the URI parameters (like sort keys).
- */
   /**
    * Generate request URL to the search API endpoint.
    *
@@ -220,12 +214,13 @@ public class Derpibooru implements SearchClient {
     // Page numbers are 1-indexed for this API.
     final int page = pid + 1;
 
-    // TODO Add check here for whether search *requires* an API key
-    if (!TextUtils.isEmpty(this.username) && !TextUtils.isEmpty(this.apiKey)) {
-      return String.format(Locale.US, apiEndpoint + "/search.json?q=%s&page=%d&perpage=%d&key=%s",
-          Uri.encode(tags), page, limit, Uri.encode(this.username), Uri.encode(this.apiKey));
-    }
-    return String.format(Locale.US, apiEndpoint + "/search.json?q=%s&page=%d&perpage=%d", Uri.encode(tags), page, limit);
+    return new DerpibooruQueryBuilder()
+            .tags(tags)
+            .endpoint(this.apiEndpoint)
+            .page(page)
+            .limit(limit)
+            .apiKey(this.apiKey)
+            .build();
   }
   //endregion
 
@@ -238,7 +233,6 @@ public class Derpibooru implements SearchClient {
    * @param offset Current paging offset.
    * @return A {@link SearchResult} parsed from given XML.
    */
-  @SuppressWarnings("FeatureEnvy")
   protected SearchResult parseJSONResponse(String body, String tags, int offset) throws IOException {
     // Create variables to hold the values as XML is being parsed.
     final List<Image> imageList = new ArrayList<>(DEFAULT_LIMIT);
@@ -454,6 +448,160 @@ public class Derpibooru implements SearchClient {
     public String full;
 
     DerpibooruImageRepresentations() {}
+  }
+  //endregion
+
+  //region Derpibooru Query Builder class
+  protected class DerpibooruQueryBuilder {
+    /** API Endpoint. */
+    @NonNull String endpoint = "https://derpibooru.org";
+    /** Comma-separated list of tags. */
+    @NonNull String tags = "*";
+    /** User's API Key. */
+    @Nullable private String apiKey;
+    /** Page number to request. */
+    private int page = 0;
+    /** Number of results per page. */
+    private int limit = 50;
+    /**
+     * Sort type to use. Corresponds directly with the accepted values of Derpibooru's
+     * '&sf=' parameter. This can be 'score', 'wilson', 'random', etc. Automatically
+     * parsed out of the query, but can be overridden.
+     */
+    @Nullable private String sortType;
+    /**
+     * If an API Key is not required for a given query, it is not sent, so the filter
+     * does not get overridden by the user's default filter.
+     */
+    private boolean keyRequired = false;
+    /**
+     * Filter to use for the query. The default filter used is Everything (56027),
+     * which filters out nothing.
+     */
+    private int filterID = 56027;
+
+    /**
+     * Assign the tags to the query and parse out if the API key is required or the
+     * tag list contains any synthetic tags.
+     *
+     * @param tags Comma-separated list of tags.
+     * @return Itself.
+     */
+    public DerpibooruQueryBuilder tags(String tags) {
+      String[] tagList = tags.split(",\\s*");
+      StringBuilder tagBuilder = new StringBuilder();
+
+      for (int i = 0; i < tagList.length; i++) {
+        String tag = tagList[i];
+        boolean skipTag = false;
+
+        if (tag.startsWith("my:")) {
+          this.keyRequired = true;
+        }
+
+        if (tag.startsWith("sort:")) {
+          // Sort tags are synthetic and should be stripped from the query.
+          this.sortType = tag.substring(5);
+          skipTag = true;
+        }
+
+        // Strip synthetic tags from the output by only writing good tags to the output
+        // stringbuilder.
+        if (!skipTag) {
+          if (i != 0) {
+            tagBuilder.append(",");
+          }
+          tagBuilder.append(Uri.encode(tag));
+        }
+      }
+
+      this.tags = tagBuilder.toString();
+
+      return this;
+    }
+
+      /**
+       * Assign the API endpoint to the query.
+       *
+       * @param endpoint The base URL for the query.
+       * @return Itself.
+       */
+    public DerpibooruQueryBuilder endpoint(String endpoint) {
+        this.endpoint = endpoint;
+        return this;
+    }
+
+    /**
+     * Assign the API key to the query. Only sent with a request if it's necessary.
+     *
+     * @param apiKey The user's API key.
+     * @return Itself.
+     */
+    public DerpibooruQueryBuilder apiKey(String apiKey) {
+      this.apiKey = apiKey;
+      return this;
+    }
+
+    /**
+     * Assign the page number to the query.
+     *
+     * @param page Page number, 1-indexed.
+     * @return Itself.
+     */
+    public DerpibooruQueryBuilder page(int page) {
+      this.page = page;
+      return this;
+    }
+
+    /**
+     * Assign the number of results per page to the query.
+     *
+     * @param limit Number of results to return per page. Maximum value is 50.
+     * @return Itself.
+     */
+    public DerpibooruQueryBuilder limit(int limit) {
+      this.limit = limit;
+      return this;
+    }
+
+    /**
+     * Assign the sort type to the query.
+     *
+     * @param sortType Sort type to use. Passed directly into the URL parameters.
+     * @return Itself.
+     */
+    public DerpibooruQueryBuilder sortType(String sortType) {
+      this.sortType = sortType;
+      return this;
+    }
+
+    /**
+     * Build the final query.
+     *
+     * @return A URL that will execute the requested query.
+     */
+    public String build() {
+      StringBuilder queryBuilder = new StringBuilder(this.endpoint + "/search.json?");
+
+      queryBuilder.append("q=");
+      queryBuilder.append(this.tags);
+      queryBuilder.append("&page=");
+      queryBuilder.append(this.page);
+      queryBuilder.append("&perpage=");
+      queryBuilder.append(this.limit);
+      queryBuilder.append("&filter_id=");
+      queryBuilder.append(this.filterID);
+      if (!TextUtils.isEmpty(this.sortType)) {
+        queryBuilder.append("&sf=");
+        queryBuilder.append(this.sortType);
+      }
+      if (this.keyRequired && !TextUtils.isEmpty(this.apiKey)) {
+        queryBuilder.append("&key=");
+        queryBuilder.append(this.apiKey);
+      }
+
+      return queryBuilder.toString();
+    }
   }
   //endregion
 }
