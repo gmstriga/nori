@@ -43,6 +43,7 @@ public class EditAPISettingDialogFragment extends DialogFragment
   //region Hard-coded URL hashes
   /** Danbooru API URL. Used to only show the optional authentication fields for the Danbooru API. */
   private static final String DANBOORU_API_URL = "b163eea7c4d359284718c64ed351b92ff2d2144c9cf85a6ef40253c87fb1c4e6df8c5b7e78f04c747d5e674c103320672bc769a68e28d202e092b49a5a13a768";
+  private static final String DERPIBOORU_API_URL = "0b3ce6d8b19e2f618942c2a00a68429b30c162c69c7698c7298e73276cb5b4ad13d624f71b8ac2dfa4301025ff9d8ee8e878d56087719ad3e0af673b86bfb361";
   //endregion
 
   //region Instance fields
@@ -230,7 +231,8 @@ public class EditAPISettingDialogFragment extends DialogFragment
   public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
     // Only show optional authentication inputs for the Danbooru API.
     Uri parsedUri = Uri.parse(uri.getText().toString());
-    if (DANBOORU_API_URL.equals(HashUtils.sha512(parsedUri.getHost(), "nori"))) {
+    String urlHash = HashUtils.sha512(parsedUri.getHost(), "nori");
+    if (DANBOORU_API_URL.equals(urlHash) || DERPIBOORU_API_URL.equals(urlHash)) {
       username.setVisibility(View.VISIBLE);
       passphrase.setVisibility(View.VISIBLE);
     } else if (username.getVisibility() != View.GONE) {

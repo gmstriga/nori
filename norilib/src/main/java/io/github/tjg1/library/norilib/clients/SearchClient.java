@@ -258,7 +258,7 @@ public interface SearchClient {
         case FLICKR_USER:
           return new FlickrUser(context, name, endpoint);
         case DERPIBOORU:
-          return new Derpibooru(context, name, endpoint);
+          return new Derpibooru(context, name, endpoint, username, password);
         default:
           return null;
       }
